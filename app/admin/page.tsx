@@ -67,6 +67,12 @@ export default async function AdminIndexPage() {
           title="Manage profiles"
           desc="Flip pool membership and admin role. Captain status lives in the Captains tab."
         />
+        <AdminLink
+          href="/admin/og-preview"
+          eyebrow="OG preview"
+          title="See how links unfurl"
+          desc="Live render of every social card the site emits, with a Discord-style mock for each."
+        />
       </div>
     </section>
   );
