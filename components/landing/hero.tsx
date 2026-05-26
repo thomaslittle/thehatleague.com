@@ -180,7 +180,7 @@ export function Hero({ viewer }: { viewer?: ViewerInfo | null } = {}) {
                   </a>
                 </div>
                 <div className="rounded-lg bg-thl-orange px-3 py-2 text-center text-black">
-                  <div className="text-2xl leading-none font-extrabold">24</div>
+                  <div className="text-2xl leading-none font-extrabold">∞</div>
                   <div className="mt-1 text-[9px] font-bold tracking-[0.2em] uppercase">
                     Spots left
                   </div>
