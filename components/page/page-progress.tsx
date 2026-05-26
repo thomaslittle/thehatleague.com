@@ -164,7 +164,7 @@ export function PageProgress() {
       aria-hidden="true"
       className="pointer-events-none fixed inset-x-0 top-0 z-[70]"
     >
-      <div className="h-[3px] bg-black/5 dark:bg-white/10">
+      <div className="h-[3px] bg-neutral-50/70 dark:bg-neutral-950/70">
         <div
           className="h-full origin-left bg-thl-orange shadow-[0_0_18px_rgba(247,97,3,0.75)] transition-[width,opacity] duration-200 ease-out"
           style={{
@@ -173,7 +173,7 @@ export function PageProgress() {
           }}
         />
       </div>
-      <div className="h-[3px] bg-black/5 dark:bg-white/10">
+      <div className="h-[3px] bg-neutral-50/70 dark:bg-neutral-950/70">
         <div
           ref={scrollBarRef}
           className="h-full origin-left scale-x-0 bg-thl-orange shadow-[0_0_18px_rgba(247,97,3,0.75)]"

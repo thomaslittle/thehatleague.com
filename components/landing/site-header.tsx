@@ -82,7 +82,7 @@ export function SiteHeader({
       <div className="mx-auto flex h-[72px] max-w-[1320px] items-center justify-between gap-4 px-4 md:gap-6 md:px-10">
         <Link href="/" className="group flex shrink-0 items-center gap-2.5 md:gap-3">
           <Image
-            src="/brand/thl-logo.png"
+            src="/brand/thl-logo-notext.png"
             alt=""
             width={44}
             height={44}
@@ -93,7 +93,7 @@ export function SiteHeader({
             <div className="font-marker text-lg whitespace-nowrap text-neutral-900 md:text-xl dark:text-white">
               The Hat League
             </div>
-            <div className="hidden text-[10px] font-bold tracking-[0.22em] whitespace-nowrap text-neutral-500 uppercase sm:block dark:text-neutral-500">
+            <div className="hidden text-[10px] font-bold tracking-[0.24em] whitespace-nowrap text-neutral-500 uppercase sm:block dark:text-neutral-500">
               Rocket League · S04
             </div>
           </div>
