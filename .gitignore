@@ -32,9 +32,18 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
+
+# Claude Code / agent session state
+/.claude/
+/.agents/
+/skills-lock.json
+
+# Windows alternate-stream metadata that ships with file copies
+*:Zone.Identifier
 
 # typescript
 *.tsbuildinfo
