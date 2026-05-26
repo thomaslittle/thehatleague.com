@@ -12,6 +12,7 @@ const FOOTER_GROUPS: { title: string; links: { label: string; href: string }[] }
         { label: "Standings", href: "/standings" },
         { label: "Schedule", href: "/schedule" },
         { label: "Captains", href: "/captains" },
+        { label: "MVP vote", href: "/mvp" },
       ],
     },
     {
@@ -19,7 +20,7 @@ const FOOTER_GROUPS: { title: string; links: { label: string; href: string }[] }
       links: [
         { label: "Twitch · Live", href: SITE.twitchUrl },
         { label: "Replays", href: "/replays" },
-        { label: "Highlight reel", href: "/#clips" },
+        { label: "Clips & highlights", href: "/clips" },
       ],
     },
     {

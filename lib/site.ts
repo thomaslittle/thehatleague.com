@@ -17,5 +17,5 @@ export const NAV_PRIMARY: { href: string; label: string }[] = [
   { href: "/captains", label: "Captains" },
   { href: "/schedule", label: "Schedule" },
   { href: "/standings", label: "Standings" },
-  { href: "/mvp", label: "MVP" },
+  { href: "/clips", label: "Clips" },
 ];

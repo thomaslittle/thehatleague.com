@@ -91,9 +91,9 @@ export type Database = {
       };
       profiles: {
         Row: {
+          admin_pitch: string | null;
           captain_pitch: string | null;
           created_at: string;
-          devops_pitch: string | null;
           discord_avatar_url: string | null;
           discord_global_name: string | null;
           discord_id: string | null;
@@ -101,10 +101,9 @@ export type Database = {
           id: string;
           in_player_pool: boolean;
           is_admin: boolean;
+          is_admin_applicant: boolean;
           is_captain: boolean;
           is_captain_applicant: boolean;
-          is_devops: boolean;
-          is_devops_applicant: boolean;
           peak_rank: string | null;
           peak_rank_playlist: string | null;
           rank_2v2: string | null;
@@ -114,9 +113,9 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          admin_pitch?: string | null;
           captain_pitch?: string | null;
           created_at?: string;
-          devops_pitch?: string | null;
           discord_avatar_url?: string | null;
           discord_global_name?: string | null;
           discord_id?: string | null;
@@ -124,10 +123,9 @@ export type Database = {
           id: string;
           in_player_pool?: boolean;
           is_admin?: boolean;
+          is_admin_applicant?: boolean;
           is_captain?: boolean;
           is_captain_applicant?: boolean;
-          is_devops?: boolean;
-          is_devops_applicant?: boolean;
           peak_rank?: string | null;
           peak_rank_playlist?: string | null;
           rank_2v2?: string | null;
@@ -137,9 +135,9 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          admin_pitch?: string | null;
           captain_pitch?: string | null;
           created_at?: string;
-          devops_pitch?: string | null;
           discord_avatar_url?: string | null;
           discord_global_name?: string | null;
           discord_id?: string | null;
@@ -147,10 +145,9 @@ export type Database = {
           id?: string;
           in_player_pool?: boolean;
           is_admin?: boolean;
+          is_admin_applicant?: boolean;
           is_captain?: boolean;
           is_captain_applicant?: boolean;
-          is_devops?: boolean;
-          is_devops_applicant?: boolean;
           peak_rank?: string | null;
           peak_rank_playlist?: string | null;
           rank_2v2?: string | null;

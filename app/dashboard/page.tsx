@@ -18,7 +18,7 @@ import { CopyLinkButton } from "@/components/share/copy-link-button";
 import { env } from "@/lib/env";
 import { rankWeight } from "@/lib/data/rank-sort";
 import { RankBadge } from "@/components/ranks/rank-badge";
-import { DevopsApplication } from "@/components/devops/devops-application";
+import { LeagueOpsApplication } from "@/components/league-ops/league-ops-application";
 import { getTwitchLive } from "@/lib/twitch/live";
 
 export const metadata = {
@@ -508,9 +508,10 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
                   </span>
                 </h2>
                 <p className="mt-4 max-w-md text-neutral-600 dark:text-neutral-400">
-                  Code contributions, replay pipelines, infra, Discord bots,
-                  draft-night on-call — if you can ship it, we&apos;ll plug
-                  you in. League ops reviews and DMs you on Discord.
+                  Schedule matches, coordinate captains, manage the player
+                  pool, run draft events, handle communications — if you can
+                  own it, we&apos;ll give you the keys. League ops reaches out
+                  on Discord.
                 </p>
               </div>
 

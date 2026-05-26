@@ -57,54 +57,43 @@ export async function revokeCaptain(formData: FormData) {
   revalidatePath("/captains");
 }
 
-// ---------- devops ------------------------------------------------------
+// ---------- league ops applications --------------------------------------
+// "League ops" is the user-facing name for admin staff. A user requests
+// admin access from the dashboard, an existing admin approves here, and
+// the existing `is_admin` flag flips on. Demotion still happens via the
+// per-player admin toggle on /admin/players (setPlayerAdmin).
 
-/** Promote an applicant to devops. */
-export async function approveDevops(formData: FormData) {
-  await requireAdmin("/admin/devops");
+/** Promote an applicant to league ops (admin). */
+export async function approveAdminApplication(formData: FormData) {
+  await requireAdmin("/admin/league-ops");
   const profileId = String(formData.get("profile_id") ?? "").trim();
   if (!profileId) return;
 
   const supabase = await createSupabaseServerClient();
   await supabase
     .from("profiles")
-    .update({ is_devops: true, is_devops_applicant: false })
+    .update({ is_admin: true, is_admin_applicant: false })
     .eq("id", profileId);
 
-  revalidatePath("/admin/devops");
+  revalidatePath("/admin/league-ops");
+  revalidatePath("/admin/players");
   revalidatePath("/dashboard");
 }
 
-/** Reject a devops application — clears the applicant flag, keeps the
+/** Reject a league-ops application — clears the applicant flag, keeps the
  *  pitch on file in case they reapply. */
-export async function dismissDevopsApplication(formData: FormData) {
-  await requireAdmin("/admin/devops");
+export async function dismissAdminApplication(formData: FormData) {
+  await requireAdmin("/admin/league-ops");
   const profileId = String(formData.get("profile_id") ?? "").trim();
   if (!profileId) return;
 
   const supabase = await createSupabaseServerClient();
   await supabase
     .from("profiles")
-    .update({ is_devops_applicant: false })
+    .update({ is_admin_applicant: false })
     .eq("id", profileId);
 
-  revalidatePath("/admin/devops");
-  revalidatePath("/dashboard");
-}
-
-/** Demote a devops contributor (e.g. they stepped down). */
-export async function revokeDevops(formData: FormData) {
-  await requireAdmin("/admin/devops");
-  const profileId = String(formData.get("profile_id") ?? "").trim();
-  if (!profileId) return;
-
-  const supabase = await createSupabaseServerClient();
-  await supabase
-    .from("profiles")
-    .update({ is_devops: false })
-    .eq("id", profileId);
-
-  revalidatePath("/admin/devops");
+  revalidatePath("/admin/league-ops");
   revalidatePath("/dashboard");
 }
 

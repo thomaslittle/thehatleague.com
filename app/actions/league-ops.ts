@@ -3,27 +3,27 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { DEVOPS_PITCH_MAX, DEVOPS_PITCH_MIN } from "@/lib/devops";
+import { ADMIN_PITCH_MAX, ADMIN_PITCH_MIN } from "@/lib/league-ops";
 
-export interface DevopsApplicationState {
+export interface LeagueOpsApplicationState {
   ok?: boolean;
   error?: string;
 }
 
-export async function applyForDevops(
-  _prev: DevopsApplicationState | undefined,
+export async function applyForLeagueOps(
+  _prev: LeagueOpsApplicationState | undefined,
   formData: FormData,
-): Promise<DevopsApplicationState> {
+): Promise<LeagueOpsApplicationState> {
   const pitch = String(formData.get("pitch") ?? "").trim();
 
-  if (pitch.length < DEVOPS_PITCH_MIN) {
+  if (pitch.length < ADMIN_PITCH_MIN) {
     return {
-      error: `Tell us a bit more — at least ${DEVOPS_PITCH_MIN} characters so league ops has something to read.`,
+      error: `Tell us a bit more — at least ${ADMIN_PITCH_MIN} characters so league ops has something to read.`,
     };
   }
-  if (pitch.length > DEVOPS_PITCH_MAX) {
+  if (pitch.length > ADMIN_PITCH_MAX) {
     return {
-      error: `Trim it to under ${DEVOPS_PITCH_MAX} characters — we'll DM you to flesh it out.`,
+      error: `Trim it to under ${ADMIN_PITCH_MAX} characters — we'll DM you to flesh it out.`,
     };
   }
 
@@ -38,8 +38,8 @@ export async function applyForDevops(
   const { error } = await supabase
     .from("profiles")
     .update({
-      is_devops_applicant: true,
-      devops_pitch: pitch,
+      is_admin_applicant: true,
+      admin_pitch: pitch,
     })
     .eq("id", user.id);
   if (error) {
@@ -50,7 +50,7 @@ export async function applyForDevops(
   return { ok: true };
 }
 
-export async function withdrawDevopsApplication() {
+export async function withdrawLeagueOpsApplication() {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -59,11 +59,11 @@ export async function withdrawDevopsApplication() {
 
   const { error } = await supabase
     .from("profiles")
-    .update({ is_devops_applicant: false })
+    .update({ is_admin_applicant: false })
     .eq("id", user.id);
   if (error) {
     // Best-effort withdraw — log so we notice, don't surface to UI.
-    console.error("withdrawDevopsApplication failed:", error);
+    console.error("withdrawLeagueOpsApplication failed:", error);
   }
 
   revalidatePath("/dashboard");

@@ -8,7 +8,6 @@ import { Standings } from "@/components/landing/standings";
 import { PlayerStats } from "@/components/landing/player-stats";
 import { Clips } from "@/components/landing/clips";
 import { HypeReel } from "@/components/landing/hype-reel";
-import { MvpCallout } from "@/components/landing/mvp-callout";
 import { FinalCta } from "@/components/landing/final-cta";
 import { RecentSignups } from "@/components/landing/recent-signups";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -77,7 +76,6 @@ export default async function HomePage() {
         <Standings />
         <PlayerStats />
         <HypeReel />
-        <MvpCallout />
         <Clips />
         {!viewer?.isAuthenticated && <FinalCta />}
       </main>

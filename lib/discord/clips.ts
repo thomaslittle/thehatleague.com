@@ -12,27 +12,61 @@
 
 import "server-only";
 
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getTwitchAccessToken, getTwitchClientId } from "@/lib/twitch/auth";
+import { cleanDiscordUsername } from "@/lib/discord/name";
+
+export type ClipSource =
+  | "discord-mp4"
+  | "discord-image"
+  | "gifyourgame"
+  | "medal"
+  | "twitch-clip"
+  | "youtube"
+  | "imgur"
+  | "x"
+  | "other";
+
+export interface ClipSubmitterProfile {
+  username: string;
+  isCaptain: boolean;
+}
+
 export interface Clip {
   id: string;
+  /** Caption-style headline (the message text, an embed title, or a
+   *  host label). */
   title: string;
-  submitter: string;
-  /** Team name when we know it; empty until the draft populates rosters. */
-  team: string;
-  /** "Wk 3" parsed from the message, else a month label. */
-  week: string;
-  /** Empty for now — Discord doesn't expose video duration on attachments. */
-  duration: string;
-  likes: number;
-  /** Deep link the card hyperlinks to. Either the embed URL (YouTube etc.)
-   *  or the Discord message permalink. */
+  /** Classification so the UI can pick the right embed strategy. */
+  source: ClipSource;
+  /** ISO timestamp of the original Discord message. */
+  postedAt: string;
+  /** External link target ("View on …" / Discord permalink). */
   url: string;
-  /** Direct mp4 from Discord CDN when the clip was uploaded as a file. */
+  /** Direct mp4 URL when Discord hosted the file. */
   videoUrl?: string;
-  /** Cover/thumbnail to render in the card. */
+  /** Iframe-ready embed URL (YouTube nocookie, medal/embed, twitch/embed…). */
+  embedUrl?: string;
+  /** Static thumbnail to render in the card. */
   thumbUrl?: string;
-  /** Fallback positioning when no thumbUrl exists (used by ClipCard). */
-  pos?: string;
-  scale?: number;
+  /** Discord user ID of the poster. */
+  submitterDiscordId: string;
+  /** Display name (global name when set, else username) for the card. */
+  submitterName: string;
+  /** Avatar URL from Discord CDN (cdn.discordapp.com). */
+  submitterAvatarUrl: string | null;
+  /** Site profile match if the poster has signed up. null otherwise. */
+  submitterProfile: ClipSubmitterProfile | null;
+  /** Parsed "Wk N" tag if the poster typed one, else month label w/ year. */
+  week: string;
+  /** Total reaction count across all emojis on the message. */
+  likes: number;
+  /** Direct count of 👍 (thumbsup) reactions — used so we can render the
+   *  league's own like count separate from random reactions. */
+  thumbsUp: number;
+  /** Mostly unused right now — Discord doesn't expose video duration via
+   *  the REST channel-messages endpoint. */
+  duration?: string;
 }
 
 interface DiscordAttachment {
@@ -57,6 +91,7 @@ interface DiscordEmbed {
   url?: string;
   title?: string;
   thumbnail?: DiscordEmbedThumb;
+  image?: DiscordEmbedThumb;
   video?: { url?: string; width?: number; height?: number };
   provider?: { name?: string; url?: string };
 }
@@ -66,6 +101,7 @@ interface DiscordAuthor {
   username: string;
   global_name?: string | null;
   avatar?: string | null;
+  discriminator?: string;
 }
 
 interface DiscordReaction {
@@ -87,6 +123,9 @@ interface DiscordMessage {
 
 const DISCORD_API = "https://discord.com/api/v10";
 
+const CLIP_HOSTS_RE =
+  /https?:\/\/[^\s]*(?:gifyourgame\.com|medal\.tv|streamable\.com|clips\.twitch\.tv|twitch\.tv\/[^\s]+\/clip|youtube\.com|youtu\.be|imgur\.com|x\.com|twitter\.com)\/[^\s]+/i;
+
 export async function getClips(): Promise<Clip[]> {
   const token = process.env.DISCORD_BOT_TOKEN;
   const channelId = process.env.DISCORD_CLIPS_CHANNEL_ID;
@@ -100,9 +139,6 @@ export async function getClips(): Promise<Clip[]> {
         Authorization: `Bot ${token}`,
         "User-Agent": "TheHatLeague (https://thehatleague.com, 0.1.0)",
       },
-      // Cache per-render via Next data cache; refresh every 5 minutes or on
-      // explicit revalidateTag("discord:clips"). Keeps Discord rate-limit
-      // exposure minimal — we re-fetch ~12x/hour total, not per visitor.
       next: { revalidate: 60 * 5, tags: ["discord:clips"] },
     },
   ).catch((err) => {
@@ -122,42 +158,33 @@ export async function getClips(): Promise<Clip[]> {
     | null;
   if (!messages) return [];
 
-  return messages
+  const basic = messages
     .map((m) => messageToClip(m, guildId))
     .filter((c): c is Clip => c !== null);
+
+  if (basic.length === 0) return [];
+
+  // Enrich with profile matches + thumbnail metadata in parallel.
+  const [enriched] = await Promise.all([enrichClips(basic)]);
+  return enriched;
 }
 
-// Hosts that members commonly use to share clips. When a message body
-// contains a URL on one of these hosts but Discord didn't auto-generate
-// an embed (gifyourgame in particular), we still treat the message as a
-// clip and link out to the host.
-const CLIP_HOSTS_RE =
-  /https?:\/\/[^\s]*(?:gifyourgame\.com|medal\.tv|streamable\.com|clips\.twitch\.tv|twitch\.tv\/[^\s]+\/clip|youtube\.com|youtu\.be|imgur\.com|x\.com|twitter\.com)\/[^\s]+/i;
-
-function findClipUrlInContent(content: string | undefined): string | undefined {
-  if (!content) return undefined;
-  const m = content.match(CLIP_HOSTS_RE);
-  return m?.[0];
-}
+// ---------------------------------------------------------------------------
+// Message → Clip
+// ---------------------------------------------------------------------------
 
 function messageToClip(m: DiscordMessage, guildId: string): Clip | null {
-  // Prefer a direct video attachment (mp4/mov/webm).
   const videoAttachment = m.attachments?.find((a) =>
     (a.content_type ?? "").startsWith("video/"),
   );
-  // Image attachment (some captains screenshot a clip — better than nothing).
   const imageAttachment = m.attachments?.find((a) =>
     (a.content_type ?? "").startsWith("image/"),
   );
-  // A rich embed for a video link (YouTube, Streamable, Twitch clip, etc.).
   const videoEmbed = m.embeds?.find(
     (e) => e.type === "video" || e.video || e.thumbnail,
   );
-  // URL to a known clip host in the message text — covers cases where
-  // Discord didn't bother generating an embed (gifyourgame is the big one).
   const contentClipUrl = findClipUrlInContent(m.content);
 
-  // Skip messages that carry no recognizable media of any kind.
   if (
     !videoAttachment &&
     !imageAttachment &&
@@ -167,95 +194,366 @@ function messageToClip(m: DiscordMessage, guildId: string): Clip | null {
     return null;
   }
 
-  const author = m.author;
-  const submitter = author.global_name ?? author.username;
-
+  // Classify the source.
+  let source: ClipSource = "other";
+  let embedUrl: string | undefined;
   const messageLink = `https://discord.com/channels/${guildId}/${m.channel_id}/${m.id}`;
-  const url =
-    videoEmbed?.url ??
-    videoAttachment?.url ??
-    contentClipUrl ??
-    messageLink;
+  let url = messageLink;
+
+  if (videoAttachment) {
+    source = "discord-mp4";
+    url = videoAttachment.url;
+  } else if (imageAttachment) {
+    source = "discord-image";
+    url = imageAttachment.url;
+  } else if (contentClipUrl) {
+    const classified = classifyContentUrl(contentClipUrl);
+    source = classified.source;
+    url = contentClipUrl;
+    embedUrl = classified.embedUrl;
+  } else if (videoEmbed?.url) {
+    const classified = classifyContentUrl(videoEmbed.url);
+    source = classified.source;
+    url = videoEmbed.url;
+    embedUrl = classified.embedUrl;
+  }
+
+  // Initial thumbnail guess from whatever Discord gave us. We'll override
+  // for hosts where we can do better in enrichClips().
   const thumbUrl =
     videoEmbed?.thumbnail?.url ??
+    videoEmbed?.image?.url ??
     imageAttachment?.proxy_url ??
     imageAttachment?.url ??
     deriveYouTubeThumb(videoEmbed?.url ?? contentClipUrl);
 
+  const author = m.author;
+  const submitterName = author.global_name ?? author.username;
+  const submitterAvatarUrl = discordAvatarUrl(author);
   const likes = (m.reactions ?? []).reduce((sum, r) => sum + r.count, 0);
+  const thumbsUp = (m.reactions ?? [])
+    .filter((r) => r.emoji?.name === "👍")
+    .reduce((sum, r) => sum + r.count, 0);
 
-  // Headline preference order: caption text → embed title → host name → fallback.
   const captionText = m.content?.trim() ?? "";
-  // If the only content is a bare URL (very common), don't use it as the
-  // title — fall through to the embed title / host name.
   const captionIsJustUrl = /^https?:\/\/\S+\s*$/.test(captionText);
   const titleCandidate =
     !captionIsJustUrl && captionText
       ? captionText
-      : (videoEmbed?.title ??
-        hostLabelFromUrl(contentClipUrl ?? videoEmbed?.url) ??
-        "Hat clip");
+      : (videoEmbed?.title ?? hostLabelForSource(source) ?? "Hat clip");
 
-  const week =
-    parseWeekTag(m.content) ?? monthLabelFromTimestamp(m.timestamp);
+  const week = parseWeekTag(m.content) ?? dateLabelFromTimestamp(m.timestamp);
 
   return {
     id: m.id,
     title: trimTitle(titleCandidate),
-    submitter,
-    team: "",
-    week,
-    duration: "",
-    likes,
+    source,
+    postedAt: m.timestamp,
     url,
     videoUrl: videoAttachment?.url,
+    embedUrl,
     thumbUrl,
+    submitterDiscordId: author.id,
+    submitterName,
+    submitterAvatarUrl,
+    submitterProfile: null,
+    week,
+    likes,
+    thumbsUp,
+    duration: undefined,
   };
 }
 
-function hostLabelFromUrl(url: string | undefined): string | null {
-  if (!url) return null;
+// ---------------------------------------------------------------------------
+// Enrichment: profile matches + better thumbnails
+// ---------------------------------------------------------------------------
+
+async function enrichClips(clips: Clip[]): Promise<Clip[]> {
+  const [profileMap, thumbs] = await Promise.all([
+    resolveProfiles(clips.map((c) => c.submitterDiscordId)),
+    Promise.all(
+      clips.map((c) =>
+        c.thumbUrl ? Promise.resolve(c.thumbUrl) : resolveThumb(c),
+      ),
+    ),
+  ]);
+
+  return clips.map((c, i) => ({
+    ...c,
+    submitterProfile: profileMap.get(c.submitterDiscordId) ?? null,
+    thumbUrl: thumbs[i] ?? c.thumbUrl,
+  }));
+}
+
+async function resolveProfiles(
+  discordIds: string[],
+): Promise<Map<string, ClipSubmitterProfile>> {
+  const ids = Array.from(new Set(discordIds)).filter(Boolean);
+  if (ids.length === 0) return new Map();
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("discord_id, discord_username, is_captain")
+    .in("discord_id", ids);
+  if (error || !data) return new Map();
+
+  const map = new Map<string, ClipSubmitterProfile>();
+  for (const row of data) {
+    if (!row.discord_id) continue;
+    const username = cleanDiscordUsername(row.discord_username);
+    if (!username) continue;
+    map.set(row.discord_id, {
+      username,
+      isCaptain: !!row.is_captain,
+    });
+  }
+  return map;
+}
+
+async function resolveThumb(c: Clip): Promise<string | undefined> {
+  switch (c.source) {
+    case "twitch-clip":
+      return getTwitchClipThumb(c.url);
+    case "gifyourgame":
+    case "medal":
+    case "imgur":
+      return scrapeOgImage(c.url);
+    case "youtube":
+      return deriveYouTubeThumb(c.url);
+    default:
+      return undefined;
+  }
+}
+
+async function getTwitchClipThumb(url: string): Promise<string | undefined> {
+  const slug = twitchSlugFromUrl(url);
+  if (!slug) return undefined;
+  const token = await getTwitchAccessToken();
+  const clientId = getTwitchClientId();
+  if (!token || !clientId) return undefined;
+  const res = await fetch(
+    `https://api.twitch.tv/helix/clips?id=${encodeURIComponent(slug)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Client-Id": clientId,
+      },
+      next: { revalidate: 60 * 30 },
+    },
+  ).catch(() => null);
+  if (!res || !res.ok) return undefined;
+  const json = (await res.json().catch(() => null)) as
+    | { data: Array<{ thumbnail_url: string }> }
+    | null;
+  return json?.data?.[0]?.thumbnail_url;
+}
+
+async function scrapeOgImage(url: string): Promise<string | undefined> {
+  const res = await fetch(url, {
+    headers: { "User-Agent": "TheHatLeague-OGScraper/0.1" },
+    next: { revalidate: 60 * 30 },
+  }).catch(() => null);
+  if (!res || !res.ok) return undefined;
+  // Only sniff the head — clip-host pages render their og tags early.
+  const html = (await res.text().catch(() => "")).slice(0, 32_000);
+  const match =
+    html.match(
+      /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+    ) ??
+    html.match(
+      /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
+    );
+  return match?.[1];
+}
+
+// ---------------------------------------------------------------------------
+// URL classification / helpers
+// ---------------------------------------------------------------------------
+
+function classifyContentUrl(url: string): {
+  source: ClipSource;
+  embedUrl?: string;
+} {
   try {
-    const host = new URL(url).hostname.replace(/^www\./, "");
-    if (host.includes("gifyourgame")) return "GIFYourGame clip";
-    if (host.includes("medal.tv")) return "Medal clip";
-    if (host.includes("streamable")) return "Streamable clip";
-    if (host.includes("twitch")) return "Twitch clip";
-    if (host.includes("youtube") || host.includes("youtu.be")) return "YouTube";
-    if (host.includes("imgur")) return "Imgur clip";
-    return host;
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./, "");
+
+    if (host.endsWith("gifyourgame.com")) {
+      const slug = u.pathname.split("/").filter(Boolean)[0];
+      return {
+        source: "gifyourgame",
+        embedUrl: slug
+          ? `https://gifyourgame.com/embed/${slug}`
+          : undefined,
+      };
+    }
+
+    if (host.endsWith("medal.tv")) {
+      const parts = u.pathname.split("/").filter(Boolean);
+      const idx = parts.indexOf("clips");
+      const slug = idx >= 0 ? parts[idx + 1] : null;
+      return {
+        source: "medal",
+        embedUrl: slug
+          ? `https://medal.tv/clips/${slug}/embed?autoplay=1`
+          : undefined,
+      };
+    }
+
+    if (host === "clips.twitch.tv") {
+      const slug = u.pathname.split("/").filter(Boolean)[0];
+      return {
+        source: "twitch-clip",
+        embedUrl: slug
+          ? buildTwitchEmbedUrl(slug)
+          : undefined,
+      };
+    }
+    if (host.endsWith("twitch.tv") && u.pathname.includes("/clip/")) {
+      const slug = u.pathname.split("/clip/")[1]?.split(/[/?#]/)[0];
+      return {
+        source: "twitch-clip",
+        embedUrl: slug ? buildTwitchEmbedUrl(slug) : undefined,
+      };
+    }
+
+    if (host.endsWith("youtu.be") || host.endsWith("youtube.com")) {
+      const id = youTubeId(url);
+      return {
+        source: "youtube",
+        embedUrl: id
+          ? `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`
+          : undefined,
+      };
+    }
+
+    if (host.endsWith("imgur.com")) {
+      // Imgur images/videos embed as raw URL with type — we just link out.
+      return { source: "imgur" };
+    }
+
+    if (host.endsWith("x.com") || host.endsWith("twitter.com")) {
+      return { source: "x" };
+    }
+
+    return { source: "other" };
+  } catch {
+    return { source: "other" };
+  }
+}
+
+function buildTwitchEmbedUrl(slug: string): string {
+  // Twitch requires every parent the embed will load under. List the
+  // production host plus localhost for dev/Vercel previews.
+  const params = new URLSearchParams({
+    clip: slug,
+    autoplay: "true",
+    muted: "false",
+  });
+  params.append("parent", "thehatleague.com");
+  params.append("parent", "www.thehatleague.com");
+  params.append("parent", "localhost");
+  return `https://clips.twitch.tv/embed?${params.toString()}`;
+}
+
+function twitchSlugFromUrl(url: string): string | null {
+  try {
+    const u = new URL(url);
+    if (u.hostname === "clips.twitch.tv") {
+      return u.pathname.split("/").filter(Boolean)[0] ?? null;
+    }
+    if (u.hostname.endsWith("twitch.tv") && u.pathname.includes("/clip/")) {
+      return u.pathname.split("/clip/")[1]?.split(/[/?#]/)[0] ?? null;
+    }
+    return null;
   } catch {
     return null;
   }
 }
 
-function deriveYouTubeThumb(url: string | undefined): string | undefined {
-  if (!url) return undefined;
-  // Matches youtu.be/<id>, youtube.com/watch?v=<id>, /embed/<id>, /shorts/<id>
+function youTubeId(url: string): string | undefined {
   const m =
     url.match(/youtu\.be\/([\w-]{11})/) ??
     url.match(/[?&]v=([\w-]{11})/) ??
     url.match(/youtube\.com\/(?:embed|shorts)\/([\w-]{11})/);
-  if (!m) return undefined;
-  return `https://i.ytimg.com/vi/${m[1]}/hqdefault.jpg`;
+  return m?.[1];
+}
+
+function deriveYouTubeThumb(url: string | undefined): string | undefined {
+  if (!url) return undefined;
+  const id = youTubeId(url);
+  return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : undefined;
+}
+
+function discordAvatarUrl(author: DiscordAuthor): string | null {
+  if (author.avatar) {
+    const ext = author.avatar.startsWith("a_") ? "gif" : "png";
+    return `https://cdn.discordapp.com/avatars/${author.id}/${author.avatar}.${ext}?size=128`;
+  }
+  // Default avatar — new system uses (id >> 22) % 6, old uses discriminator % 5.
+  if (
+    author.discriminator &&
+    author.discriminator !== "0" &&
+    author.discriminator !== "0000"
+  ) {
+    const idx = Number(author.discriminator) % 5;
+    return `https://cdn.discordapp.com/embed/avatars/${idx}.png`;
+  }
+  try {
+    const idx = Number(
+      (BigInt(author.id) >> BigInt(22)) % BigInt(6),
+    );
+    return `https://cdn.discordapp.com/embed/avatars/${idx}.png`;
+  } catch {
+    return null;
+  }
+}
+
+function findClipUrlInContent(content: string | undefined): string | undefined {
+  if (!content) return undefined;
+  return content.match(CLIP_HOSTS_RE)?.[0];
+}
+
+function hostLabelForSource(source: ClipSource): string | null {
+  switch (source) {
+    case "gifyourgame":
+      return "GIFYourGame clip";
+    case "medal":
+      return "Medal clip";
+    case "twitch-clip":
+      return "Twitch clip";
+    case "youtube":
+      return "YouTube";
+    case "imgur":
+      return "Imgur clip";
+    case "x":
+      return "X / Twitter clip";
+    case "discord-mp4":
+      return "Hat clip";
+    case "discord-image":
+      return "Hat clip";
+    default:
+      return null;
+  }
 }
 
 function parseWeekTag(content: string | undefined): string | null {
   if (!content) return null;
   const m = content.match(/\bW(?:k|eek)?\s*(\d{1,2})\b/i);
-  if (!m) return null;
-  return `Wk ${m[1]}`;
+  return m ? `Wk ${m[1]}` : null;
 }
 
-function monthLabelFromTimestamp(ts: string): string {
+function dateLabelFromTimestamp(ts: string): string {
   const d = new Date(ts);
   if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 function trimTitle(raw: string): string {
-  // Strip Discord's @mentions, channel refs, and URL noise so the headline
-  // is just the caption the player wrote.
   const cleaned = raw
     .replace(/<@!?\d+>/g, "")
     .replace(/<#\d+>/g, "")

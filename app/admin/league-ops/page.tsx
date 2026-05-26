@@ -2,46 +2,46 @@ import Image from "next/image";
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
-  approveDevops,
-  dismissDevopsApplication,
-  revokeDevops,
+  approveAdminApplication,
+  dismissAdminApplication,
 } from "@/app/actions/admin";
 
-export default async function AdminDevopsPage() {
+export default async function AdminLeagueOpsPage() {
   const supabase = await createSupabaseServerClient();
 
-  const [{ data: pending }, { data: confirmed }] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select(
-        "id, discord_username, discord_global_name, discord_avatar_url, devops_pitch, updated_at",
-      )
-      .eq("is_devops_applicant", true)
-      .eq("is_devops", false)
-      .order("updated_at", { ascending: false }),
-    supabase
-      .from("profiles")
-      .select(
-        "id, discord_username, discord_global_name, discord_avatar_url",
-      )
-      .eq("is_devops", true)
-      .order("created_at", { ascending: true }),
-  ]);
+  const { data: pending } = await supabase
+    .from("profiles")
+    .select(
+      "id, discord_username, discord_global_name, discord_avatar_url, admin_pitch, updated_at",
+    )
+    .eq("is_admin_applicant", true)
+    .eq("is_admin", false)
+    .order("updated_at", { ascending: false });
 
   const pendingRows = pending ?? [];
-  const confirmedRows = confirmed ?? [];
 
   return (
     <section className="mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
       <div className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
-        Devops
+        League ops applications
       </div>
       <h1 className="mt-3 text-4xl leading-tight font-bold tracking-[-0.02em] md:text-5xl">
-        {pendingRows.length} pending,{" "}
+        {pendingRows.length} pending{" "}
         <span className="font-marker font-normal text-thl-orange">
-          {confirmedRows.length} on the crew.
+          request{pendingRows.length === 1 ? "" : "s"}.
         </span>
       </h1>
+      <p className="mt-3 max-w-2xl text-neutral-600 dark:text-neutral-400">
+        Approving promotes the user to admin. To demote an existing admin,
+        head to{" "}
+        <Link
+          href="/admin/players"
+          className="font-semibold text-thl-orange underline-offset-4 hover:underline"
+        >
+          /admin/players
+        </Link>
+        .
+      </p>
 
       <h2 className="mt-12 text-xl font-bold tracking-tight">
         Pending applications
@@ -97,23 +97,23 @@ export default async function AdminDevopsPage() {
                   </div>
                 </div>
 
-                {p.devops_pitch && (
+                {p.admin_pitch && (
                   <blockquote className="mt-4 max-h-40 overflow-auto border-l-2 border-thl-orange/40 pl-3 text-sm leading-relaxed text-neutral-700 italic dark:text-neutral-300">
-                    &ldquo;{p.devops_pitch}&rdquo;
+                    &ldquo;{p.admin_pitch}&rdquo;
                   </blockquote>
                 )}
 
                 <div className="mt-5 flex flex-wrap gap-2">
-                  <form action={approveDevops}>
+                  <form action={approveAdminApplication}>
                     <input type="hidden" name="profile_id" value={p.id} />
                     <button
                       type="submit"
                       className="inline-flex items-center gap-2 rounded-lg bg-thl-orange px-4 py-2 text-sm font-bold text-black hover:bg-thl-orange-deep"
                     >
-                      Approve
+                      Approve as admin
                     </button>
                   </form>
-                  <form action={dismissDevopsApplication}>
+                  <form action={dismissAdminApplication}>
                     <input type="hidden" name="profile_id" value={p.id} />
                     <button
                       type="submit"
@@ -123,60 +123,6 @@ export default async function AdminDevopsPage() {
                     </button>
                   </form>
                 </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-
-      <h2 className="mt-16 text-xl font-bold tracking-tight">
-        Confirmed devops crew
-      </h2>
-      {confirmedRows.length === 0 ? (
-        <p className="mt-4 text-sm text-neutral-500">
-          No devops crew confirmed yet.
-        </p>
-      ) : (
-        <ul className="mt-4 grid gap-3 md:grid-cols-3">
-          {confirmedRows.map((c) => {
-            const name =
-              c.discord_global_name ?? c.discord_username ?? "Devops";
-            return (
-              <li
-                key={c.id}
-                className="flex items-center justify-between gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 dark:border-neutral-800 dark:bg-neutral-950"
-              >
-                <div className="flex min-w-0 items-center gap-2.5">
-                  {c.discord_avatar_url ? (
-                    <Image
-                      src={c.discord_avatar_url}
-                      alt=""
-                      width={36}
-                      height={36}
-                      unoptimized
-                      className="h-9 w-9 rounded-full border border-thl-orange/30"
-                    />
-                  ) : (
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-thl-orange text-xs font-bold text-black">
-                      {name.slice(0, 2).toUpperCase()}
-                    </div>
-                  )}
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-bold">{name}</div>
-                    <div className="mt-0.5 truncate text-[11px] text-neutral-500">
-                      @{c.discord_username ?? "—"}
-                    </div>
-                  </div>
-                </div>
-                <form action={revokeDevops}>
-                  <input type="hidden" name="profile_id" value={c.id} />
-                  <button
-                    type="submit"
-                    className="rounded-md border border-neutral-300 px-2 py-1 text-[11px] font-semibold text-neutral-500 hover:border-rose-400 hover:text-rose-500 dark:border-neutral-700 dark:text-neutral-300"
-                  >
-                    Revoke
-                  </button>
-                </form>
               </li>
             );
           })}

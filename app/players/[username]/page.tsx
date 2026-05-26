@@ -8,6 +8,8 @@ import { SITE } from "@/lib/site";
 import { CopyLinkButton } from "@/components/share/copy-link-button";
 import { env } from "@/lib/env";
 import { RankBadge } from "@/components/ranks/rank-badge";
+import { ClipCard } from "@/components/landing/clips";
+import { getClips } from "@/lib/discord/clips";
 
 export async function generateMetadata(props: PageProps<"/players/[username]">) {
   const { username } = await props.params;
@@ -33,6 +35,17 @@ export default async function PlayerProfilePage(
     .maybeSingle();
 
   if (!player) notFound();
+
+  // Pull every clip and filter to the ones matched against this profile.
+  // getClips() already does the bulk profile lookup; we just keep the
+  // ones whose matched username is ours.
+  const [{ data: { user } }, allClips] = await Promise.all([
+    supabase.auth.getUser(),
+    getClips(),
+  ]);
+  const myClips = allClips.filter(
+    (c) => c.submitterProfile?.username === player.discord_username,
+  );
 
   const name =
     player.discord_global_name ?? player.discord_username ?? "Unnamed";
@@ -223,6 +236,32 @@ export default async function PlayerProfilePage(
               and ballchasing.com ingestion is live.
             </p>
           </aside>
+
+          {myClips.length > 0 && (
+            <section className="mt-12">
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
+                    Submitted clips
+                  </div>
+                  <h2 className="mt-2 text-2xl leading-tight font-bold tracking-tight md:text-3xl">
+                    Their highlights.
+                  </h2>
+                </div>
+                <Link
+                  href="/clips"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-thl-orange underline-offset-4 hover:underline"
+                >
+                  All clips <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+              <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+                {myClips.map((c) => (
+                  <ClipCard key={c.id} clip={c} isAuthenticated={!!user} />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </section>
     </PageShell>
