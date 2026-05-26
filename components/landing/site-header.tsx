@@ -190,7 +190,7 @@ export function SiteHeader({
               <span className="hidden sm:inline">Dashboard</span>
             </Link>
           )}
-          <div className="hidden pl-1 md:ml-1 md:flex md:border-l md:border-neutral-200 md:pl-2 dark:md:border-neutral-800">
+          <div className="hidden pl-3 ml-1 md:flex md:border-l md:border-neutral-200 dark:md:border-neutral-800">
             <ThemeToggle theme={theme} />
           </div>
           <MobileNavTrigger />
