@@ -34,23 +34,35 @@ export function RevealObserver() {
       { threshold: 0.08, rootMargin: "0px 0px -60px 0px" },
     );
 
-    targets.forEach((el) => io.observe(el));
+    const tracked = new WeakSet<Element>();
+    const observe = (el: Element) => {
+      if (tracked.has(el)) return;
+      tracked.add(el);
+      io.observe(el);
+    };
+    targets.forEach(observe);
 
-    // Re-scan on navigation since new sections may have mounted.
-    const scanInterval = window.setInterval(() => {
-      document
-        .querySelectorAll<HTMLElement>(".reveal:not(.in)")
-        .forEach((el) => {
-          if (!(el as HTMLElement & { __obs?: boolean }).__obs) {
-            io.observe(el);
-            (el as HTMLElement & { __obs?: boolean }).__obs = true;
+    // Pick up `.reveal` nodes added after initial mount (route nav, async
+    // sections). MutationObserver only fires on actual DOM mutation, so
+    // there's no idle polling cost like the prior setInterval had.
+    const mo = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        m.addedNodes.forEach((node) => {
+          if (!(node instanceof HTMLElement)) return;
+          if (node.classList.contains("reveal") && !node.classList.contains("in")) {
+            observe(node);
           }
+          node
+            .querySelectorAll<HTMLElement>(".reveal:not(.in)")
+            .forEach(observe);
         });
-    }, 1000);
+      }
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       io.disconnect();
-      window.clearInterval(scanInterval);
+      mo.disconnect();
     };
   }, []);
 
