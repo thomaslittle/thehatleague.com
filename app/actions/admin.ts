@@ -57,6 +57,57 @@ export async function revokeCaptain(formData: FormData) {
   revalidatePath("/captains");
 }
 
+// ---------- devops ------------------------------------------------------
+
+/** Promote an applicant to devops. */
+export async function approveDevops(formData: FormData) {
+  await requireAdmin("/admin/devops");
+  const profileId = String(formData.get("profile_id") ?? "").trim();
+  if (!profileId) return;
+
+  const supabase = await createSupabaseServerClient();
+  await supabase
+    .from("profiles")
+    .update({ is_devops: true, is_devops_applicant: false })
+    .eq("id", profileId);
+
+  revalidatePath("/admin/devops");
+  revalidatePath("/dashboard");
+}
+
+/** Reject a devops application — clears the applicant flag, keeps the
+ *  pitch on file in case they reapply. */
+export async function dismissDevopsApplication(formData: FormData) {
+  await requireAdmin("/admin/devops");
+  const profileId = String(formData.get("profile_id") ?? "").trim();
+  if (!profileId) return;
+
+  const supabase = await createSupabaseServerClient();
+  await supabase
+    .from("profiles")
+    .update({ is_devops_applicant: false })
+    .eq("id", profileId);
+
+  revalidatePath("/admin/devops");
+  revalidatePath("/dashboard");
+}
+
+/** Demote a devops contributor (e.g. they stepped down). */
+export async function revokeDevops(formData: FormData) {
+  await requireAdmin("/admin/devops");
+  const profileId = String(formData.get("profile_id") ?? "").trim();
+  if (!profileId) return;
+
+  const supabase = await createSupabaseServerClient();
+  await supabase
+    .from("profiles")
+    .update({ is_devops: false })
+    .eq("id", profileId);
+
+  revalidatePath("/admin/devops");
+  revalidatePath("/dashboard");
+}
+
 // ---------- announcements ------------------------------------------------
 
 function slugify(input: string): string {

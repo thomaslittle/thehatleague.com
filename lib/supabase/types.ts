@@ -93,6 +93,7 @@ export type Database = {
         Row: {
           captain_pitch: string | null;
           created_at: string;
+          devops_pitch: string | null;
           discord_avatar_url: string | null;
           discord_global_name: string | null;
           discord_id: string | null;
@@ -102,6 +103,8 @@ export type Database = {
           is_admin: boolean;
           is_captain: boolean;
           is_captain_applicant: boolean;
+          is_devops: boolean;
+          is_devops_applicant: boolean;
           peak_rank: string | null;
           peak_rank_playlist: string | null;
           rank_2v2: string | null;
@@ -113,6 +116,7 @@ export type Database = {
         Insert: {
           captain_pitch?: string | null;
           created_at?: string;
+          devops_pitch?: string | null;
           discord_avatar_url?: string | null;
           discord_global_name?: string | null;
           discord_id?: string | null;
@@ -122,6 +126,8 @@ export type Database = {
           is_admin?: boolean;
           is_captain?: boolean;
           is_captain_applicant?: boolean;
+          is_devops?: boolean;
+          is_devops_applicant?: boolean;
           peak_rank?: string | null;
           peak_rank_playlist?: string | null;
           rank_2v2?: string | null;
@@ -133,6 +139,7 @@ export type Database = {
         Update: {
           captain_pitch?: string | null;
           created_at?: string;
+          devops_pitch?: string | null;
           discord_avatar_url?: string | null;
           discord_global_name?: string | null;
           discord_id?: string | null;
@@ -142,6 +149,8 @@ export type Database = {
           is_admin?: boolean;
           is_captain?: boolean;
           is_captain_applicant?: boolean;
+          is_devops?: boolean;
+          is_devops_applicant?: boolean;
           peak_rank?: string | null;
           peak_rank_playlist?: string | null;
           rank_2v2?: string | null;

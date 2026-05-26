@@ -18,6 +18,7 @@ import { CopyLinkButton } from "@/components/share/copy-link-button";
 import { env } from "@/lib/env";
 import { rankWeight } from "@/lib/data/rank-sort";
 import { RankBadge } from "@/components/ranks/rank-badge";
+import { DevopsApplication } from "@/components/devops/devops-application";
 import { getTwitchLive } from "@/lib/twitch/live";
 
 export const metadata = {
@@ -489,6 +490,37 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
             isCaptain={profile.is_captain}
             isApplicant={profile.is_captain_applicant}
           />
+
+          {/* Devops application */}
+          <section
+            id="devops"
+            className="mt-10 overflow-hidden rounded-3xl border border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950"
+          >
+            <div className="grid gap-8 p-6 md:gap-10 md:p-10 lg:grid-cols-[1fr_1.1fr] lg:p-12">
+              <div>
+                <div className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
+                  Want to help with devops?
+                </div>
+                <h2 className="mt-3 text-3xl leading-tight font-bold tracking-[-0.02em] md:text-4xl">
+                  Help us{" "}
+                  <span className="font-marker font-normal text-thl-orange">
+                    run the league.
+                  </span>
+                </h2>
+                <p className="mt-4 max-w-md text-neutral-600 dark:text-neutral-400">
+                  Code contributions, replay pipelines, infra, Discord bots,
+                  draft-night on-call — if you can ship it, we&apos;ll plug
+                  you in. League ops reviews and DMs you on Discord.
+                </p>
+              </div>
+
+              <DevopsApplication
+                alreadyApplied={profile.is_devops_applicant}
+                initialPitch={profile.devops_pitch ?? ""}
+                isDevops={profile.is_devops}
+              />
+            </div>
+          </section>
 
           {/* Quick links */}
           <section className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
