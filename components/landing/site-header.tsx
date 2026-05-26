@@ -7,6 +7,7 @@ import {
   TwitchIcon,
 } from "@/components/icons/brand";
 import { MobileNavSheet, MobileNavTrigger } from "@/components/landing/mobile-nav";
+import { SiteSearch } from "@/components/search/site-search";
 import { NAV_PRIMARY, SITE } from "@/lib/site";
 import type { ThemePref } from "@/lib/site";
 
@@ -123,6 +124,10 @@ export function SiteHeader({
         </nav>
 
         <div className="flex items-center gap-2 md:gap-3">
+          <SiteSearch
+            isAuthenticated={!!viewer?.isAuthenticated}
+            isAdmin={!!viewer?.isAdmin}
+          />
           <a
             href={SITE.twitchUrl}
             target="_blank"

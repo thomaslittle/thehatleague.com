@@ -6,7 +6,6 @@ import { cn } from "@/lib/cn";
 import { THEME_COOKIE, type ThemePref } from "@/lib/site";
 
 const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
-const THEME_TRANSITION_MS = 260;
 
 export function ThemeToggle({ theme }: { theme: ThemePref }) {
   const [currentTheme, setCurrentTheme] = useState<ThemePref>(theme);
@@ -15,13 +14,9 @@ export function ThemeToggle({ theme }: { theme: ThemePref }) {
   function toggleTheme() {
     const next: ThemePref = isDark ? "light" : "dark";
     const root = document.documentElement;
-    root.classList.add("theme-transitioning");
     root.classList.toggle("dark", next === "dark");
     document.cookie = `${THEME_COOKIE}=${next}; Path=/; Max-Age=${THEME_COOKIE_MAX_AGE}; SameSite=Lax`;
     setCurrentTheme(next);
-    window.setTimeout(() => {
-      root.classList.remove("theme-transitioning");
-    }, THEME_TRANSITION_MS);
   }
 
   return (

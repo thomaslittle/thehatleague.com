@@ -119,6 +119,11 @@ html {
   scrollbar-gutter: stable;
 }
 
+
+body {
+  @apply !min-w-full;
+}
+
 html.theme-transitioning,
 html.theme-transitioning *,
 html.theme-transitioning *::before,
