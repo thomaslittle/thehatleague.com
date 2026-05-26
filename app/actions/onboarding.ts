@@ -135,7 +135,7 @@ export async function submitOnboarding(
   revalidatePath("/pool");
   if (from === "settings") {
     revalidatePath("/settings");
-    redirect("/settings?saved=1");
+    redirect("/dashboard?settings_saved=rank_profile");
   }
   redirect(`/dashboard?welcome=1${joinPool ? "" : "&left=1"}`);
 }
@@ -184,5 +184,5 @@ export async function togglePoolMembership(formData: FormData) {
   revalidatePath("/settings");
   revalidatePath("/dashboard");
   revalidatePath("/pool");
-  redirect(`/settings?${wantIn ? "rejoined=1" : "left=1"}`);
+  redirect(`/dashboard?settings_saved=${wantIn ? "pool_rejoined" : "pool_left"}`);
 }

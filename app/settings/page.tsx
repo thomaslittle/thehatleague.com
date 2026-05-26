@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { PageShell } from "@/components/page/page-shell";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -10,12 +11,7 @@ export const metadata = {
   title: "Settings",
 };
 
-export default async function SettingsPage(props: PageProps<"/settings">) {
-  const sp = await props.searchParams;
-  const justSaved = sp.saved === "1";
-  const justLeft = sp.left === "1";
-  const justRejoined = sp.rejoined === "1";
-
+export default async function SettingsPage() {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -31,8 +27,51 @@ export default async function SettingsPage(props: PageProps<"/settings">) {
 
   return (
     <PageShell>
-      <section className="relative">
-        <div className="mx-auto max-w-[1100px] px-6 py-12 md:px-10 md:py-16">
+      <section className="relative overflow-hidden">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] overflow-hidden"
+        >
+          <Image
+            src="/brand/thl-fennec.png"
+            alt=""
+            fill
+            sizes="100vw"
+            priority
+            className="object-cover opacity-40 dark:opacity-45"
+            style={{ objectPosition: "55% 30%" }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/55 to-white/25 dark:from-black/80 dark:via-black/45 dark:to-black/20" />
+          <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-white dark:to-black" />
+        </div>
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-80"
+          style={{
+            background:
+              "radial-gradient(ellipse 60% 50% at 18% 10%, rgba(247,97,3,0.32), transparent 60%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-60"
+          style={{
+            background:
+              "radial-gradient(ellipse 50% 40% at 90% 0%, rgba(247,97,3,0.14), transparent 60%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-[0.08] dark:opacity-[0.05]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0,0,0,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.5) 1px, transparent 1px)",
+            backgroundSize: "56px 56px",
+            maskImage:
+              "linear-gradient(180deg, rgba(0,0,0,1), transparent 90%)",
+          }}
+        />
+        <div className="relative mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
           <div className="grid items-end gap-6 md:grid-cols-[1fr_auto]">
             <div>
               <div className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
@@ -56,23 +95,6 @@ export default async function SettingsPage(props: PageProps<"/settings">) {
               ← Back to dashboard
             </Link>
           </div>
-
-          {justSaved && (
-            <div className="mt-8 rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200">
-              Saved. Captains see the new ranks on the player pool now.
-            </div>
-          )}
-          {justLeft && (
-            <div className="mt-8 rounded-xl border border-amber-400/40 bg-amber-50/70 px-4 py-3 text-sm text-amber-800 dark:border-amber-700/40 dark:bg-amber-950/30 dark:text-amber-200">
-              You&apos;re out of the pool. Captains won&apos;t see you on
-              draft night. Rejoin any time below.
-            </div>
-          )}
-          {justRejoined && (
-            <div className="mt-8 rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200">
-              Welcome back. You&apos;re visible to captains again.
-            </div>
-          )}
 
           <div className="mt-10 rounded-3xl border border-neutral-200 bg-white p-6 md:p-8 dark:border-neutral-800 dark:bg-neutral-950">
             <OnboardingForm

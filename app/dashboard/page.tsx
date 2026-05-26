@@ -20,6 +20,10 @@ import { rankWeight } from "@/lib/data/rank-sort";
 import { RankBadge } from "@/components/ranks/rank-badge";
 import { LeagueOpsApplication } from "@/components/league-ops/league-ops-application";
 import { getTwitchLive } from "@/lib/twitch/live";
+import {
+  SettingsSavedToast,
+  type SettingsToastKind,
+} from "@/components/dashboard/settings-saved-toast";
 
 export const metadata = {
   title: "Dashboard",
@@ -29,6 +33,12 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
   const theme = await readThemePref();
   const sp = await props.searchParams;
   const justOnboarded = sp.welcome === "1";
+  const settingsSaved =
+    sp.settings_saved === "rank_profile" ||
+    sp.settings_saved === "pool_rejoined" ||
+    sp.settings_saved === "pool_left"
+      ? (sp.settings_saved as SettingsToastKind)
+      : null;
 
   const supabase = await createSupabaseServerClient();
   const {
@@ -87,6 +97,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
         twitchLive={twitch?.isLive ?? false}
       />
       <main id="main" className="relative overflow-hidden">
+        <SettingsSavedToast kind={settingsSaved} />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-[720px] overflow-hidden"

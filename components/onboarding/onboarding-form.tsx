@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { ArrowRight, LinkIcon } from "@/components/icons/brand";
 import { submitOnboarding, type OnboardingState } from "@/app/actions/onboarding";
 import {
@@ -59,6 +59,12 @@ export function OnboardingForm({
   const d = defaults ?? {};
   const defaultPoolOptIn = d.in_player_pool ?? true;
   const showPoolOptIn = from !== "settings";
+  const [poolOptIn, setPoolOptIn] = useState(defaultPoolOptIn);
+  const effectiveSubmitLabel = showPoolOptIn
+    ? poolOptIn
+      ? "Save ranks and join the pool"
+      : "Save ranks without joining"
+    : submitLabel;
 
   return (
     <form action={action} className="grid gap-7">
@@ -79,7 +85,8 @@ export function OnboardingForm({
               id="join_season_pool"
               name="join_pool"
               value="1"
-              defaultChecked={defaultPoolOptIn}
+              checked={poolOptIn}
+              onCheckedChange={(checked) => setPoolOptIn(checked === true)}
               className="mt-1 h-7 w-7 rounded-lg border-2 border-thl-orange bg-white shadow-sm data-[state=checked]:bg-thl-orange dark:bg-black"
             />
             <div className="min-w-0">
@@ -154,7 +161,7 @@ export function OnboardingForm({
       <div className="grid gap-5 md:grid-cols-[1.4fr_1fr]">
         <Field
           label="Highest rank you've ever hit"
-          hint="Any season, any playlist. Be honest — captains can see this."
+          hint="Any season, any playlist. Be honest."
           error={fe.peak_rank}
         >
           <RankSelect
@@ -189,12 +196,17 @@ export function OnboardingForm({
         </p>
       )}
 
-      <div className="flex flex-wrap items-center gap-3">
-        <Button type="submit" size="lg" disabled={pending}>
-          {pending ? pendingLabel : submitLabel}
+      <div className="flex flex-col items-stretch gap-3 border-t border-neutral-200 pt-2 sm:items-end dark:border-neutral-800">
+        <Button
+          type="submit"
+          size="lg"
+          disabled={pending}
+          className="h-12 rounded-xl bg-thl-orange px-6 text-sm font-extrabold text-black shadow-[0_14px_35px_-18px_rgba(247,97,3,0.9)] hover:bg-thl-orange-deep sm:min-w-64"
+        >
+          {pending ? pendingLabel : effectiveSubmitLabel}
           {!pending && <ArrowRight className="h-4 w-4" />}
         </Button>
-        <p className="text-xs text-neutral-500">
+        <p className="max-w-sm text-right text-xs text-neutral-500">
           You can update these any time from your dashboard.
         </p>
       </div>
