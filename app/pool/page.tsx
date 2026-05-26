@@ -13,6 +13,8 @@ export const metadata = {
     "Every player who's signed up for The Hat League Season 4 draft, ordered by rank.",
 };
 
+type RoleFilter = "everyone" | "captains" | "players";
+
 export default async function PoolPage(props: PageProps<"/pool">) {
   const sp = await props.searchParams;
   const sort: SortKey =
@@ -21,6 +23,9 @@ export default async function PoolPage(props: PageProps<"/pool">) {
     sp.sort === "joined"
       ? sp.sort
       : "peak";
+  const role: RoleFilter =
+    sp.role === "captains" || sp.role === "players" ? sp.role : "everyone";
+  const query = typeof sp.q === "string" ? sp.q : "";
 
   return (
     <PageShell>
@@ -31,8 +36,8 @@ export default async function PoolPage(props: PageProps<"/pool">) {
         subtitle={
           <>
             Every player who&apos;s signed up and confirmed their ranks. This
-            list updates live — new sign-ups appear instantly. Sort it any way
-            you want.
+            list updates live — search by name, filter by role, or sort it
+            any way you want.
           </>
         }
         actions={
@@ -47,13 +52,21 @@ export default async function PoolPage(props: PageProps<"/pool">) {
         }
       />
       <Suspense fallback={<PoolBoardSkeleton />}>
-        <PoolBoardLoader sort={sort} />
+        <PoolBoardLoader sort={sort} role={role} query={query} />
       </Suspense>
     </PageShell>
   );
 }
 
-async function PoolBoardLoader({ sort }: { sort: SortKey }) {
+async function PoolBoardLoader({
+  sort,
+  role,
+  query,
+}: {
+  sort: SortKey;
+  role: RoleFilter;
+  query: string;
+}) {
   const supabase = await createSupabaseServerClient();
   const { data: players } = await supabase
     .from("profiles")
@@ -61,7 +74,14 @@ async function PoolBoardLoader({ sort }: { sort: SortKey }) {
     .eq("in_player_pool", true);
   const initialRows: PoolRow[] = (players ?? []) as PoolRow[];
 
-  return <PoolBoard initialRows={initialRows} sort={sort} />;
+  return (
+    <PoolBoard
+      initialRows={initialRows}
+      sort={sort}
+      role={role}
+      query={query}
+    />
+  );
 }
 
 function PoolBoardSkeleton() {
