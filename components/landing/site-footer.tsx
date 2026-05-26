@@ -10,6 +10,7 @@ const FOOTER_GROUPS: { title: string; links: { label: string; href: string }[] }
       links: [
         { label: "The Draft", href: "/the-draft" },
         { label: "Standings", href: "/standings" },
+        { label: "Leaderboards", href: "/leaderboards" },
         { label: "Schedule", href: "/schedule" },
         { label: "Captains", href: "/captains" },
         { label: "MVP vote", href: "/mvp" },
