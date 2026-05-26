@@ -7,6 +7,7 @@ import { SITE } from "@/lib/site";
 import { cn } from "@/lib/cn";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { PageProgress } from "@/components/page/page-progress";
+import { RouteViewTransition } from "@/components/page/route-view-transition";
 import { Toaster } from "@/components/ui/sonner";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -101,7 +102,9 @@ export default async function RootLayout({
         <Suspense fallback={null}>
           <PageProgress />
         </Suspense>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <RouteViewTransition>{children}</RouteViewTransition>
+        </QueryProvider>
         <Toaster position="top-right" richColors closeButton />
       </body>
     </html>

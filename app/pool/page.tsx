@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { PageShell } from "@/components/page/page-shell";
 import { PageHero } from "@/components/page/page-hero";
@@ -20,13 +21,6 @@ export default async function PoolPage(props: PageProps<"/pool">) {
     sp.sort === "joined"
       ? sp.sort
       : "peak";
-
-  const supabase = await createSupabaseServerClient();
-  const { data: players } = await supabase
-    .from("profiles")
-    .select(POOL_SELECT)
-    .eq("in_player_pool", true);
-  const initialRows: PoolRow[] = (players ?? []) as PoolRow[];
 
   return (
     <PageShell>
@@ -52,7 +46,71 @@ export default async function PoolPage(props: PageProps<"/pool">) {
           </Link>
         }
       />
-      <PoolBoard initialRows={initialRows} sort={sort} />
+      <Suspense fallback={<PoolBoardSkeleton />}>
+        <PoolBoardLoader sort={sort} />
+      </Suspense>
     </PageShell>
+  );
+}
+
+async function PoolBoardLoader({ sort }: { sort: SortKey }) {
+  const supabase = await createSupabaseServerClient();
+  const { data: players } = await supabase
+    .from("profiles")
+    .select(POOL_SELECT)
+    .eq("in_player_pool", true);
+  const initialRows: PoolRow[] = (players ?? []) as PoolRow[];
+
+  return <PoolBoard initialRows={initialRows} sort={sort} />;
+}
+
+function PoolBoardSkeleton() {
+  return (
+    <>
+      <section className="mx-auto max-w-[1320px] px-6 pb-10 md:px-10">
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index}>
+                <div className="h-3 w-24 animate-pulse rounded bg-neutral-200 dark:bg-neutral-800" />
+                <div className="mt-2 h-7 w-16 animate-pulse rounded bg-neutral-200 dark:bg-neutral-800" />
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={index}
+                className="h-8 w-24 animate-pulse rounded-lg bg-neutral-200 dark:bg-neutral-800"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-[1320px] px-6 pb-24 md:px-10">
+        <ul className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <li
+              key={index}
+              className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950"
+            >
+              <div className="flex items-start gap-3">
+                <div className="h-12 w-12 shrink-0 animate-pulse rounded-full bg-neutral-200 dark:bg-neutral-800" />
+                <div className="grid flex-1 gap-2">
+                  <div className="h-4 w-2/3 animate-pulse rounded bg-neutral-200 dark:bg-neutral-800" />
+                  <div className="h-3 w-1/3 animate-pulse rounded bg-neutral-200 dark:bg-neutral-800" />
+                </div>
+              </div>
+              <div className="mt-4 grid grid-cols-3 gap-2">
+                <div className="h-12 animate-pulse rounded-xl bg-neutral-200 dark:bg-neutral-800" />
+                <div className="h-12 animate-pulse rounded-xl bg-neutral-200 dark:bg-neutral-800" />
+                <div className="h-12 animate-pulse rounded-xl bg-neutral-200 dark:bg-neutral-800" />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </>
   );
 }

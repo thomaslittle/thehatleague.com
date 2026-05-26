@@ -44,7 +44,10 @@ export function SiteHeader({
   const showSignupButton = showSignup && !viewer?.isAuthenticated;
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-neutral-200/70 bg-white/85 backdrop-blur-md dark:border-neutral-900 dark:bg-black/80">
+      <header
+        className="sticky top-0 z-40 border-b border-neutral-200/70 bg-white/85 backdrop-blur-md dark:border-neutral-900 dark:bg-black/80"
+        style={{ viewTransitionName: "site-header" }}
+      >
       <div className="border-b border-neutral-200/70 bg-neutral-50/70 dark:border-neutral-900 dark:bg-neutral-950/70">
         <div className="mx-auto flex h-9 max-w-[1320px] items-center justify-between px-6 text-[11px] tracking-[0.18em] uppercase md:px-10">
           <div className="flex min-w-0 items-center gap-2.5 font-bold text-neutral-700 dark:text-neutral-300">

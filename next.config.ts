@@ -25,6 +25,7 @@ const nextConfig: NextConfig = {
   // to 10 MB. Hard cap on what we'll accept; the upload handler should
   // still validate type/size before persisting.
   experimental: {
+    viewTransition: true,
     serverActions: {
       bodySizeLimit: "10mb",
     },
