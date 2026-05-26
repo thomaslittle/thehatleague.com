@@ -3,6 +3,7 @@
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { rankIconSrc } from "@/lib/data/rank-icons";
 
 export const OG_SIZE = { width: 1200, height: 630 } as const;
 export const OG_CONTENT_TYPE = "image/png" as const;
@@ -23,6 +24,24 @@ export function loadLogoDataUri(): string {
 
 export function loadFennecDataUri(): string {
   return dataUri(readPublic("brand", "thl-fennec.png"), "image/png");
+}
+
+/**
+ * Resolve a stored rank string (e.g. "Diamond II · Div 3") to a base64
+ * data URI of the in-game tier icon. Reads the same `/public/brand/ranks/*.png`
+ * file the site uses via `rankIconSrc`, then inlines it so Satori can
+ * draw it without making an HTTP fetch at render time. Returns null when
+ * the rank string doesn't match a known tier (legacy free-text values).
+ */
+export function loadRankIconDataUri(
+  value: string | null | undefined,
+): string | null {
+  const publicPath = rankIconSrc(value);
+  if (!publicPath) return null;
+  // rankIconSrc returns e.g. "/brand/ranks/13.png" — strip the leading
+  // slash and split so readPublic can join it under public/.
+  const parts = publicPath.replace(/^\//, "").split("/");
+  return dataUri(readPublic(...parts), "image/png");
 }
 
 /**

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, DiscordIcon } from "@/components/icons/brand";
+import { DiscordIcon } from "@/components/icons/brand";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { rankWeight } from "@/lib/data/rank-sort";
 import { queryKeys } from "@/lib/query-keys";
@@ -136,12 +136,13 @@ function PoolCard({ row }: { row: PoolRow }) {
   const profileHref = row.discord_username
     ? `/players/${encodeURIComponent(row.discord_username)}`
     : null;
+  const avatarUrl = row.profile_avatar_url ?? row.discord_avatar_url;
   return (
     <li className="group rounded-2xl border border-neutral-200 bg-white p-5 transition hover:border-thl-orange dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-thl-orange">
       <div className="flex items-start gap-3">
-        {row.discord_avatar_url ? (
+        {avatarUrl ? (
           <Image
-            src={row.discord_avatar_url}
+            src={avatarUrl}
             alt=""
             width={48}
             height={48}

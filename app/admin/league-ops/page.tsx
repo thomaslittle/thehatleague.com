@@ -5,8 +5,13 @@ import {
   approveAdminApplication,
   dismissAdminApplication,
 } from "@/app/actions/admin";
+import { AdminActionToast } from "@/components/admin/admin-action-toast";
+import { parseAdminToastKind } from "@/lib/admin/toast-kinds";
 
-export default async function AdminLeagueOpsPage() {
+export default async function AdminLeagueOpsPage(
+  props: PageProps<"/admin/league-ops">,
+) {
+  const sp = await props.searchParams;
   const supabase = await createSupabaseServerClient();
 
   const { data: pending } = await supabase
@@ -22,6 +27,7 @@ export default async function AdminLeagueOpsPage() {
 
   return (
     <section className="mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
+      <AdminActionToast kind={parseAdminToastKind(sp.toast)} />
       <div className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
         League ops applications
       </div>

@@ -8,6 +8,7 @@ import {
   SOMBRERO_S3,
   type StandingRow,
 } from "@/lib/data/season3-standings";
+import { StandingsTable } from "@/components/standings/standings-table";
 
 const TABS = [
   { key: "top6", label: "Top 6", shortLabel: "Top 6" },
@@ -109,67 +110,8 @@ function ConfCard({
         </span>
       </div>
 
-      <div className="grid grid-cols-[32px_1fr_60px_56px] gap-2 border-b border-neutral-200 px-4 py-3 text-[10px] font-bold tracking-[0.16em] text-neutral-500 uppercase md:grid-cols-[36px_1fr_44px_64px_44px_44px_56px] dark:border-neutral-800">
-        <span className="text-center">#</span>
-        <span>Team</span>
-        <span className="hidden text-center md:block">GP</span>
-        <span className="text-center">W/L</span>
-        <span className="hidden text-center md:block">GF</span>
-        <span className="hidden text-center md:block">GA</span>
-        <span className="text-right">Diff</span>
-      </div>
+      <StandingsTable teams={teams} compact />
 
-      <ol>
-        {teams.map((t, i) => {
-          const diff = t.gf - t.ga;
-          return (
-            <li
-              key={t.seed}
-              className={`grid grid-cols-[32px_1fr_60px_56px] items-center gap-2 px-4 py-3 text-sm transition md:grid-cols-[36px_1fr_44px_64px_44px_44px_56px] ${
-                i === 0
-                  ? "bg-thl-orange/10"
-                  : "border-t border-neutral-100 hover:bg-neutral-100 dark:border-neutral-900 dark:hover:bg-neutral-900"
-              }`}
-            >
-              <span className="text-center font-extrabold tabular-nums text-thl-orange">
-                {String(t.seed).padStart(2, "0")}
-              </span>
-              <span className="flex items-center gap-2 truncate font-semibold text-neutral-900 dark:text-white">
-                <span className="truncate">{t.name}</span>
-                {i === 0 && (
-                  <span className="hidden rounded-md bg-thl-orange/15 px-1.5 py-0.5 text-[9px] font-bold tracking-[0.16em] text-thl-orange uppercase lg:inline-flex">
-                    Champ
-                  </span>
-                )}
-              </span>
-              <span className="hidden text-center tabular-nums text-neutral-600 md:block dark:text-neutral-400">
-                {t.gp}
-              </span>
-              <span className="text-center font-semibold tabular-nums whitespace-nowrap text-neutral-900 dark:text-white">
-                {t.w}–{t.l}
-              </span>
-              <span className="hidden text-center tabular-nums text-neutral-600 md:block dark:text-neutral-400">
-                {t.gf}
-              </span>
-              <span className="hidden text-center tabular-nums text-neutral-600 md:block dark:text-neutral-400">
-                {t.ga}
-              </span>
-              <span
-                className={`text-right font-bold tabular-nums ${
-                  diff > 0
-                    ? "text-emerald-600 dark:text-emerald-400"
-                    : diff < 0
-                      ? "text-rose-500"
-                      : "text-neutral-500"
-                }`}
-              >
-                {diff > 0 ? "+" : ""}
-                {diff}
-              </span>
-            </li>
-          );
-        })}
-      </ol>
       <div className="flex items-center justify-between border-t border-neutral-200 px-6 py-4 text-xs dark:border-neutral-800">
         <span className="text-neutral-500">
           Showing {teams.length} of {total} teams

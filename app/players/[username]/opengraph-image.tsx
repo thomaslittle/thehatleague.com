@@ -5,6 +5,7 @@ import {
   TYPE,
   loadLogoDataUri,
   loadOgFonts,
+  loadRankIconDataUri,
   ogBackgroundStyle,
 } from "@/lib/og";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -116,8 +117,12 @@ export default async function Image(props: {
           <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
             <div
               style={{
-                ...TYPE.display,
-                fontSize: 84,
+                fontFamily: "Permanent Marker",
+                fontSize: 96,
+                fontWeight: 400,
+                lineHeight: 0.92,
+                color: "#fff",
+                textShadow: "-2px 2px 0 #f76103",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -137,11 +142,20 @@ export default async function Image(props: {
             </div>
 
             <div style={{ display: "flex", gap: 14, marginTop: 30 }}>
-              <RankChip label="2v2" value={player?.rank_2v2 ?? "—"} />
-              <RankChip label="3v3" value={player?.rank_3v3 ?? "—"} />
+              <RankChip
+                label="2v2"
+                value={player?.rank_2v2 ?? "—"}
+                icon={loadRankIconDataUri(player?.rank_2v2)}
+              />
+              <RankChip
+                label="3v3"
+                value={player?.rank_3v3 ?? "—"}
+                icon={loadRankIconDataUri(player?.rank_3v3)}
+              />
               <RankChip
                 label={`Peak${player?.peak_rank_playlist ? " · " + player.peak_rank_playlist : ""}`}
                 value={player?.peak_rank ?? "—"}
+                icon={loadRankIconDataUri(player?.peak_rank)}
                 highlight
               />
             </div>
@@ -177,10 +191,12 @@ export default async function Image(props: {
 function RankChip({
   label,
   value,
+  icon,
   highlight = false,
 }: {
   label: string;
   value: string;
+  icon?: string | null;
   highlight?: boolean;
 }) {
   return (
@@ -213,14 +229,34 @@ function RankChip({
       <div
         style={{
           display: "flex",
-          marginTop: 4,
-          fontSize: 28,
-          fontWeight: 800,
-          color: highlight ? "#f76103" : "#fff",
-          letterSpacing: -0.5,
+          alignItems: "center",
+          gap: 10,
+          marginTop: 6,
         }}
       >
-        {value}
+        {icon && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={icon}
+            alt=""
+            // Source PNGs are 150×100 — keep that 3:2 ratio so the
+            // diamond/star/crown shapes aren't horizontally squashed.
+            width={60}
+            height={40}
+            style={{ width: 60, height: 40, display: "block" }}
+          />
+        )}
+        <span
+          style={{
+            display: "flex",
+            fontSize: 28,
+            fontWeight: 800,
+            color: highlight ? "#f76103" : "#fff",
+            letterSpacing: -0.5,
+          }}
+        >
+          {value}
+        </span>
       </div>
     </div>
   );

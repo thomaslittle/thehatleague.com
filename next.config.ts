@@ -20,6 +20,15 @@ const nextConfig: NextConfig = {
   // Strip X-Powered-By: Next.js — version disclosure is free recon for
   // attackers and adds zero value.
   poweredByHeader: false,
+  // Server Actions default to a 1 MB request body. Profile avatar/banner
+  // uploads run through a Server Action and easily exceed that — bump
+  // to 10 MB. Hard cap on what we'll accept; the upload handler should
+  // still validate type/size before persisting.
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "10mb",
+    },
+  },
   images: {
     remotePatterns: [
       // Discord-hosted user avatars (delivered through cdn.discordapp.com).

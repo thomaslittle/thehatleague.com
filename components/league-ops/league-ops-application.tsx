@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { ArrowRight, CheckIcon } from "@/components/icons/brand";
 import {
   applyForLeagueOps,
@@ -14,6 +14,7 @@ import {
   ADMIN_PITCH_MAX as PITCH_MAX,
   ADMIN_PITCH_MIN as PITCH_MIN,
 } from "@/lib/league-ops";
+import { showLeagueToast } from "@/components/ui/league-toast";
 
 export function LeagueOpsApplication({
   alreadyApplied,
@@ -34,6 +35,16 @@ export function LeagueOpsApplication({
     : tooShort
       ? "text-amber-600 dark:text-amber-400"
       : "text-neutral-500";
+
+  useEffect(() => {
+    if (!state?.ok) return;
+    showLeagueToast({
+      id: "league-ops-application-submitted",
+      eyebrow: "Application sent",
+      prefix: "League ops application",
+      body: "was submitted. A current admin will review it.",
+    });
+  }, [state?.ok]);
 
   if (state?.ok || alreadyApplied) {
     return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { ArrowRight, CheckIcon } from "@/components/icons/brand";
 import {
   applyForCaptain,
@@ -14,6 +14,7 @@ import {
   CAPTAIN_PITCH_MAX as PITCH_MAX,
   CAPTAIN_PITCH_MIN as PITCH_MIN,
 } from "@/lib/captain";
+import { showLeagueToast } from "@/components/ui/league-toast";
 
 export function CaptainApplication({
   alreadyApplied,
@@ -36,6 +37,16 @@ export function CaptainApplication({
     : tooShort
       ? "text-amber-600 dark:text-amber-400"
       : "text-neutral-500";
+
+  useEffect(() => {
+    if (!state?.ok) return;
+    showLeagueToast({
+      id: "captain-application-submitted",
+      eyebrow: "Application sent",
+      prefix: "Captain application",
+      body: "was submitted. League ops will review it.",
+    });
+  }, [state?.ok]);
 
   if (isCaptain) {
     return (

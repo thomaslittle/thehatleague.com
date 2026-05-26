@@ -88,15 +88,16 @@ export function RecentSignups({ initialRows }: { initialRows: PoolRow[] }) {
               ? `/players/${encodeURIComponent(p.discord_username)}`
               : null;
             const joined = p.created_at ? new Date(p.created_at) : null;
+            const avatarUrl = p.profile_avatar_url ?? p.discord_avatar_url;
             return (
               <li
                 key={p.id}
                 className="rounded-2xl border border-neutral-200 bg-neutral-50/60 p-4 transition hover:border-thl-orange dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-thl-orange"
               >
                 <div className="flex items-center gap-3">
-                  {p.discord_avatar_url ? (
+                  {avatarUrl ? (
                     <Image
-                      src={p.discord_avatar_url}
+                      src={avatarUrl}
                       alt=""
                       width={44}
                       height={44}
@@ -143,19 +144,11 @@ export function RecentSignups({ initialRows }: { initialRows: PoolRow[] }) {
                       )}
                       {joined && (
                         <span>
-                          ·{" "}
-                          {new Intl.RelativeTimeFormat("en", {
-                            numeric: "auto",
-                          }).format(
-                            -Math.max(
-                              0,
-                              Math.round(
-                                (Date.now() - joined.getTime()) /
-                                  (1000 * 60 * 60),
-                              ),
-                            ),
-                            "hour",
-                          )}
+                          · Joined{" "}
+                          {joined.toLocaleDateString(undefined, {
+                            month: "short",
+                            day: "numeric",
+                          })}
                         </span>
                       )}
                     </div>

@@ -28,7 +28,9 @@ export async function PageShell({ children }: { children: ReactNode }) {
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("discord_username, discord_global_name, discord_avatar_url, is_admin")
+      .select(
+        "discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, is_admin",
+      )
       .eq("id", user.id)
       .single();
     viewer = {
@@ -38,7 +40,7 @@ export async function PageShell({ children }: { children: ReactNode }) {
         cleanDiscordUsername(profile?.discord_username) ??
         null,
       username: cleanDiscordUsername(profile?.discord_username),
-      avatarUrl: profile?.discord_avatar_url ?? null,
+      avatarUrl: profile?.profile_avatar_url ?? profile?.discord_avatar_url ?? null,
       isAdmin: !!profile?.is_admin,
     };
   }

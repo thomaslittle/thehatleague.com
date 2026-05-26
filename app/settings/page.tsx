@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PageShell } from "@/components/page/page-shell";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { OnboardingForm } from "@/components/onboarding/onboarding-form";
+import { ProfileCustomizationForm } from "@/components/settings/profile-customization-form";
 import { signOut } from "@/app/actions/auth";
 import { togglePoolMembership } from "@/app/actions/onboarding";
 
@@ -94,6 +95,15 @@ export default async function SettingsPage() {
             >
               ← Back to dashboard
             </Link>
+          </div>
+
+          <div className="mt-10 rounded-3xl border border-neutral-200 bg-white p-6 md:p-8 dark:border-neutral-800 dark:bg-neutral-950">
+            <ProfileCustomizationForm
+              bio={profile.bio}
+              socialLinks={profile.social_links}
+              hasCustomAvatar={!!profile.profile_avatar_url}
+              hasCustomBanner={!!profile.profile_banner_url}
+            />
           </div>
 
           <div className="mt-10 rounded-3xl border border-neutral-200 bg-white p-6 md:p-8 dark:border-neutral-800 dark:bg-neutral-950">

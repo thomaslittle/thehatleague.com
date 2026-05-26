@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PageShell } from "@/components/page/page-shell";
 import { PageHero } from "@/components/page/page-hero";
 import { ArrowRight } from "@/components/icons/brand";
+import { StandingsTable } from "@/components/standings/standings-table";
 import {
   CHALLONGE_BRACKETS,
   FEDORA_PLAYOFFS_S3,
@@ -185,67 +186,9 @@ function ConfBlock({
         </span>
       </div>
 
-      {/* Regular season table */}
-      <div className="grid grid-cols-[32px_1fr_60px_56px] gap-2 border-b border-neutral-200 px-4 py-3 text-[10px] font-bold tracking-[0.16em] text-neutral-500 uppercase md:grid-cols-[40px_1fr_44px_64px_44px_44px_56px] dark:border-neutral-800">
-        <span className="text-center">#</span>
-        <span>Team</span>
-        <span className="hidden text-center md:block">GP</span>
-        <span className="text-center">W/L</span>
-        <span className="hidden text-center md:block">GF</span>
-        <span className="hidden text-center md:block">GA</span>
-        <span className="text-right">Diff</span>
-      </div>
-      <ol>
-        {rows.map((t, i) => {
-          const diff = t.gf - t.ga;
-          return (
-            <li
-              key={t.seed}
-              className={`grid grid-cols-[32px_1fr_60px_56px] items-center gap-2 px-4 py-3 text-sm md:grid-cols-[40px_1fr_44px_64px_44px_44px_56px] ${
-                i === 0
-                  ? "bg-thl-orange/10"
-                  : "border-t border-neutral-100 dark:border-neutral-900"
-              }`}
-            >
-              <span className="text-center font-extrabold tabular-nums text-thl-orange">
-                {String(t.seed).padStart(2, "0")}
-              </span>
-              <span className="min-w-0 truncate font-semibold" title={t.name}>
-                {t.name}
-                {t.captain && (
-                  <span className="ml-1.5 text-xs font-normal text-neutral-500">
-                    · {t.captain}
-                  </span>
-                )}
-              </span>
-              <span className="hidden text-center tabular-nums text-neutral-600 md:block dark:text-neutral-400">
-                {t.gp}
-              </span>
-              <span className="text-center font-semibold tabular-nums whitespace-nowrap">
-                {t.w}–{t.l}
-              </span>
-              <span className="hidden text-center tabular-nums text-neutral-600 md:block dark:text-neutral-400">
-                {t.gf}
-              </span>
-              <span className="hidden text-center tabular-nums text-neutral-600 md:block dark:text-neutral-400">
-                {t.ga}
-              </span>
-              <span
-                className={`text-right font-bold tabular-nums ${
-                  diff > 0
-                    ? "text-emerald-600 dark:text-emerald-400"
-                    : diff < 0
-                      ? "text-rose-500"
-                      : "text-neutral-500"
-                }`}
-              >
-                {diff > 0 ? "+" : ""}
-                {diff}
-              </span>
-            </li>
-          );
-        })}
-      </ol>
+      {/* Regular season table — click any column header to sort */}
+      <StandingsTable teams={rows} />
+
 
       {/* Playoff results */}
       <div className="border-t border-neutral-200 bg-neutral-50/60 px-6 py-5 dark:border-neutral-800 dark:bg-neutral-900/50">

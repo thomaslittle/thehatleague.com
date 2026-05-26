@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, DiscordIcon } from "@/components/icons/brand";
 import { SITE } from "@/lib/site";
@@ -26,12 +27,12 @@ export default function Error({
       />
       <div className="relative mx-auto max-w-3xl px-6 py-24 text-center md:px-10 md:py-32">
         <div className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
-          Something dropped a banana
+          It's windy
         </div>
         <h1 className="mt-5 text-5xl leading-[0.95] font-bold tracking-[-0.04em] md:text-6xl">
-          We hit the{" "}
+          There goes the{" "}
           <span className="font-marker font-normal text-thl-orange">
-            wall.
+            hat.
           </span>
         </h1>
         <p className="mx-auto mt-6 max-w-md text-lg text-neutral-600 dark:text-neutral-400">

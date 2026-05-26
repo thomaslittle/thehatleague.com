@@ -36,7 +36,8 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
   const settingsSaved =
     sp.settings_saved === "rank_profile" ||
     sp.settings_saved === "pool_rejoined" ||
-    sp.settings_saved === "pool_left"
+    sp.settings_saved === "pool_left" ||
+    sp.settings_saved === "profile_card"
       ? (sp.settings_saved as SettingsToastKind)
       : null;
 
@@ -86,6 +87,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
     user.email ??
     "Hat dad";
   const firstName = displayName.split(/[\s_]/)[0] ?? displayName;
+  const avatarUrl = profile.profile_avatar_url ?? profile.discord_avatar_url;
 
   return (
     <div className="min-h-screen bg-white text-neutral-900 dark:bg-black dark:text-white">
@@ -233,9 +235,9 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
             <div className="grid items-end gap-6 md:grid-cols-[1fr_auto]">
               <div className="flex items-start gap-5">
                 <div className="relative shrink-0">
-                  {profile.discord_avatar_url ? (
+                  {avatarUrl ? (
                     <Image
-                      src={profile.discord_avatar_url}
+                      src={avatarUrl}
                       alt=""
                       width={104}
                       height={104}

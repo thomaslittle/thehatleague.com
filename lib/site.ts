@@ -14,7 +14,6 @@ export type ThemePref = "light" | "dark";
 export const NAV_PRIMARY: { href: string; label: string }[] = [
   { href: "/the-draft", label: "The Draft" },
   { href: "/pool", label: "Player Pool" },
-  { href: "/captains", label: "Captains" },
   { href: "/schedule", label: "Schedule" },
   { href: "/standings", label: "Standings" },
   { href: "/clips", label: "Clips" },

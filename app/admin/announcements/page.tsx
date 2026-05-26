@@ -5,12 +5,13 @@ import {
   togglePinAnnouncement,
 } from "@/app/actions/admin";
 import { AnnouncementComposer } from "@/components/admin/announcement-composer";
+import { AdminActionToast } from "@/components/admin/admin-action-toast";
+import { parseAdminToastKind } from "@/lib/admin/toast-kinds";
 
 export default async function AdminAnnouncementsPage(
   props: PageProps<"/admin/announcements">,
 ) {
   const sp = await props.searchParams;
-  const justPosted = sp.ok === "1";
 
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase
@@ -23,6 +24,7 @@ export default async function AdminAnnouncementsPage(
 
   return (
     <section className="mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
+      <AdminActionToast kind={parseAdminToastKind(sp.toast)} />
       <div className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
         Announcements
       </div>
@@ -32,12 +34,6 @@ export default async function AdminAnnouncementsPage(
           straight up.
         </span>
       </h1>
-
-      {justPosted && (
-        <div className="mt-6 rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200">
-          Published. It&apos;s live on the site now.
-        </div>
-      )}
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[1.1fr_1fr]">
         <div>

@@ -9,6 +9,7 @@ export type PoolRow = Pick<
   | "discord_username"
   | "discord_global_name"
   | "discord_avatar_url"
+  | "profile_avatar_url"
   | "rank_2v2"
   | "rank_3v3"
   | "peak_rank"
@@ -20,4 +21,4 @@ export type PoolRow = Pick<
 >;
 
 export const POOL_SELECT =
-  "id, discord_username, discord_global_name, discord_avatar_url, rank_2v2, rank_3v3, peak_rank, peak_rank_playlist, rl_tracker_url, is_captain, in_player_pool, created_at" as const;
+  "id, discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, rank_2v2, rank_3v3, peak_rank, peak_rank_playlist, rl_tracker_url, is_captain, in_player_pool, created_at" as const;

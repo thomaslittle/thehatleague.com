@@ -98,6 +98,7 @@ export type Database = {
           discord_global_name: string | null;
           discord_id: string | null;
           discord_username: string | null;
+          bio: string | null;
           id: string;
           in_player_pool: boolean;
           is_admin: boolean;
@@ -106,10 +107,13 @@ export type Database = {
           is_captain_applicant: boolean;
           peak_rank: string | null;
           peak_rank_playlist: string | null;
+          profile_avatar_url: string | null;
+          profile_banner_url: string | null;
           rank_2v2: string | null;
           rank_3v3: string | null;
           ranks_updated_at: string | null;
           rl_tracker_url: string | null;
+          social_links: Json;
           updated_at: string;
         };
         Insert: {
@@ -120,6 +124,7 @@ export type Database = {
           discord_global_name?: string | null;
           discord_id?: string | null;
           discord_username?: string | null;
+          bio?: string | null;
           id: string;
           in_player_pool?: boolean;
           is_admin?: boolean;
@@ -128,10 +133,13 @@ export type Database = {
           is_captain_applicant?: boolean;
           peak_rank?: string | null;
           peak_rank_playlist?: string | null;
+          profile_avatar_url?: string | null;
+          profile_banner_url?: string | null;
           rank_2v2?: string | null;
           rank_3v3?: string | null;
           ranks_updated_at?: string | null;
           rl_tracker_url?: string | null;
+          social_links?: Json;
           updated_at?: string;
         };
         Update: {
@@ -142,6 +150,7 @@ export type Database = {
           discord_global_name?: string | null;
           discord_id?: string | null;
           discord_username?: string | null;
+          bio?: string | null;
           id?: string;
           in_player_pool?: boolean;
           is_admin?: boolean;
@@ -150,10 +159,13 @@ export type Database = {
           is_captain_applicant?: boolean;
           peak_rank?: string | null;
           peak_rank_playlist?: string | null;
+          profile_avatar_url?: string | null;
+          profile_banner_url?: string | null;
           rank_2v2?: string | null;
           rank_3v3?: string | null;
           ranks_updated_at?: string | null;
           rl_tracker_url?: string | null;
+          social_links?: Json;
           updated_at?: string;
         };
         Relationships: [];

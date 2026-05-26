@@ -28,6 +28,11 @@ export function RankBadge({
 }) {
   const icon = rankIconSrc(value);
   const label = abbreviate ? rankAbbrev(value) : (value ?? "—");
+  // Source PNGs are 150×100. The `size` prop is treated as the rendered
+  // HEIGHT; width is derived to preserve the 3:2 ratio so the rank shapes
+  // (diamond, star, crown, etc.) don't get squashed.
+  const iconHeight = size;
+  const iconWidth = Math.round(size * 1.5);
   return (
     <span
       className={cn(
@@ -39,8 +44,8 @@ export function RankBadge({
         <Image
           src={icon}
           alt=""
-          width={size}
-          height={size}
+          width={iconWidth}
+          height={iconHeight}
           className="shrink-0"
           aria-hidden
         />
@@ -48,7 +53,7 @@ export function RankBadge({
         <span
           aria-hidden
           className="inline-block shrink-0 rounded-full bg-neutral-200 dark:bg-neutral-800"
-          style={{ width: size, height: size }}
+          style={{ width: iconHeight, height: iconHeight }}
         />
       )}
       {showText && (

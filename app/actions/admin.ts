@@ -22,6 +22,7 @@ export async function approveCaptain(formData: FormData) {
   revalidatePath("/admin/captains");
   revalidatePath("/captains");
   revalidatePath("/pool");
+  redirect("/admin/captains?toast=captain_approved");
 }
 
 /** Reject an application — clears the applicant flag, keeps the pitch
@@ -39,6 +40,7 @@ export async function dismissCaptainApplication(formData: FormData) {
 
   revalidatePath("/admin/captains");
   revalidatePath("/captains");
+  redirect("/admin/captains?toast=captain_dismissed");
 }
 
 /** Demote a captain (e.g. they had to step down). */
@@ -55,6 +57,7 @@ export async function revokeCaptain(formData: FormData) {
 
   revalidatePath("/admin/captains");
   revalidatePath("/captains");
+  redirect("/admin/captains?toast=captain_revoked");
 }
 
 // ---------- league ops applications --------------------------------------
@@ -78,6 +81,7 @@ export async function approveAdminApplication(formData: FormData) {
   revalidatePath("/admin/league-ops");
   revalidatePath("/admin/players");
   revalidatePath("/dashboard");
+  redirect("/admin/league-ops?toast=league_ops_approved");
 }
 
 /** Reject a league-ops application — clears the applicant flag, keeps the
@@ -95,6 +99,7 @@ export async function dismissAdminApplication(formData: FormData) {
 
   revalidatePath("/admin/league-ops");
   revalidatePath("/dashboard");
+  redirect("/admin/league-ops?toast=league_ops_dismissed");
 }
 
 // ---------- announcements ------------------------------------------------
@@ -157,7 +162,11 @@ export async function createAnnouncement(
   revalidatePath("/announcements");
   revalidatePath("/");
   revalidatePath("/dashboard");
-  redirect("/admin/announcements?ok=1");
+  redirect(
+    `/admin/announcements?toast=${
+      isPublishing ? "announcement_published" : "announcement_drafted"
+    }`,
+  );
 }
 
 export async function deleteAnnouncement(formData: FormData) {
@@ -168,6 +177,7 @@ export async function deleteAnnouncement(formData: FormData) {
   await supabase.from("announcements").delete().eq("id", id);
   revalidatePath("/admin/announcements");
   revalidatePath("/announcements");
+  redirect("/admin/announcements?toast=announcement_deleted");
 }
 
 // ---------- players -----------------------------------------------------
@@ -185,6 +195,7 @@ export async function setPlayerInPool(formData: FormData) {
   revalidatePath("/admin/players");
   revalidatePath("/pool");
   revalidatePath("/dashboard");
+  redirect("/admin/players?toast=player_pool_updated");
 }
 
 /** Promote or demote an admin. Refuses to demote the actor themselves so
@@ -204,6 +215,7 @@ export async function setPlayerAdmin(formData: FormData) {
   await supabase.from("profiles").update({ is_admin: next }).eq("id", profileId);
 
   revalidatePath("/admin/players");
+  redirect("/admin/players?toast=player_admin_updated");
 }
 
 export async function togglePinAnnouncement(formData: FormData) {
@@ -219,4 +231,5 @@ export async function togglePinAnnouncement(formData: FormData) {
   revalidatePath("/admin/announcements");
   revalidatePath("/announcements");
   revalidatePath("/");
+  redirect("/admin/announcements?toast=announcement_pin_updated");
 }

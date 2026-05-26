@@ -42,7 +42,7 @@ export default async function CaptainsPage() {
   const { data: confirmed } = await supabase
     .from("profiles")
     .select(
-      "id, discord_username, discord_global_name, discord_avatar_url, peak_rank, peak_rank_playlist, captain_pitch",
+      "id, discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, peak_rank, peak_rank_playlist, captain_pitch",
     )
     .eq("is_captain", true)
     .order("created_at", { ascending: true });
@@ -121,15 +121,16 @@ export default async function CaptainsPage() {
               const profileHref = c.discord_username
                 ? `/players/${encodeURIComponent(c.discord_username)}`
                 : null;
+              const avatarUrl = c.profile_avatar_url ?? c.discord_avatar_url;
               return (
                 <li
                   key={c.id}
                   className="group flex flex-col rounded-2xl border border-neutral-200 bg-white p-5 transition hover:border-thl-orange dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-thl-orange"
                 >
                   <div className="flex items-center gap-3">
-                    {c.discord_avatar_url ? (
+                    {avatarUrl ? (
                       <Image
-                        src={c.discord_avatar_url}
+                        src={avatarUrl}
                         alt=""
                         width={56}
                         height={56}

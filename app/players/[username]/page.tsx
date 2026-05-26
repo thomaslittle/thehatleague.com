@@ -10,6 +10,7 @@ import { env } from "@/lib/env";
 import { RankBadge } from "@/components/ranks/rank-badge";
 import { ClipCard } from "@/components/landing/clips";
 import { getClips } from "@/lib/discord/clips";
+import { parseSocialLinks, SOCIAL_LINKS } from "@/lib/profile/customization";
 
 export async function generateMetadata(props: PageProps<"/players/[username]">) {
   const { username } = await props.params;
@@ -29,7 +30,7 @@ export default async function PlayerProfilePage(
   const { data: player } = await supabase
     .from("profiles")
     .select(
-      "id, discord_username, discord_global_name, discord_avatar_url, rank_2v2, rank_3v3, peak_rank, peak_rank_playlist, ranks_updated_at, rl_tracker_url, is_captain, is_captain_applicant, is_admin, in_player_pool, captain_pitch, created_at",
+      "id, discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, profile_banner_url, bio, social_links, rank_2v2, rank_3v3, peak_rank, peak_rank_playlist, ranks_updated_at, rl_tracker_url, is_captain, is_captain_applicant, is_admin, in_player_pool, captain_pitch, created_at",
     )
     .ilike("discord_username", handle)
     .maybeSingle();
@@ -49,6 +50,10 @@ export default async function PlayerProfilePage(
 
   const name =
     player.discord_global_name ?? player.discord_username ?? "Unnamed";
+  const avatarUrl = player.profile_avatar_url ?? player.discord_avatar_url;
+  const bannerUrl = player.profile_banner_url ?? "/brand/thl-fennec.png";
+  const socialLinks = parseSocialLinks(player.social_links);
+  const visibleSocials = SOCIAL_LINKS.filter((link) => socialLinks[link.key]);
   const joined = new Date(player.created_at);
   const ranksUpdated = player.ranks_updated_at
     ? new Date(player.ranks_updated_at)
@@ -56,16 +61,52 @@ export default async function PlayerProfilePage(
 
   return (
     <PageShell>
-      <section className="relative">
+      <section className="relative overflow-hidden">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-50"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] overflow-hidden"
+        >
+          <Image
+            src={bannerUrl}
+            alt=""
+            fill
+            sizes="100vw"
+            priority
+            unoptimized={!!player.profile_banner_url}
+            className="object-cover opacity-40 dark:opacity-45"
+            style={{ objectPosition: "50% 32%" }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/55 to-white/25 dark:from-black/80 dark:via-black/45 dark:to-black/20" />
+          <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-white dark:to-black" />
+        </div>
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-80"
           style={{
             background:
-              "radial-gradient(ellipse at 20% 0%, rgba(247,97,3,0.20), transparent 55%)",
+              "radial-gradient(ellipse 60% 50% at 18% 10%, rgba(247,97,3,0.32), transparent 60%)",
           }}
         />
-        <div className="relative mx-auto max-w-[1080px] px-6 py-12 md:px-10 md:py-16">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-60"
+          style={{
+            background:
+              "radial-gradient(ellipse 50% 40% at 90% 0%, rgba(247,97,3,0.14), transparent 60%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-[0.08] dark:opacity-[0.05]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0,0,0,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.5) 1px, transparent 1px)",
+            backgroundSize: "56px 56px",
+            maskImage:
+              "linear-gradient(180deg, rgba(0,0,0,1), transparent 90%)",
+          }}
+        />
+        <div className="relative mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
           <div className="flex items-center justify-between gap-3">
             <Link
               href="/pool"
@@ -83,13 +124,13 @@ export default async function PlayerProfilePage(
 
           <div className="mt-8 grid items-end gap-6 md:grid-cols-[auto_1fr]">
             <div className="relative w-fit">
-              {player.discord_avatar_url ? (
+              {avatarUrl ? (
                 <Image
-                  src={player.discord_avatar_url}
+                  src={avatarUrl}
                   alt=""
                   width={120}
                   height={120}
-                  unoptimized
+                  unoptimized={!!player.profile_avatar_url || !!player.discord_avatar_url}
                   className={`h-28 w-28 rounded-full shadow-xl md:h-32 md:w-32 ${
                     player.is_admin
                       ? "border-2 border-thl-orange"
@@ -149,6 +190,11 @@ export default async function PlayerProfilePage(
                 <p className="mt-3 max-w-md text-sm text-neutral-600 dark:text-neutral-400">
                   Runs league ops — point of contact for scheduling, rules
                   questions, and disputes.
+                </p>
+              )}
+              {player.bio && (
+                <p className="mt-4 max-w-2xl rounded-2xl border border-white/60 bg-white/70 p-4 text-sm leading-relaxed text-neutral-700 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-black/35 dark:text-neutral-200">
+                  {player.bio}
                 </p>
               )}
             </div>
@@ -230,6 +276,19 @@ export default async function PlayerProfilePage(
                   <ArrowRight className="h-3.5 w-3.5" />
                 </a>
               </li>
+              {visibleSocials.map((link) => (
+                <li key={link.key}>
+                  <a
+                    href={socialLinks[link.key] ?? "#"}
+                    target="_blank"
+                    rel="noopener"
+                    className="flex items-center justify-between rounded-xl border border-neutral-200 px-4 py-3 text-sm font-semibold transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-800"
+                  >
+                    <span>{link.label}</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </a>
+                </li>
+              ))}
             </ul>
             <p className="mt-5 text-xs leading-relaxed text-neutral-500">
               We&apos;ll surface per-match stats here once Season 4 starts

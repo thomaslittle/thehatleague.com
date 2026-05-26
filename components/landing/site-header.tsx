@@ -80,7 +80,7 @@ export function SiteHeader({
       </div>
 
       <div className="mx-auto flex h-[72px] max-w-[1320px] items-center justify-between gap-4 px-4 md:gap-6 md:px-10">
-        <Link href="/" className="group flex min-w-0 items-center gap-2.5 md:gap-3">
+        <Link href="/" className="group flex shrink-0 items-center gap-2.5 md:gap-3">
           <Image
             src="/brand/thl-logo.png"
             alt=""
@@ -89,11 +89,11 @@ export function SiteHeader({
             priority
             className="h-10 w-10 shrink-0 rounded-full transition group-hover:rotate-6 md:h-11 md:w-11"
           />
-          <div className="min-w-0 leading-tight">
-            <div className="truncate font-marker text-lg whitespace-nowrap text-neutral-900 md:text-xl dark:text-white">
+          <div className="leading-tight">
+            <div className="font-marker text-lg whitespace-nowrap text-neutral-900 md:text-xl dark:text-white">
               The Hat League
             </div>
-            <div className="hidden truncate text-[10px] font-bold tracking-[0.22em] whitespace-nowrap text-neutral-500 uppercase sm:block dark:text-neutral-500">
+            <div className="hidden text-[10px] font-bold tracking-[0.22em] whitespace-nowrap text-neutral-500 uppercase sm:block dark:text-neutral-500">
               Rocket League · S04
             </div>
           </div>
@@ -106,7 +106,7 @@ export function SiteHeader({
               <Link
                 key={item.href}
                 href={item.href}
-                className="inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-neutral-700 transition hover:text-thl-orange dark:text-neutral-300 dark:hover:text-thl-orange"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-neutral-700 transition hover:text-thl-orange dark:text-neutral-300 dark:hover:text-thl-orange"
               >
                 {item.label}
                 {typeof count === "number" && count > 0 && (
