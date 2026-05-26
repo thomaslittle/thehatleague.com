@@ -35,6 +35,20 @@ export function Hero({ viewer }: { viewer?: ViewerInfo | null } = {}) {
         {/* Soft left-side fade — headline stays readable, photo still reads. */}
         <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/45 to-white/0 dark:from-black/80 dark:via-black/35 dark:to-black/0" />
         <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-white dark:to-black" />
+        <div
+          className="absolute inset-0 opacity-80"
+          style={{
+            background:
+              "radial-gradient(ellipse 60% 50% at 18% 10%, rgba(247,97,3,0.32), transparent 60%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 opacity-60"
+          style={{
+            background:
+              "radial-gradient(ellipse 50% 40% at 90% 0%, rgba(247,97,3,0.14), transparent 60%)",
+          }}
+        />
       </div>
 
       <div
