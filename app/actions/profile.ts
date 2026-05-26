@@ -95,6 +95,12 @@ export async function updateProfileCustomization(
   } = await supabase.auth.getUser();
   if (!user) return { error: "You need to be signed in." };
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("discord_username")
+    .eq("id", user.id)
+    .single();
+
   const bio = textValue(formData, "bio");
   const avatar = fileFromForm(formData, "avatar");
   const banner = fileFromForm(formData, "banner");
@@ -189,5 +195,8 @@ export async function updateProfileCustomization(
   revalidatePath("/settings");
   revalidatePath("/dashboard");
   revalidatePath("/pool");
+  if (profile?.discord_username) {
+    revalidatePath(`/players/${encodeURIComponent(profile.discord_username)}`);
+  }
   redirect("/dashboard?settings_saved=profile_card");
 }

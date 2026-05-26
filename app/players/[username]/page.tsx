@@ -51,6 +51,7 @@ export default async function PlayerProfilePage(
   const name =
     player.discord_global_name ?? player.discord_username ?? "Unnamed";
   const avatarUrl = player.profile_avatar_url ?? player.discord_avatar_url;
+  const bannerUrl = player.profile_banner_url;
   const socialLinks = parseSocialLinks(player.social_links);
   const visibleSocials = SOCIAL_LINKS.filter((link) => socialLinks[link.key]);
   const joined = new Date(player.created_at);
@@ -60,7 +61,8 @@ export default async function PlayerProfilePage(
 
   return (
     <PageShell>
-      <section className="relative">
+      {bannerUrl && <PlayerProfileBackdrop src={bannerUrl} />}
+      <section className="relative z-10">
         <div className="relative mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
           <div className="flex items-center justify-between gap-3">
             <Link
@@ -85,7 +87,9 @@ export default async function PlayerProfilePage(
                   alt=""
                   width={120}
                   height={120}
-                  unoptimized={!!player.profile_avatar_url || !!player.discord_avatar_url}
+                  unoptimized={
+                    !!player.profile_avatar_url || !!player.discord_avatar_url
+                  }
                   className={`h-28 w-28 rounded-full shadow-xl md:h-32 md:w-32 ${
                     player.is_admin
                       ? "border-2 border-thl-orange"
@@ -135,14 +139,17 @@ export default async function PlayerProfilePage(
                   </span>
                 )}
               </div>
-              <h1 className="mt-2 text-4xl leading-tight font-bold tracking-[-0.02em] md:text-5xl font-marker drop-shadow-lg" style={{textShadow: '-2px 2px 0px #f76103'}}>
+              <h1
+                className="mt-2 font-marker text-4xl leading-tight font-bold tracking-[-0.02em] drop-shadow-lg md:text-5xl"
+                style={{ textShadow: "-2px 2px 0px #f76103" }}
+              >
                 {name}
               </h1>
               <div className="mt-1 text-sm text-neutral-500">
                 @{player.discord_username ?? "—"}
               </div>
               {player.is_admin && (
-                <p className="mt-3 max-w-md text-sm text-neutral-600 dark:text-neutral-400">
+                <p className="mt-3 max-w-xl text-sm text-neutral-600 dark:text-neutral-400">
                   Runs league ops — point of contact for scheduling, rules
                   questions, and disputes.
                 </p>
@@ -309,6 +316,46 @@ function RankCell({
           }`}
         />
       </div>
+    </div>
+  );
+}
+
+function PlayerProfileBackdrop({ src }: { src: string }) {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-x-0 top-[110px] z-0 h-[720px] overflow-hidden"
+    >
+      <div className="absolute inset-0 bg-white dark:bg-black" />
+      <Image
+        src={src}
+        alt=""
+        fill
+        priority
+        unoptimized
+        sizes="100vw"
+        className="object-cover opacity-45 dark:opacity-50"
+        style={{ objectPosition: "center" }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-white/88 via-white/58 to-white/20 dark:from-black/82 dark:via-black/48 dark:to-black/18" />
+      <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-white dark:to-black" />
+      <div
+        className="absolute inset-0 opacity-70"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 50% at 18% 10%, rgba(247,97,3,0.28), transparent 60%)",
+        }}
+      />
+      <div
+        className="absolute inset-0 opacity-[0.08] dark:opacity-[0.05]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(0,0,0,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.5) 1px, transparent 1px)",
+          backgroundSize: "56px 56px",
+          maskImage:
+            "linear-gradient(180deg, rgba(0,0,0,1), transparent 90%)",
+        }}
+      />
     </div>
   );
 }
