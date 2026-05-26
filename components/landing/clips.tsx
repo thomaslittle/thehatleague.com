@@ -10,8 +10,7 @@ import { SITE } from "@/lib/site";
 
 export async function Clips() {
   const clips = await getClips();
-  if (!clips.length) return null;
-
+  const isEmpty = clips.length === 0;
   const [featured, ...rest] = clips;
 
   return (
@@ -26,10 +25,6 @@ export async function Clips() {
               <div className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
                 Clips &amp; highlights
               </div>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-thl-orange/10 px-2.5 py-0.5 text-[10px] font-bold tracking-[0.18em] text-thl-orange uppercase">
-                <span className="h-1.5 w-1.5 rounded-full bg-thl-orange" />
-                Live
-              </span>
             </div>
             <h2 className="text-4xl leading-[0.98] font-bold tracking-[-0.03em] text-neutral-900 md:text-5xl lg:text-6xl dark:text-white">
               The plays.{" "}
@@ -57,12 +52,16 @@ export async function Clips() {
           </a>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          <ClipCard clip={featured} featured />
-          {rest.map((c) => (
-            <ClipCard key={c.id} clip={c} />
-          ))}
-        </div>
+        {isEmpty ? (
+          <EmptyClipsBoard />
+        ) : (
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            <ClipCard clip={featured} featured />
+            {rest.map((c) => (
+              <ClipCard key={c.id} clip={c} />
+            ))}
+          </div>
+        )}
 
         <div className="mt-10 flex items-center justify-center">
           <a
@@ -77,6 +76,66 @@ export async function Clips() {
         </div>
       </div>
     </section>
+  );
+}
+
+function EmptyClipsBoard() {
+  return (
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <ClipPlaceholder featured />
+      <ClipPlaceholder />
+      <ClipPlaceholder />
+    </div>
+  );
+}
+
+function ClipPlaceholder({ featured = false }: { featured?: boolean }) {
+  return (
+    <div
+      className={`relative overflow-hidden rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950 ${
+        featured ? "lg:row-span-2" : ""
+      }`}
+    >
+      <div
+        className={`relative flex items-center justify-center bg-neutral-100 dark:bg-neutral-900 ${
+          featured ? "aspect-[16/13] lg:aspect-auto lg:h-full" : "aspect-video"
+        }`}
+      >
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-[0.18]"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(45deg, currentColor 0 1px, transparent 1px 14px)",
+            color: "rgb(247 97 3 / 0.8)",
+          }}
+        />
+        <div className="relative z-10 px-6 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-thl-orange/15 text-thl-orange md:h-16 md:w-16">
+            <PlayIcon className="ml-1 h-7 w-7 md:h-8 md:w-8" />
+          </div>
+          <div className="mt-4 text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
+            Clip drops here
+          </div>
+          <div
+            className={`mt-1.5 font-bold tracking-tight text-neutral-700 dark:text-neutral-200 ${
+              featured ? "text-xl md:text-2xl" : "text-base"
+            }`}
+          >
+            Once Season 04 starts.
+          </div>
+          {featured && (
+            <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
+              Post your best play in{" "}
+              <span className="inline-flex items-center gap-1.5 align-middle font-semibold text-neutral-700 dark:text-neutral-300">
+                <DiscordIcon className="h-3.5 w-3.5" /> #highlights
+              </span>{" "}
+              and it lands here automatically.
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 

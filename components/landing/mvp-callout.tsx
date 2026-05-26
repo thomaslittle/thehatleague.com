@@ -34,8 +34,8 @@ export function MvpCallout() {
             </h2>
             <p className="mt-5 max-w-xl text-lg text-neutral-600 dark:text-neutral-400">
               At the end of Season 04 every signed-up player gets one vote.
-              Pick the dad who shifted the league. The winner takes the
-              trophy, the bragging rights, and the engraved hat.
+              Pick the dad who shifted the league. Winner gets announced
+              live at the Grand Finals.
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link
@@ -73,7 +73,7 @@ export function MvpCallout() {
                   no Discord ballot-stuffing.
                 </Step>
                 <Step n={3}>
-                  Top vote-getter gets the MVP hat at the Grand Finals stream.
+                  Top vote-getter is announced live at the Grand Finals stream.
                 </Step>
               </ol>
             </div>

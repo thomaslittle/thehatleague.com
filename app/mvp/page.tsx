@@ -40,8 +40,8 @@ export default async function MvpPage() {
           <>
             One signed-up player, one vote. Voting opens for{" "}
             <span className="font-semibold text-thl-orange">48 hours</span>{" "}
-            after Conference Finals wrap. The MVP gets the engraved hat at
-            the Grand Finals stream.
+            after Conference Finals wrap. Winner gets announced at the
+            Grand Finals stream.
           </>
         }
         actions={

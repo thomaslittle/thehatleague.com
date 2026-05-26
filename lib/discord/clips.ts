@@ -28,75 +28,6 @@ export interface Clip {
   thumbUrl?: string;
 }
 
-const SAMPLE_CLIPS: Clip[] = [
-  {
-    id: "s1",
-    title: "Triple reset down 2-0 in the final 30",
-    submitter: "BophadesNutz",
-    team: "Sombrero · S03 Champs",
-    week: "Wk 5",
-    duration: "0:18",
-    likes: 142,
-    pos: "center 35%",
-    scale: 1.0,
-  },
-  {
-    id: "s2",
-    title: "Flick-shot back-board double-tap",
-    submitter: "Neoman47",
-    team: "Fedora",
-    week: "Wk 3",
-    duration: "0:12",
-    likes: 96,
-    pos: "30% 60%",
-    scale: 1.4,
-  },
-  {
-    id: "s3",
-    title: "Bumped at the apex, still scored",
-    submitter: "ProdigyMETA",
-    team: "Fedora",
-    week: "Wk 2",
-    duration: "0:09",
-    likes: 81,
-    pos: "75% 50%",
-    scale: 1.5,
-  },
-  {
-    id: "s4",
-    title: "Goalie demo into open-net empty-cup",
-    submitter: "Hat_Dad_Gaming",
-    team: "Sombrero",
-    week: "Wk 4",
-    duration: "0:14",
-    likes: 73,
-    pos: "50% 70%",
-    scale: 1.3,
-  },
-  {
-    id: "s5",
-    title: "Last-second save off the post twice",
-    submitter: "MajorMalnut",
-    team: "Fedora",
-    week: "Playoffs",
-    duration: "0:11",
-    likes: 119,
-    pos: "20% 40%",
-    scale: 1.6,
-  },
-  {
-    id: "s6",
-    title: "Speedflip kickoff, no-touch goal",
-    submitter: "iGotAverageMeat",
-    team: "Sombrero",
-    week: "Wk 1",
-    duration: "0:07",
-    likes: 64,
-    pos: "85% 65%",
-    scale: 1.4,
-  },
-];
-
 export async function getClips(): Promise<Clip[]> {
   // TODO(season-4-launch): replace with live Discord fetch.
   //
@@ -114,5 +45,8 @@ export async function getClips(): Promise<Clip[]> {
   //   .filter((m) => m.attachments?.some((a) => a.content_type?.startsWith("video/")))
   //   .map(toClip);
 
-  return SAMPLE_CLIPS;
+  // Empty until Season 4 actually starts and clips begin landing in the
+  // Discord highlights channel. The Clips component renders a polished
+  // placeholder when this returns []. No fake data shown.
+  return [];
 }
