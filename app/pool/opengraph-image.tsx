@@ -61,21 +61,23 @@ export default async function Image() {
             alignItems: "center",
             justifyContent: "space-between",
             gap: 48,
+            paddingTop: 32,
+            paddingBottom: 44,
           }}
         >
           <div style={{ display: "flex", flexDirection: "column", maxWidth: 760 }}>
-            <div style={{ display: "flex", ...TYPE.display, fontSize: 92 }}>
+            <div style={{ display: "flex", ...TYPE.display, fontSize: 76 }}>
               Everyone in the
             </div>
-            <div style={{ display: "flex", ...TYPE.marker, fontSize: 132, marginTop: -4 }}>
+            <div style={{ display: "flex", ...TYPE.marker, fontSize: 112, marginTop: -2 }}>
               lobby.
             </div>
-            <div style={{ display: "flex", ...TYPE.body, marginTop: 22, maxWidth: 680 }}>
+            <div style={{ display: "flex", ...TYPE.body, marginTop: 26, maxWidth: 680, fontSize: 26 }}>
               The list captains pick from on draft night. Sort by 2v2, 3v3,
               or peak rank.
             </div>
 
-            <div style={{ display: "flex", gap: 56, marginTop: 32 }}>
+            <div style={{ display: "flex", gap: 48, marginTop: 24 }}>
               <Stat label="In the pool" value={totalInPool} />
               <Stat label="Captains" value={captainCount} />
             </div>
@@ -87,7 +89,7 @@ export default async function Image() {
             alt=""
             width={300}
             height={300}
-            style={{ display: "block", filter: "drop-shadow(0 30px 60px rgba(247,97,3,0.5))" }}
+            style={{ display: "block" }}
           />
         </div>
 
@@ -131,7 +133,7 @@ function Stat({ label, value }: { label: string; value: number }) {
           display: "flex",
           fontFamily: "Inter Tight",
           marginTop: 6,
-          fontSize: 84,
+          fontSize: 64,
           fontWeight: 800,
           color: "#f76103",
           lineHeight: 1,

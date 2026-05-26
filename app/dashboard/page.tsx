@@ -8,6 +8,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   ArrowRight,
   DiscordIcon,
+  ShieldGlyph,
   TwitchIcon,
 } from "@/components/icons/brand";
 import { signOut } from "@/app/actions/auth";
@@ -108,6 +109,34 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
           }}
         />
         <div className="relative mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
+          {profile.is_admin && (
+            <Link
+              href="/admin"
+              className="group mb-10 flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-thl-orange bg-thl-orange/10 px-5 py-4 shadow-[0_15px_50px_-20px_rgba(247,97,3,0.55)] transition hover:bg-thl-orange/15 sm:px-6 sm:py-5"
+            >
+              <div className="flex min-w-0 items-center gap-4">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-thl-orange text-black shadow-md">
+                  <ShieldGlyph className="h-6 w-6" />
+                </span>
+                <div className="min-w-0">
+                  <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
+                    League ops · Admin access
+                  </div>
+                  <div className="mt-0.5 truncate text-base font-bold text-neutral-900 sm:text-lg dark:text-white">
+                    Run the league →
+                  </div>
+                  <div className="mt-0.5 text-xs text-neutral-600 dark:text-neutral-400">
+                    Approve captains, post announcements, manage players,
+                    preview OG cards.
+                  </div>
+                </div>
+              </div>
+              <span className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-thl-orange px-4 py-2.5 text-sm font-extrabold whitespace-nowrap text-black transition group-hover:bg-thl-orange-deep">
+                Open ops
+                <ArrowRight className="h-4 w-4" />
+              </span>
+            </Link>
+          )}
           {justOnboarded && onboarded && (
             <div className="mb-10 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-thl-orange/30 bg-thl-orange/10 px-5 py-4">
               <div>
@@ -194,14 +223,6 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
             </div>
 
             <div className="flex items-center gap-2">
-              {profile.is_admin && (
-                <Link
-                  href="/admin"
-                  className="inline-flex items-center gap-2 rounded-lg border border-thl-orange/40 bg-thl-orange/10 px-3 py-2 text-sm font-semibold text-thl-orange transition hover:bg-thl-orange hover:text-black"
-                >
-                  League ops
-                </Link>
-              )}
               <Link
                 href="/settings"
                 className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 px-3 py-2 text-sm font-semibold text-neutral-600 transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-700 dark:text-neutral-300"

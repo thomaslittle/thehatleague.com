@@ -74,6 +74,8 @@ export default async function Image(props: {
             alignItems: "center",
             justifyContent: "space-between",
             gap: 48,
+            paddingTop: 32,
+            paddingBottom: 44,
           }}
         >
           <div style={{ display: "flex", flexDirection: "column", maxWidth: 780 }}>
@@ -107,7 +109,7 @@ export default async function Image(props: {
             alt=""
             width={260}
             height={260}
-            style={{ display: "block", filter: "drop-shadow(0 30px 60px rgba(247,97,3,0.5))" }}
+            style={{ display: "block" }}
           />
         </div>
 

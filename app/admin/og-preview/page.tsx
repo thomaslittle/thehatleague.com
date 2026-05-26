@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { PageShell } from "@/components/page/page-shell";
 import { requireAdmin } from "@/lib/admin";
 
 export const metadata = {
@@ -95,8 +94,7 @@ export default async function OgPreviewPage() {
   await requireAdmin("/admin/og-preview");
 
   return (
-    <PageShell>
-      <section className="mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
+    <section className="mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <div className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
@@ -169,7 +167,6 @@ export default async function OgPreviewPage() {
           ))}
         </ul>
       </section>
-    </PageShell>
   );
 }
 

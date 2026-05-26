@@ -52,6 +52,8 @@ export default async function Image() {
             alignItems: "center",
             justifyContent: "space-between",
             gap: 56,
+            paddingTop: 40,
+            paddingBottom: 40,
           }}
         >
           <div
@@ -74,8 +76,8 @@ export default async function Image() {
             >
               League.
             </div>
-            <div style={{ display: "flex", ...TYPE.body, marginTop: 28 }}>
-              More than mid, less than pro. A draft-style RL series — sign
+            <div style={{ display: "flex", ...TYPE.body, marginTop: 40 }}>
+              More than mid, less than pro. A draft-style RL series. Sign
               up, get drafted live on Twitch, bring your hat.
             </div>
           </div>
@@ -84,12 +86,9 @@ export default async function Image() {
           <img
             src={logoSrc}
             alt=""
-            width={360}
-            height={360}
-            style={{
-              display: "block",
-              filter: "drop-shadow(0 30px 60px rgba(247,97,3,0.55))",
-            }}
+            width={340}
+            height={340}
+            style={{ display: "block" }}
           />
         </div>
 
@@ -99,7 +98,7 @@ export default async function Image() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            paddingTop: 22,
+            paddingTop: 26,
             borderTop: "1px solid rgba(255,255,255,0.18)",
           }}
         >

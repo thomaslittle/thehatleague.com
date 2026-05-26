@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageShell } from "@/components/page/page-shell";
-import { ArrowRight, DiscordIcon } from "@/components/icons/brand";
+import { ArrowRight, DiscordIcon, ShieldGlyph } from "@/components/icons/brand";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SITE } from "@/lib/site";
 import { CopyLinkButton } from "@/components/share/copy-link-button";
@@ -27,7 +27,7 @@ export default async function PlayerProfilePage(
   const { data: player } = await supabase
     .from("profiles")
     .select(
-      "id, discord_username, discord_global_name, discord_avatar_url, rank_2v2, rank_3v3, peak_rank, peak_rank_playlist, ranks_updated_at, rl_tracker_url, is_captain, is_captain_applicant, in_player_pool, captain_pitch, created_at",
+      "id, discord_username, discord_global_name, discord_avatar_url, rank_2v2, rank_3v3, peak_rank, peak_rank_playlist, ranks_updated_at, rl_tracker_url, is_captain, is_captain_applicant, is_admin, in_player_pool, captain_pitch, created_at",
     )
     .ilike("discord_username", handle)
     .maybeSingle();
@@ -69,26 +69,47 @@ export default async function PlayerProfilePage(
           </div>
 
           <div className="mt-8 grid items-end gap-6 md:grid-cols-[auto_1fr]">
-            {player.discord_avatar_url ? (
-              <Image
-                src={player.discord_avatar_url}
-                alt=""
-                width={120}
-                height={120}
-                unoptimized
-                className="h-28 w-28 rounded-full border-2 border-thl-orange/40 shadow-xl md:h-32 md:w-32"
-              />
-            ) : (
-              <div className="flex h-28 w-28 items-center justify-center rounded-full bg-thl-orange text-3xl font-extrabold text-black md:h-32 md:w-32">
-                {name.slice(0, 2).toUpperCase()}
-              </div>
-            )}
+            <div className="relative w-fit">
+              {player.discord_avatar_url ? (
+                <Image
+                  src={player.discord_avatar_url}
+                  alt=""
+                  width={120}
+                  height={120}
+                  unoptimized
+                  className={`h-28 w-28 rounded-full shadow-xl md:h-32 md:w-32 ${
+                    player.is_admin
+                      ? "border-2 border-thl-orange"
+                      : "border-2 border-thl-orange/40"
+                  }`}
+                />
+              ) : (
+                <div className="flex h-28 w-28 items-center justify-center rounded-full bg-thl-orange text-3xl font-extrabold text-black md:h-32 md:w-32">
+                  {name.slice(0, 2).toUpperCase()}
+                </div>
+              )}
+              {player.is_admin && (
+                <span
+                  className="absolute -right-1 -bottom-1 inline-flex items-center justify-center rounded-full border-[3px] border-white bg-thl-orange p-1.5 text-black shadow-lg dark:border-black"
+                  aria-label="League operations"
+                  title="League operations"
+                >
+                  <ShieldGlyph className="h-4 w-4" />
+                </span>
+              )}
+            </div>
 
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
                   Player · Season 04
                 </span>
+                {player.is_admin && (
+                  <span className="inline-flex items-center gap-1.5 rounded-md bg-thl-orange px-2 py-0.5 text-[10px] font-extrabold tracking-[0.16em] text-black uppercase">
+                    <ShieldGlyph className="h-3 w-3" />
+                    League ops
+                  </span>
+                )}
                 {player.is_captain && (
                   <span className="rounded-md bg-thl-orange/15 px-2 py-0.5 text-[10px] font-bold tracking-[0.16em] text-thl-orange uppercase">
                     Captain
@@ -111,6 +132,12 @@ export default async function PlayerProfilePage(
               <div className="mt-1 text-sm text-neutral-500">
                 @{player.discord_username ?? "—"}
               </div>
+              {player.is_admin && (
+                <p className="mt-3 max-w-md text-sm text-neutral-600 dark:text-neutral-400">
+                  Runs league ops — point of contact for scheduling, rules
+                  questions, and disputes.
+                </p>
+              )}
             </div>
           </div>
 

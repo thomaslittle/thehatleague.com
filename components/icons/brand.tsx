@@ -3,6 +3,20 @@ import { cn } from "@/lib/cn";
 
 type IconProps = SVGProps<SVGSVGElement> & { className?: string };
 
+export function ShieldGlyph({ className = "h-4 w-4", ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={cn(className)}
+      aria-hidden
+      {...props}
+    >
+      <path d="M12 2 4 5v6c0 4.97 3.4 9.55 8 11 4.6-1.45 8-6.03 8-11V5l-8-3Zm-1 14-3.5-3.5 1.42-1.42L11 13.17l5.08-5.09L17.5 9.5 11 16Z" />
+    </svg>
+  );
+}
+
 export function DiscordIcon({ className = "h-5 w-5", ...props }: IconProps) {
   return (
     <svg

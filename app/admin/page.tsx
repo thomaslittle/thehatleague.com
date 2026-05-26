@@ -35,10 +35,7 @@ export default async function AdminIndexPage() {
         Run the league.
       </h1>
       <p className="mt-3 max-w-xl text-neutral-600 dark:text-neutral-400">
-        You&apos;re seeing this because your profile has{" "}
-        <code className="rounded bg-neutral-100 px-1 py-0.5 text-xs dark:bg-neutral-900">
-          is_admin = true
-        </code>
+        League operations
       </p>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

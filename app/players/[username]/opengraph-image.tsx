@@ -75,6 +75,8 @@ export default async function Image(props: {
             flex: 1,
             alignItems: "center",
             gap: 48,
+            paddingTop: 32,
+            paddingBottom: 40,
           }}
         >
           {avatar ? (
