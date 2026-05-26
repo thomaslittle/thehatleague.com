@@ -24,6 +24,9 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       // Discord-hosted user avatars (delivered through cdn.discordapp.com).
       { protocol: "https", hostname: "cdn.discordapp.com" },
+      // YouTube thumbnails for the hype-reel cards.
+      { protocol: "https", hostname: "i.ytimg.com" },
+      { protocol: "https", hostname: "img.youtube.com" },
     ],
   },
   async headers() {
