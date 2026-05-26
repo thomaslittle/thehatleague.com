@@ -1,27 +1,34 @@
 "use client";
 
-import { useOptimistic, useTransition } from "react";
+import { useState } from "react";
 import { MoonIcon, SunIcon } from "@/components/icons/brand";
-import { toggleThemePref } from "@/app/actions/theme";
 import { cn } from "@/lib/cn";
-import type { ThemePref } from "@/lib/site";
+import { THEME_COOKIE, type ThemePref } from "@/lib/site";
+
+const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+const THEME_TRANSITION_MS = 260;
 
 export function ThemeToggle({ theme }: { theme: ThemePref }) {
-  const [optimisticTheme, setOptimisticTheme] = useOptimistic<ThemePref>(theme);
-  const [, startTransition] = useTransition();
-  const isDark = optimisticTheme === "dark";
+  const [currentTheme, setCurrentTheme] = useState<ThemePref>(theme);
+  const isDark = currentTheme === "dark";
+
+  function toggleTheme() {
+    const next: ThemePref = isDark ? "light" : "dark";
+    const root = document.documentElement;
+    root.classList.add("theme-transitioning");
+    root.classList.toggle("dark", next === "dark");
+    document.cookie = `${THEME_COOKIE}=${next}; Path=/; Max-Age=${THEME_COOKIE_MAX_AGE}; SameSite=Lax`;
+    setCurrentTheme(next);
+    window.setTimeout(() => {
+      root.classList.remove("theme-transitioning");
+    }, THEME_TRANSITION_MS);
+  }
 
   return (
-    <form
-      action={() => {
-        startTransition(() => {
-          setOptimisticTheme(isDark ? "light" : "dark");
-          void toggleThemePref();
-        });
-      }}
-    >
+    <div>
       <button
-        type="submit"
+        type="button"
+        onClick={toggleTheme}
         className="group relative inline-flex h-9 w-16 items-center rounded-full bg-neutral-200 transition-colors dark:bg-neutral-800"
         aria-label="Toggle color theme"
         title={isDark ? "Switch to light mode" : "Switch to dark mode"}
@@ -46,6 +53,6 @@ export function ThemeToggle({ theme }: { theme: ThemePref }) {
           )}
         </span>
       </button>
-    </form>
+    </div>
   );
 }
