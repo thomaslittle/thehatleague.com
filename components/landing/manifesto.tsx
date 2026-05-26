@@ -74,7 +74,7 @@ export function Manifesto() {
 
         <div className="mx-auto mt-16 max-w-3xl text-center md:mt-20">
           <p className="text-lg leading-relaxed text-neutral-300 md:text-xl">
-            One night. Live chat captains. Teams formed live on stream — and a
+            One night. Live chat captains. Teams formed live on stream. A
             season that ends with someone wearing the hat.
           </p>
           <div className="mt-10 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-center">

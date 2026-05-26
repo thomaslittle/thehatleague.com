@@ -127,6 +127,19 @@ export async function getClips(): Promise<Clip[]> {
     .filter((c): c is Clip => c !== null);
 }
 
+// Hosts that members commonly use to share clips. When a message body
+// contains a URL on one of these hosts but Discord didn't auto-generate
+// an embed (gifyourgame in particular), we still treat the message as a
+// clip and link out to the host.
+const CLIP_HOSTS_RE =
+  /https?:\/\/[^\s]*(?:gifyourgame\.com|medal\.tv|streamable\.com|clips\.twitch\.tv|twitch\.tv\/[^\s]+\/clip|youtube\.com|youtu\.be|imgur\.com|x\.com|twitter\.com)\/[^\s]+/i;
+
+function findClipUrlInContent(content: string | undefined): string | undefined {
+  if (!content) return undefined;
+  const m = content.match(CLIP_HOSTS_RE);
+  return m?.[0];
+}
+
 function messageToClip(m: DiscordMessage, guildId: string): Clip | null {
   // Prefer a direct video attachment (mp4/mov/webm).
   const videoAttachment = m.attachments?.find((a) =>
@@ -140,30 +153,55 @@ function messageToClip(m: DiscordMessage, guildId: string): Clip | null {
   const videoEmbed = m.embeds?.find(
     (e) => e.type === "video" || e.video || e.thumbnail,
   );
+  // URL to a known clip host in the message text — covers cases where
+  // Discord didn't bother generating an embed (gifyourgame is the big one).
+  const contentClipUrl = findClipUrlInContent(m.content);
 
-  // Skip messages that don't carry any media at all.
-  if (!videoAttachment && !imageAttachment && !videoEmbed) return null;
+  // Skip messages that carry no recognizable media of any kind.
+  if (
+    !videoAttachment &&
+    !imageAttachment &&
+    !videoEmbed &&
+    !contentClipUrl
+  ) {
+    return null;
+  }
 
   const author = m.author;
   const submitter = author.global_name ?? author.username;
 
   const messageLink = `https://discord.com/channels/${guildId}/${m.channel_id}/${m.id}`;
-  const url = videoEmbed?.url ?? videoAttachment?.url ?? messageLink;
+  const url =
+    videoEmbed?.url ??
+    videoAttachment?.url ??
+    contentClipUrl ??
+    messageLink;
   const thumbUrl =
     videoEmbed?.thumbnail?.url ??
     imageAttachment?.proxy_url ??
     imageAttachment?.url ??
-    deriveYouTubeThumb(videoEmbed?.url);
+    deriveYouTubeThumb(videoEmbed?.url ?? contentClipUrl);
 
   const likes = (m.reactions ?? []).reduce((sum, r) => sum + r.count, 0);
 
-  const title = m.content?.trim() || (videoEmbed?.title ?? "Hat clip");
+  // Headline preference order: caption text → embed title → host name → fallback.
+  const captionText = m.content?.trim() ?? "";
+  // If the only content is a bare URL (very common), don't use it as the
+  // title — fall through to the embed title / host name.
+  const captionIsJustUrl = /^https?:\/\/\S+\s*$/.test(captionText);
+  const titleCandidate =
+    !captionIsJustUrl && captionText
+      ? captionText
+      : (videoEmbed?.title ??
+        hostLabelFromUrl(contentClipUrl ?? videoEmbed?.url) ??
+        "Hat clip");
+
   const week =
     parseWeekTag(m.content) ?? monthLabelFromTimestamp(m.timestamp);
 
   return {
     id: m.id,
-    title: trimTitle(title),
+    title: trimTitle(titleCandidate),
     submitter,
     team: "",
     week,
@@ -173,6 +211,22 @@ function messageToClip(m: DiscordMessage, guildId: string): Clip | null {
     videoUrl: videoAttachment?.url,
     thumbUrl,
   };
+}
+
+function hostLabelFromUrl(url: string | undefined): string | null {
+  if (!url) return null;
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    if (host.includes("gifyourgame")) return "GIFYourGame clip";
+    if (host.includes("medal.tv")) return "Medal clip";
+    if (host.includes("streamable")) return "Streamable clip";
+    if (host.includes("twitch")) return "Twitch clip";
+    if (host.includes("youtube") || host.includes("youtu.be")) return "YouTube";
+    if (host.includes("imgur")) return "Imgur clip";
+    return host;
+  } catch {
+    return null;
+  }
 }
 
 function deriveYouTubeThumb(url: string | undefined): string | undefined {
