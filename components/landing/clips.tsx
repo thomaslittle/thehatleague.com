@@ -140,38 +140,67 @@ function ClipPlaceholder({ featured = false }: { featured?: boolean }) {
 }
 
 function ClipCard({ clip, featured = false }: { clip: Clip; featured?: boolean }) {
+  const hasThumb = !!clip.thumbUrl;
+  const Wrapper = ({ children }: { children: React.ReactNode }) =>
+    clip.url ? (
+      <a
+        href={clip.url}
+        target="_blank"
+        rel="noopener"
+        className={`group relative block overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:border-thl-orange dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-thl-orange ${
+          featured ? "lg:row-span-2" : ""
+        }`}
+      >
+        {children}
+      </a>
+    ) : (
+      <article
+        className={`group relative block overflow-hidden rounded-2xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950 ${
+          featured ? "lg:row-span-2" : ""
+        }`}
+      >
+        {children}
+      </article>
+    );
+
   return (
-    <article
-      className={`group relative cursor-pointer overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:border-thl-orange dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-thl-orange ${
-        featured ? "lg:row-span-2" : ""
-      }`}
-    >
+    <Wrapper>
       <div
         className={`relative overflow-hidden bg-neutral-900 ${
           featured ? "aspect-[16/13] lg:aspect-auto lg:h-full" : "aspect-video"
         }`}
       >
-        <Image
-          src="/brand/thl-fennec.png"
-          alt=""
-          aria-hidden
-          fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-          className="object-cover"
-          style={{
-            objectPosition: clip.pos,
-            transform: `scale(${clip.scale})`,
-            transformOrigin: "center",
-          }}
-        />
-        <div aria-hidden className="absolute inset-0 bg-neutral-900/55 mix-blend-multiply" />
+        {hasThumb ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={clip.thumbUrl}
+            alt=""
+            aria-hidden
+            className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+          />
+        ) : (
+          <Image
+            src="/brand/thl-fennec.png"
+            alt=""
+            aria-hidden
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+            className="object-cover"
+            style={{
+              objectPosition: clip.pos ?? "center",
+              transform: `scale(${clip.scale ?? 1})`,
+              transformOrigin: "center",
+            }}
+          />
+        )}
+        <div aria-hidden className="absolute inset-0 bg-neutral-900/45 mix-blend-multiply" />
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-black/15"
+          className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-black/10"
         />
         <div
           aria-hidden
-          className="absolute inset-0 mix-blend-overlay opacity-[0.15]"
+          className="absolute inset-0 mix-blend-overlay opacity-[0.12]"
           style={{
             backgroundImage:
               "repeating-linear-gradient(0deg, rgba(255,255,255,0.4) 0 1px, transparent 1px 3px)",
@@ -184,12 +213,16 @@ function ClipCard({ clip, featured = false }: { clip: Clip; featured?: boolean }
           </div>
         </div>
 
-        <span className="absolute top-3 right-3 rounded-md bg-black/70 px-2 py-1 text-[11px] font-bold tabular-nums text-white backdrop-blur-sm">
-          {clip.duration}
-        </span>
-        <span className="absolute top-3 left-3 rounded-md bg-thl-orange px-2 py-1 text-[10px] font-bold tracking-[0.16em] text-black uppercase">
-          {clip.week}
-        </span>
+        {clip.duration && (
+          <span className="absolute top-3 right-3 rounded-md bg-black/70 px-2 py-1 text-[11px] font-bold tabular-nums text-white backdrop-blur-sm">
+            {clip.duration}
+          </span>
+        )}
+        {clip.week && (
+          <span className="absolute top-3 left-3 rounded-md bg-thl-orange px-2 py-1 text-[10px] font-bold tracking-[0.16em] text-black uppercase">
+            {clip.week}
+          </span>
+        )}
 
         <div className="absolute right-4 bottom-4 left-4">
           <h3
@@ -211,9 +244,11 @@ function ClipCard({ clip, featured = false }: { clip: Clip; featured?: boolean }
             <div className="truncate text-sm font-semibold text-neutral-900 dark:text-white">
               {clip.submitter}
             </div>
-            <div className="truncate text-[11px] text-neutral-500">
-              {clip.team}
-            </div>
+            {clip.team && (
+              <div className="truncate text-[11px] text-neutral-500">
+                {clip.team}
+              </div>
+            )}
           </div>
         </div>
         <span className="inline-flex shrink-0 items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400">
@@ -221,6 +256,6 @@ function ClipCard({ clip, featured = false }: { clip: Clip; featured?: boolean }
           {clip.likes}
         </span>
       </div>
-    </article>
+    </Wrapper>
   );
 }

@@ -72,7 +72,7 @@ export function HypeReel() {
             </p>
           </div>
           <a
-            href="https://www.youtube.com/@hatdadgaming"
+            href="https://www.youtube.com/@hat_dad_gaming"
             target="_blank"
             rel="noopener"
             className="inline-flex items-center gap-1.5 text-sm font-semibold whitespace-nowrap text-thl-orange underline-offset-4 hover:underline"
