@@ -10,9 +10,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
-
-const PITCH_MIN = 40;
-const PITCH_MAX = 1200;
+import {
+  CAPTAIN_PITCH_MAX as PITCH_MAX,
+  CAPTAIN_PITCH_MIN as PITCH_MIN,
+} from "@/lib/captain";
 
 export function CaptainApplication({
   alreadyApplied,
