@@ -122,7 +122,7 @@ export default async function PlayerProfilePage(
             )}
           </div>
 
-          <div className="mt-8 grid items-end gap-6 md:grid-cols-[auto_1fr]">
+          <div className="mt-8 grid items-start gap-6 md:grid-cols-[auto_1fr]">
             <div className="relative w-fit">
               {avatarUrl ? (
                 <Image

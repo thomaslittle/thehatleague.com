@@ -26,7 +26,7 @@ export default async function Image(props: {
   const { data: player } = await supabase
     .from("profiles")
     .select(
-      "discord_username, discord_global_name, discord_avatar_url, rank_2v2, rank_3v3, peak_rank, peak_rank_playlist, is_captain, is_captain_applicant",
+      "discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, profile_banner_url, rank_2v2, rank_3v3, peak_rank, peak_rank_playlist, is_captain, is_captain_applicant",
     )
     .ilike("discord_username", handle)
     .maybeSingle();
@@ -36,7 +36,11 @@ export default async function Image(props: {
     cleanDiscordUsername(player?.discord_username) ??
     handle;
   const at = cleanDiscordUsername(player?.discord_username) ?? handle;
-  const avatar = player?.discord_avatar_url ?? null;
+  // Prefer the user's custom-uploaded avatar/banner when present; fall
+  // back to Discord's CDN avatar and the default fennec backdrop.
+  const avatar =
+    player?.profile_avatar_url ?? player?.discord_avatar_url ?? null;
+  const banner = player?.profile_banner_url ?? null;
   const captainTag = player?.is_captain
     ? "Captain · Season 04"
     : player?.is_captain_applicant
@@ -54,7 +58,7 @@ export default async function Image(props: {
           color: "#fff",
           fontFamily: "Inter Tight",
           padding: 64,
-          ...ogBackgroundStyle(),
+          ...ogBackgroundStyle(banner ? { backdrop: banner } : undefined),
         }}
       >
         <div style={{ ...TYPE.eyebrow, display: "flex", alignItems: "center", gap: 18 }}>

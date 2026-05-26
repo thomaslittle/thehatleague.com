@@ -77,21 +77,27 @@ export function loadOgFonts(): OgFont[] {
  * Shared full-card background: brand-orange radial glow over a deep
  * neutral, plus the fennec hero photo at very low opacity for texture.
  * Returns a style object — splat into a top-level <div>.
+ *
+ * Pass a `backdrop` URL to replace the fennec layer (used by the player
+ * OG card when the player has a custom profile banner). The URL must
+ * be publicly fetchable — Satori loads it at render time.
  */
-export function ogBackgroundStyle(): React.CSSProperties {
-  const fennec = loadFennecDataUri();
+export function ogBackgroundStyle(opts?: {
+  backdrop?: string;
+}): React.CSSProperties {
+  const backdrop = opts?.backdrop ?? loadFennecDataUri();
   return {
     background: [
       // Brand-orange spotlight from top-left, like the site hero.
       "radial-gradient(ellipse at 18% 8%, rgba(247,97,3,0.45), transparent 55%)",
       // Subtler counter-glow bottom-right for depth.
       "radial-gradient(ellipse at 90% 100%, rgba(247,97,3,0.18), transparent 55%)",
-      // Fennec photo for texture — heavily darkened via the gradient
+      // Backdrop photo for texture — heavily darkened via the gradient
       // overlay below so the headline always wins contrast.
-      `linear-gradient(180deg, rgba(8,8,8,0.85), rgba(8,8,8,0.92)), url('${fennec}')`,
+      `linear-gradient(180deg, rgba(8,8,8,0.80), rgba(8,8,8,0.90)), url('${backdrop}')`,
     ].join(", "),
     backgroundSize: "100% 100%, 100% 100%, cover",
-    backgroundPosition: "center, center, 55% 35%",
+    backgroundPosition: "center, center, 50% 35%",
     backgroundColor: "#080808",
   };
 }
