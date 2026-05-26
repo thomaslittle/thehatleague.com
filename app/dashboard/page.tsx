@@ -88,24 +88,50 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
       <main id="main" className="relative overflow-hidden">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[600px] overflow-hidden"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] overflow-hidden"
         >
           <Image
             src="/brand/thl-fennec.png"
             alt=""
             fill
             sizes="100vw"
-            className="object-cover opacity-15 dark:opacity-10"
-            style={{ objectPosition: "55% 35%" }}
+            priority
+            className="object-cover opacity-40 dark:opacity-45"
+            style={{ objectPosition: "55% 30%" }}
           />
-          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-white dark:to-black" />
+          {/* Soft horizontal scrim so headline copy stays readable, but the
+              fennec hero photo is clearly visible behind the welcome card. */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/55 to-white/25 dark:from-black/80 dark:via-black/45 dark:to-black/20" />
+          <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-white dark:to-black" />
         </div>
+        {/* Brand-orange ambient spotlight from top-left. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-70"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-80"
           style={{
             background:
-              "radial-gradient(ellipse at 20% 0%, rgba(247,97,3,0.20), transparent 55%)",
+              "radial-gradient(ellipse 60% 50% at 18% 10%, rgba(247,97,3,0.32), transparent 60%)",
+          }}
+        />
+        {/* Subtle counter-glow bottom-right for depth. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-60"
+          style={{
+            background:
+              "radial-gradient(ellipse 50% 40% at 90% 0%, rgba(247,97,3,0.14), transparent 60%)",
+          }}
+        />
+        {/* Faint diagonal grid for texture under the card. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-[0.08] dark:opacity-[0.05]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0,0,0,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.5) 1px, transparent 1px)",
+            backgroundSize: "56px 56px",
+            maskImage:
+              "linear-gradient(180deg, rgba(0,0,0,1), transparent 90%)",
           }}
         />
         <div className="relative mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
@@ -181,63 +207,128 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
             </div>
           )}
 
-          <div className="grid items-end gap-6 md:grid-cols-[1fr_auto]">
-            <div className="flex items-center gap-5">
-              {profile.discord_avatar_url ? (
-                <Image
-                  src={profile.discord_avatar_url}
-                  alt=""
-                  width={88}
-                  height={88}
-                  unoptimized
-                  className="h-20 w-20 rounded-full border-2 border-thl-orange/30 shadow-lg md:h-22 md:w-22"
-                />
-              ) : (
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-thl-orange text-2xl font-extrabold text-black md:h-22 md:w-22">
-                  {displayName.slice(0, 2).toUpperCase()}
-                </div>
-              )}
-              <div className="min-w-0">
-                <div className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
-                  Season 04 player
-                </div>
-                <h1 className="mt-1 text-4xl leading-tight font-bold tracking-[-0.02em] md:text-5xl">
-                  Hey,{" "}
-                  <span className="font-marker font-normal text-thl-orange">
-                    {firstName}.
-                  </span>
-                </h1>
-                <div className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                  @{profile.discord_username ?? "—"} ·{" "}
-                  {profile.is_captain ? "Captain" : "In the pool"}
-                </div>
-                {profile.discord_username && (
-                  <div className="mt-3">
-                    <CopyLinkButton
-                      text={`${env.SITE_URL.replace(/\/$/, "")}/players/${profile.discord_username}`}
-                      label="Share my profile"
-                    />
-                  </div>
-                )}
+          <div className="relative overflow-hidden rounded-3xl border border-neutral-200/80 bg-white/85 p-6 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.25)] backdrop-blur-md md:p-8 dark:border-neutral-800/80 dark:bg-black/55 dark:shadow-[0_30px_80px_-30px_rgba(247,97,3,0.25)]">
+            {/* Corner marker, like a stamped ID card. */}
+            <div className="pointer-events-none absolute top-5 right-6 hidden flex-col items-end text-right sm:flex">
+              <div className="text-[9px] font-bold tracking-[0.28em] text-neutral-400 uppercase dark:text-neutral-600">
+                Player ID
+              </div>
+              <div className="mt-0.5 font-marker text-2xl leading-none text-thl-orange">
+                S04
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Link
-                href="/settings"
-                className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 px-3 py-2 text-sm font-semibold text-neutral-600 transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-700 dark:text-neutral-300"
-              >
-                Settings
-              </Link>
-              <form action={signOut}>
-                <button
-                  type="submit"
-                  className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 px-3 py-2 text-sm font-semibold text-neutral-600 transition hover:border-rose-400 hover:text-rose-500 dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-rose-500"
+            <div className="grid items-end gap-6 md:grid-cols-[1fr_auto]">
+              <div className="flex items-start gap-5">
+                <div className="relative shrink-0">
+                  {profile.discord_avatar_url ? (
+                    <Image
+                      src={profile.discord_avatar_url}
+                      alt=""
+                      width={104}
+                      height={104}
+                      unoptimized
+                      className={`h-24 w-24 rounded-full shadow-xl md:h-26 md:w-26 ${
+                        profile.is_admin
+                          ? "border-[3px] border-thl-orange"
+                          : "border-[3px] border-thl-orange/40"
+                      }`}
+                    />
+                  ) : (
+                    <div className="flex h-24 w-24 items-center justify-center rounded-full bg-thl-orange text-3xl font-extrabold text-black md:h-26 md:w-26">
+                      {displayName.slice(0, 2).toUpperCase()}
+                    </div>
+                  )}
+                  {profile.is_captain && (
+                    <span
+                      className="absolute -right-1 -bottom-1 inline-flex h-9 items-center justify-center rounded-full border-[3px] border-white bg-thl-orange px-2.5 text-[10px] font-extrabold tracking-[0.18em] text-black uppercase shadow-lg dark:border-black"
+                      title="Captain"
+                    >
+                      Captain
+                    </span>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
+                    {profile.is_admin
+                      ? "League ops · Season 04"
+                      : profile.is_captain
+                        ? "Captain · Season 04"
+                        : "Season 04 player"}
+                  </div>
+                  <h1 className="mt-1 text-4xl leading-[1.04] font-bold tracking-[-0.02em] md:text-5xl">
+                    Hey,{" "}
+                    <span className="font-marker font-normal text-thl-orange">
+                      {firstName}.
+                    </span>
+                  </h1>
+                  <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-neutral-500 dark:text-neutral-400">
+                    <span>@{profile.discord_username ?? "—"}</span>
+                    <span aria-hidden>·</span>
+                    <span>
+                      {profile.is_captain
+                        ? "Captain"
+                        : profile.in_player_pool
+                          ? "In the pool"
+                          : "Not in pool"}
+                    </span>
+                    {poolPosition > 0 && (
+                      <>
+                        <span aria-hidden>·</span>
+                        <span className="font-semibold text-neutral-700 dark:text-neutral-300">
+                          #{poolPosition} of {poolTotal} by peak rank
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  {profile.discord_username && (
+                    <div className="mt-4">
+                      <CopyLinkButton
+                        text={`${env.SITE_URL.replace(/\/$/, "")}/players/${profile.discord_username}`}
+                        label="Share my profile"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <Link
+                  href="/settings"
+                  className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white/70 px-3 py-2 text-sm font-semibold text-neutral-700 transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-700 dark:bg-neutral-900/60 dark:text-neutral-200"
                 >
-                  Sign out
-                </button>
-              </form>
+                  Settings
+                </Link>
+                <form action={signOut}>
+                  <button
+                    type="submit"
+                    className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white/70 px-3 py-2 text-sm font-semibold text-neutral-700 transition hover:border-rose-400 hover:text-rose-500 dark:border-neutral-700 dark:bg-neutral-900/60 dark:text-neutral-200 dark:hover:border-rose-500"
+                  >
+                    Sign out
+                  </button>
+                </form>
+              </div>
             </div>
+
+            {/* Quick-glance stat strip. */}
+            <dl className="mt-8 grid gap-3 sm:grid-cols-3">
+              <QuickStat
+                label="Pool position"
+                value={poolPosition > 0 ? `#${poolPosition}` : "—"}
+                hint={poolPosition > 0 ? `of ${poolTotal}` : "Add peak rank"}
+              />
+              <QuickStat
+                label="Peak"
+                value={profile.peak_rank ?? "—"}
+                hint={profile.peak_rank_playlist ?? "Playlist TBA"}
+                highlight
+              />
+              <QuickStat
+                label="Draft"
+                value="TBA"
+                hint="Captains lock 48h prior"
+              />
+            </dl>
           </div>
 
           {announcements.length > 0 && (
@@ -588,6 +679,46 @@ function CaptainStatusCard({
         <ArrowRight className="h-3.5 w-3.5" />
       </Link>
     </section>
+  );
+}
+
+function QuickStat({
+  label,
+  value,
+  hint,
+  highlight = false,
+}: {
+  label: string;
+  value: string;
+  hint: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div
+      className={`relative overflow-hidden rounded-2xl border px-5 py-4 transition ${
+        highlight
+          ? "border-thl-orange/40 bg-thl-orange/10"
+          : "border-neutral-200 bg-white/70 dark:border-neutral-800 dark:bg-neutral-900/40"
+      }`}
+    >
+      <div
+        className={`text-[10px] font-bold tracking-[0.22em] uppercase ${
+          highlight ? "text-thl-orange" : "text-neutral-500"
+        }`}
+      >
+        {label}
+      </div>
+      <div
+        className={`mt-1.5 truncate text-xl font-extrabold tracking-tight ${
+          highlight
+            ? "text-thl-orange"
+            : "text-neutral-900 dark:text-white"
+        }`}
+      >
+        {value}
+      </div>
+      <div className="mt-0.5 truncate text-xs text-neutral-500">{hint}</div>
+    </div>
   );
 }
 
