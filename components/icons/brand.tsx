@@ -45,6 +45,65 @@ export function TwitchIcon({ className = "h-5 w-5", ...props }: IconProps) {
   );
 }
 
+export function MedalIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={cn(className)}
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M7 2h10v5.5l-2.2 1.8A6.8 6.8 0 1 1 9.2 9.3L7 7.5V2Zm2 2v2.55l3 2.45 3-2.45V4H9Zm3 7.25a3.55 3.55 0 1 0 0 7.1 3.55 3.55 0 0 0 0-7.1Zm0 1.65 1.03 2.08 2.3.34-1.66 1.62.39 2.29L12 18.15l-2.06 1.08.39-2.29-1.66-1.62 2.3-.34L12 12.9Z" />
+    </svg>
+  );
+}
+
+export function GifYourGameIcon({
+  className = "h-5 w-5",
+  ...props
+}: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={cn(className)}
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M12 2 3.5 6.9v10.2L12 22l8.5-4.9V6.9L12 2Zm0 2.3 6.5 3.75v7.9L12 19.7l-6.5-3.75v-7.9L12 4.3Zm-3.6 5.2h5.2a2.4 2.4 0 0 1 0 4.8h-1.35v2.2h-2.1v-2.2H8.4V9.5Zm2.1 1.8v1.2h2.95a.6.6 0 0 0 0-1.2H10.5Z" />
+    </svg>
+  );
+}
+
+export function YouTubeIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={cn(className)}
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M21.6 7.2a3 3 0 0 0-2.1-2.12C17.65 4.58 12 4.58 12 4.58s-5.65 0-7.5.5A3 3 0 0 0 2.4 7.2 31.3 31.3 0 0 0 1.9 12a31.3 31.3 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.12c1.85.5 7.5.5 7.5.5s5.65 0 7.5-.5a3 3 0 0 0 2.1-2.12 31.3 31.3 0 0 0 .5-4.8 31.3 31.3 0 0 0-.5-4.8ZM10 15.5v-7l6 3.5-6 3.5Z" />
+    </svg>
+  );
+}
+
+export function XIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={cn(className)}
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M17.53 3h3.27l-7.14 8.16L22.06 21h-6.58l-5.15-6.73L4.43 21H1.14l7.64-8.74L.73 3h6.74l4.65 6.15L17.53 3Zm-1.15 16.27h1.81L6.49 4.64H4.55l11.83 14.63Z" />
+    </svg>
+  );
+}
+
 export function SunIcon({ className = "h-5 w-5", ...props }: IconProps) {
   return (
     <svg

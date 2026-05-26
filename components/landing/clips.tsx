@@ -4,12 +4,20 @@ import { getClips, type Clip } from "@/lib/discord/clips";
 import {
   ArrowRight,
   DiscordIcon,
+  GifYourGameIcon,
+  MedalIcon,
   PlayIcon,
+  TwitchIcon,
+  XIcon,
+  YouTubeIcon,
 } from "@/components/icons/brand";
 import { SITE } from "@/lib/site";
 import { ClipDialog } from "@/components/clips/clip-dialog";
 import { ClipLikeButton } from "@/components/clips/clip-like-button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+const CLIP_FALLBACK_THUMB_SRC = "/brand/thl-fennec.png";
+const CLIP_SOURCE_BADGE_SRC = "/brand/thl-logo.png";
 
 export async function Clips() {
   const [clips, supabase] = await Promise.all([
@@ -170,7 +178,7 @@ export function ClipCard({
 
   return (
     <article
-      className={`group relative overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:border-thl-orange dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-thl-orange ${
+      className={`group relative flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:border-thl-orange dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-thl-orange ${
         featured ? "lg:row-span-2" : ""
       }`}
     >
@@ -179,10 +187,21 @@ export function ClipCard({
           type="button"
           aria-label={`Play: ${clip.title}`}
           className={`relative block w-full cursor-pointer overflow-hidden bg-neutral-900 ${
-            featured ? "aspect-[16/13] lg:aspect-auto lg:h-full" : "aspect-video"
+            featured
+              ? "aspect-[16/13] lg:aspect-auto lg:min-h-0 lg:flex-1"
+              : "aspect-video"
           }`}
         >
-          {clip.thumbUrl ? (
+          {clip.source === "discord-mp4" && clip.videoUrl ? (
+            <video
+              src={clip.videoUrl}
+              poster={clip.thumbUrl}
+              preload="metadata"
+              muted
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+            />
+          ) : clip.thumbUrl ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src={clip.thumbUrl}
@@ -192,7 +211,7 @@ export function ClipCard({
             />
           ) : (
             <Image
-              src="/brand/thl-fennec.png"
+              src={CLIP_FALLBACK_THUMB_SRC}
               alt=""
               aria-hidden
               fill
@@ -227,9 +246,7 @@ export function ClipCard({
           <span className="absolute top-3 left-3 rounded-md bg-thl-orange px-2 py-1 text-[10px] font-bold tracking-[0.16em] text-black uppercase">
             {clip.week}
           </span>
-          <span className="absolute top-3 right-3 rounded-md bg-black/70 px-2 py-1 text-[10px] font-bold tracking-[0.16em] text-white uppercase backdrop-blur-sm">
-            {sourceLabel(clip.source)}
-          </span>
+          <SourceBadge clip={clip} />
 
           <div className="absolute right-4 bottom-4 left-4">
             <h3
@@ -287,6 +304,45 @@ export function ClipCard({
       </div>
     </article>
   );
+}
+
+function SourceBadge({ clip }: { clip: Clip }) {
+  return (
+    <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-[10px] font-bold tracking-[0.16em] text-white uppercase backdrop-blur-sm">
+      <SourceIcon clip={clip} />
+      {sourceLabel(clip.source)}
+    </span>
+  );
+}
+
+function SourceIcon({ clip }: { clip: Clip }) {
+  const className = "h-3.5 w-3.5";
+  switch (clip.source) {
+    case "discord-mp4":
+    case "discord-image":
+      return (
+        <Image
+          src={CLIP_SOURCE_BADGE_SRC}
+          alt=""
+          aria-hidden
+          width={14}
+          height={14}
+          className="h-3.5 w-3.5 rounded-full object-cover"
+        />
+      );
+    case "gifyourgame":
+      return <GifYourGameIcon className={className} />;
+    case "medal":
+      return <MedalIcon className={className} />;
+    case "twitch-clip":
+      return <TwitchIcon className={className} />;
+    case "youtube":
+      return <YouTubeIcon className={className} />;
+    case "x":
+      return <XIcon className={className} />;
+    default:
+      return <PlayIcon className={className} />;
+  }
 }
 
 function sourceLabel(s: Clip["source"]): string {

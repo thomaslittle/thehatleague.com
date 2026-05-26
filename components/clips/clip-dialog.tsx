@@ -13,7 +13,7 @@ import type { Clip } from "@/lib/discord/clips";
 /**
  * Wraps an arbitrary trigger element. Clicking opens a modal that plays
  * the clip in-place — direct <video> for Discord-uploaded mp4s, an
- * iframe embed for YouTube/Twitch/Medal/GIFYourGame, and a graceful
+ * iframe embed for YouTube/Twitch, and a graceful
  * "Open externally" fallback for sources we can't embed (X/Twitter).
  */
 export function ClipDialog({
@@ -57,7 +57,7 @@ function ClipPlayer({ clip, active }: { clip: Clip; active: boolean }) {
   // doesn't fire on initial page load.
   if (!active) return <div className="aspect-video w-full bg-black" />;
 
-  // Direct video URLs (Discord MP4s and resolved GIF Your Game clips)
+  // Direct video URLs (Discord MP4s and resolved external clips)
   if (clip.videoUrl) {
     return (
       <video
@@ -71,7 +71,7 @@ function ClipPlayer({ clip, active }: { clip: Clip; active: boolean }) {
     );
   }
 
-  // Embeddable sources (YouTube, Twitch, Medal — these work in iframes)
+  // Embeddable sources (YouTube, Twitch)
   if (clip.embedUrl) {
     return (
       <iframe
