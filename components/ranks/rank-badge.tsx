@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { rankIconSrc } from "@/lib/data/rank-icons";
+import { rankAbbrev } from "@/lib/data/rocket-league-ranks";
 import { cn } from "@/lib/cn";
 
 /**
@@ -13,6 +14,7 @@ export function RankBadge({
   className,
   showText = true,
   emphasis = "default",
+  abbreviate = false,
 }: {
   value: string | null | undefined;
   size?: number;
@@ -20,9 +22,12 @@ export function RankBadge({
   className?: string;
   showText?: boolean;
   emphasis?: "default" | "highlight" | "muted";
+  /** When true, render the short-form tier (e.g. "GC1") instead of the full
+   *  name. Useful in narrow chips where "Grand Champion I" overflows. */
+  abbreviate?: boolean;
 }) {
   const icon = rankIconSrc(value);
-  const label = value ?? "—";
+  const label = abbreviate ? rankAbbrev(value) : (value ?? "—");
   return (
     <span
       className={cn(

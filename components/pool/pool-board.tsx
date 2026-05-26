@@ -243,7 +243,8 @@ function RankCell({
         <RankBadge
           value={value}
           size={18}
-          textClassName={`text-xs font-bold truncate ${
+          abbreviate
+          textClassName={`text-xs font-bold ${
             highlight ? "text-thl-orange" : "text-neutral-900 dark:text-white"
           }`}
         />
