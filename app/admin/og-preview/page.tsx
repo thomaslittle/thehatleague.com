@@ -176,7 +176,7 @@ function DiscordMock({ card }: { card: CardEntry }) {
       <div className="mb-2 text-[10px] font-bold tracking-[0.22em] text-neutral-500 uppercase">
         Discord preview
       </div>
-      <div className="overflow-hidden rounded-md border-l-4 border-l-thl-orange bg-[#2b2d31] p-4">
+      <div className="overflow-hidden rounded-md bg-[#2b2d31] p-4">
         <div className="text-xs text-[#b5bac1]">{card.domain}</div>
         <div className="mt-1 text-base leading-tight font-semibold text-[#00a8fc] hover:underline">
           {card.title}

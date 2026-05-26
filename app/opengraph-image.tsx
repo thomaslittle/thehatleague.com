@@ -51,34 +51,42 @@ export default async function Image() {
             flex: 1,
             alignItems: "center",
             justifyContent: "space-between",
-            gap: 56,
-            paddingTop: 40,
-            paddingBottom: 40,
+            gap: 48,
+            paddingTop: 36,
+            paddingBottom: 48,
           }}
         >
           <div
             style={{
               display: "flex",
               flexDirection: "column",
-              maxWidth: 720,
+              maxWidth: 680,
             }}
           >
-            <div style={{ display: "flex", ...TYPE.display, fontSize: 116 }}>
+            <div style={{ display: "flex", ...TYPE.display, fontSize: 96 }}>
               The Hat
             </div>
             <div
               style={{
                 display: "flex",
                 ...TYPE.marker,
-                fontSize: 168,
-                marginTop: -6,
+                fontSize: 138,
+                marginTop: -4,
               }}
             >
               League.
             </div>
-            <div style={{ display: "flex", ...TYPE.body, marginTop: 40 }}>
+            <div
+              style={{
+                display: "flex",
+                ...TYPE.body,
+                marginTop: 32,
+                fontSize: 28,
+                maxWidth: 640,
+              }}
+            >
               More than mid, less than pro. A draft-style RL series. Sign
-              up, get drafted live on Twitch, bring your hat.
+              up, get drafted live on Twitch.
             </div>
           </div>
 
@@ -86,8 +94,8 @@ export default async function Image() {
           <img
             src={logoSrc}
             alt=""
-            width={340}
-            height={340}
+            width={300}
+            height={300}
             style={{ display: "block" }}
           />
         </div>
