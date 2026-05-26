@@ -134,6 +134,42 @@ export async function deleteAnnouncement(formData: FormData) {
   revalidatePath("/announcements");
 }
 
+// ---------- players -----------------------------------------------------
+
+/** Toggle in_player_pool for any profile. */
+export async function setPlayerInPool(formData: FormData) {
+  await requireAdmin("/admin/players");
+  const profileId = String(formData.get("profile_id") ?? "").trim();
+  const next = formData.get("next") === "1";
+  if (!profileId) return;
+
+  const supabase = await createSupabaseServerClient();
+  await supabase.from("profiles").update({ in_player_pool: next }).eq("id", profileId);
+
+  revalidatePath("/admin/players");
+  revalidatePath("/pool");
+  revalidatePath("/dashboard");
+}
+
+/** Promote or demote an admin. Refuses to demote the actor themselves so
+ *  league ops can't lock themselves out of the surface. */
+export async function setPlayerAdmin(formData: FormData) {
+  const actor = await requireAdmin("/admin/players");
+  const profileId = String(formData.get("profile_id") ?? "").trim();
+  const next = formData.get("next") === "1";
+  if (!profileId) return;
+
+  if (profileId === actor.id && !next) {
+    // self-demote guard — silent no-op
+    return;
+  }
+
+  const supabase = await createSupabaseServerClient();
+  await supabase.from("profiles").update({ is_admin: next }).eq("id", profileId);
+
+  revalidatePath("/admin/players");
+}
+
 export async function togglePinAnnouncement(formData: FormData) {
   await requireAdmin("/admin/announcements");
   const id = Number(formData.get("id") ?? 0);

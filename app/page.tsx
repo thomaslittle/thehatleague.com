@@ -65,14 +65,14 @@ export default async function HomePage() {
         viewer={viewer}
       />
       <main id="main">
-        <Hero />
+        <Hero viewer={viewer} />
         <Manifesto />
-        <SignupCallout />
+        {!viewer?.isAuthenticated && <SignupCallout />}
         <RecentSignups initialRows={(recent.data ?? []) as PoolRow[]} />
         <Standings />
         <PlayerStats />
         <Clips />
-        <FinalCta />
+        {!viewer?.isAuthenticated && <FinalCta />}
       </main>
       <SiteFooter />
     </div>

@@ -61,6 +61,12 @@ export default async function AdminIndexPage() {
           title="Post an update"
           desc="Write directly here — pinning shows it in the header strip."
         />
+        <AdminLink
+          href="/admin/players"
+          eyebrow="Players"
+          title="Manage profiles"
+          desc="Flip pool membership and admin role. Captain status lives in the Captains tab."
+        />
       </div>
     </section>
   );

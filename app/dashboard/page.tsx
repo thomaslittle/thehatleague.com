@@ -369,6 +369,12 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
             </section>
           </div>
 
+          {/* Captain status */}
+          <CaptainStatusCard
+            isCaptain={profile.is_captain}
+            isApplicant={profile.is_captain_applicant}
+          />
+
           {/* Quick links */}
           <section className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <QuickLink
@@ -477,6 +483,87 @@ function RankCell({
         />
       </div>
     </div>
+  );
+}
+
+function CaptainStatusCard({
+  isCaptain,
+  isApplicant,
+}: {
+  isCaptain: boolean;
+  isApplicant: boolean;
+}) {
+  if (isCaptain) {
+    return (
+      <section className="mt-10 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-thl-orange/30 bg-thl-orange/10 px-6 py-5">
+        <div>
+          <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
+            ★ Captain · Season 04
+          </div>
+          <div className="mt-1 text-base font-bold">
+            You&apos;re picking on draft night.
+          </div>
+          <div className="mt-0.5 text-sm text-neutral-700 dark:text-neutral-300">
+            Pre-draft DM with the pick order goes out 48 hours before.
+          </div>
+        </div>
+        <Link
+          href="/captains"
+          className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 px-3 py-2 text-sm font-semibold text-neutral-700 transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-700 dark:text-neutral-300"
+        >
+          See all captains
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
+      </section>
+    );
+  }
+  if (isApplicant) {
+    return (
+      <section className="mt-10 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-neutral-200 bg-white px-6 py-5 dark:border-neutral-800 dark:bg-neutral-950">
+        <div>
+          <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
+            Captain application · pending
+          </div>
+          <div className="mt-1 text-base font-bold">
+            League ops will DM you on Discord.
+          </div>
+          <div className="mt-0.5 text-sm text-neutral-500">
+            Reviews happen a couple times a week. Want out? Withdraw from
+            the captains page.
+          </div>
+        </div>
+        <Link
+          href="/captains#apply"
+          className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 px-3 py-2 text-sm font-semibold text-neutral-700 transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-700 dark:text-neutral-300"
+        >
+          Manage application
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
+      </section>
+    );
+  }
+  return (
+    <section className="mt-10 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-dashed border-neutral-300 bg-white px-6 py-5 dark:border-neutral-800 dark:bg-neutral-950">
+      <div>
+        <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
+          Want to captain?
+        </div>
+        <div className="mt-1 text-base font-bold">
+          Tell us how you&apos;d run a lobby.
+        </div>
+        <div className="mt-0.5 text-sm text-neutral-500">
+          Captains pick live on draft night. League ops reviews every
+          application personally.
+        </div>
+      </div>
+      <Link
+        href="/captains#apply"
+        className="inline-flex items-center gap-2 rounded-lg bg-thl-orange px-4 py-2 text-sm font-bold text-black transition hover:bg-thl-orange-deep"
+      >
+        Apply to captain
+        <ArrowRight className="h-3.5 w-3.5" />
+      </Link>
+    </section>
   );
 }
 

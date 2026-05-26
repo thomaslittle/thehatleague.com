@@ -2,16 +2,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, DiscordIcon, TwitchIcon } from "@/components/icons/brand";
 import { SITE } from "@/lib/site";
+import type { ViewerInfo } from "@/components/landing/site-header";
 
 const TICKER = [
   "Draft date announced soon",
-  "S3 Champ · BophadesNutz (Sombrero)",
+  "S3 Sombrero champ · Almost Legal (DrSpaceman88)",
+  "S3 Fedora champ · Das Boost (Dark0bra)",
   "Draft order revealed live on stream",
   "Captains lock 48h before draft",
   "Games scheduled Fri–Sun · 9–11pm EST",
 ];
 
-export function Hero() {
+export function Hero({ viewer }: { viewer?: ViewerInfo | null } = {}) {
+  const isAuthed = !!viewer?.isAuthenticated;
+  const firstName = viewer?.displayName?.split(/[\s_]/)[0] ?? null;
   return (
     <>
     <section id="top" className="relative overflow-hidden">
@@ -89,20 +93,40 @@ export function Hero() {
             </div>
 
             <p className="mt-7 max-w-xl text-lg leading-relaxed text-neutral-600 md:text-xl dark:text-neutral-400">
-              A Rocket League tournament series built for the hat dads, the
-              night-shift sweats, and the players who measure rank in years not
-              hours. Sign up, get drafted, bring your hat.
+              {isAuthed ? (
+                <>
+                  Welcome back{firstName ? `, ${firstName}` : ""}. You&apos;re
+                  in the Season 4 pool. Captains start scouting now — keep your
+                  ranks current, watch for the draft announcement.
+                </>
+              ) : (
+                <>
+                  A Rocket League tournament series built for the hat dads, the
+                  night-shift sweats, and the players who measure rank in years
+                  not hours. Sign up, get drafted, bring your hat.
+                </>
+              )}
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link
-                href="/signin"
-                className="inline-flex items-center gap-3 rounded-xl bg-thl-orange px-6 py-4 text-base font-bold whitespace-nowrap text-black shadow-[0_10px_40px_-12px_rgba(247,97,3,0.6)] transition hover:bg-thl-orange-deep active:scale-[0.98]"
-              >
-                <DiscordIcon className="h-5 w-5" />
-                Sign up with Discord
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              {isAuthed ? (
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center gap-3 rounded-xl bg-thl-orange px-6 py-4 text-base font-bold whitespace-nowrap text-black shadow-[0_10px_40px_-12px_rgba(247,97,3,0.6)] transition hover:bg-thl-orange-deep active:scale-[0.98]"
+                >
+                  Open your dashboard
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              ) : (
+                <Link
+                  href="/signin"
+                  className="inline-flex items-center gap-3 rounded-xl bg-thl-orange px-6 py-4 text-base font-bold whitespace-nowrap text-black shadow-[0_10px_40px_-12px_rgba(247,97,3,0.6)] transition hover:bg-thl-orange-deep active:scale-[0.98]"
+                >
+                  <DiscordIcon className="h-5 w-5" />
+                  Sign up with Discord
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              )}
               <a
                 href={SITE.twitchUrl}
                 target="_blank"

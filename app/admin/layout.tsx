@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/admin";
 
 const TABS = [
   { href: "/admin", label: "Overview" },
+  { href: "/admin/players", label: "Players" },
   { href: "/admin/captains", label: "Captains" },
   { href: "/admin/announcements", label: "Announcements" },
 ];
