@@ -14,7 +14,7 @@ export function BrandBackdropLayer() {
   return (
     <div
       aria-hidden
-      className={`pointer-events-none absolute inset-x-0 top-0 z-0 h-[720px] overflow-hidden transition-opacity duration-200 ease-out ${
+      className={`pointer-events-none absolute inset-x-0 top-[110px] z-0 h-[720px] overflow-hidden transition-opacity duration-200 ease-out ${
         pathname === "/" ? "opacity-0" : "opacity-100"
       }`}
       style={{ viewTransitionName: "brand-backdrop" }}
