@@ -1,11 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { siteOrigin } from "@/lib/origin";
+import { safeRedirectPath } from "@/lib/safe-redirect";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/dashboard";
+  // `next` arrives via OAuth state — even though sign-in sanitizes it on
+  // the way out, re-validate on the way back so this endpoint can't be
+  // turned into an open-redirect gadget by anyone who lands a user here
+  // with a crafted query.
+  const next = safeRedirectPath(searchParams.get("next"));
 
   // Use the public origin (x-forwarded-host) rather than request.url's
   // origin. Behind a reverse proxy like Coolify the latter resolves to

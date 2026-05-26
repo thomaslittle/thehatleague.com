@@ -4,11 +4,12 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { siteOrigin } from "@/lib/origin";
+import { safeRedirectPath } from "@/lib/safe-redirect";
 
 const DISCORD_SCOPES = ["identify", "guilds", "guilds.members.read"].join(" ");
 
 export async function signInWithDiscord(formData: FormData) {
-  const redirectTo = (formData.get("redirect") as string | null) ?? "/dashboard";
+  const redirectTo = safeRedirectPath(formData.get("redirect"));
   const supabase = await createSupabaseServerClient();
   const origin = await siteOrigin();
 
