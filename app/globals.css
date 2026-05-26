@@ -100,7 +100,19 @@ html {
   transition: none;
 }
 
+@keyframes thl-ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
 .thl-ticker {
-  /* Ticker no longer scrolls — content sits in place. */
-  animation: none;
+  animation: thl-ticker 38s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .thl-ticker {
+    animation: none;
+  }
 }
