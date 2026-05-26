@@ -26,7 +26,10 @@ export function RankBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 whitespace-nowrap",
+        // min-w-0 + max-w-full so flex parents can constrain the badge and
+        // let the inner truncate take effect instead of the badge bleeding
+        // off the right edge of its cell.
+        "inline-flex min-w-0 max-w-full items-center gap-2",
         className,
       )}
     >
@@ -49,7 +52,7 @@ export function RankBadge({
       {showText && (
         <span
           className={cn(
-            "truncate font-semibold tabular-nums",
+            "min-w-0 truncate font-semibold tabular-nums",
             emphasis === "highlight" && "text-thl-orange",
             emphasis === "muted" && "text-neutral-500",
             textClassName,

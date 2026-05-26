@@ -224,18 +224,18 @@ function RankCell({
 }) {
   return (
     <div
-      className={`bg-white px-7 py-6 dark:bg-neutral-950 ${
+      className={`min-w-0 bg-white px-5 py-6 sm:px-6 lg:px-7 dark:bg-neutral-950 ${
         highlight ? "ring-1 ring-thl-orange/20" : ""
       }`}
     >
-      <div className="text-[10px] font-bold tracking-[0.22em] text-neutral-500 uppercase">
+      <div className="truncate text-[10px] font-bold tracking-[0.22em] text-neutral-500 uppercase">
         {label}
       </div>
-      <div className="mt-2">
+      <div className="mt-2 flex min-w-0">
         <RankBadge
           value={value}
-          size={32}
-          textClassName={`text-xl font-extrabold tracking-tight ${
+          size={28}
+          textClassName={`text-lg font-extrabold tracking-tight lg:text-xl ${
             highlight ? "text-thl-orange" : "text-neutral-900 dark:text-white"
           }`}
         />
