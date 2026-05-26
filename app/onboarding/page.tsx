@@ -59,7 +59,11 @@ export default async function OnboardingPage() {
               </p>
 
               <div className="mt-10 rounded-3xl border border-neutral-200 bg-white p-6 md:p-8 dark:border-neutral-800 dark:bg-neutral-950">
-                <OnboardingForm />
+                <OnboardingForm
+                  defaults={{
+                    in_player_pool: profile?.in_player_pool ?? true,
+                  }}
+                />
               </div>
 
               <form action={skipOnboarding} className="mt-4 text-center">
@@ -110,14 +114,14 @@ export default async function OnboardingPage() {
                         "your_handle"}
                     </div>
                     <div className="truncate text-xs text-neutral-500">
-                      Discord verified · S04 pool
+                      Discord verified · S04 setup
                     </div>
                   </div>
                 </div>
                 <div className="mt-5 space-y-2 text-sm">
                   <p className="text-neutral-500 dark:text-neutral-400">
-                    Already in the player pool. You&apos;re visible to captains
-                    once you finish this form.
+                    You choose whether to enter the Season 04 player pool on
+                    this form. Captains can scout you once your ranks are saved.
                   </p>
                 </div>
                 <a

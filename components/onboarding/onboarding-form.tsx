@@ -10,6 +10,7 @@ import {
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -35,6 +36,7 @@ export interface OnboardingFormDefaults {
   rank_3v3?: string | null;
   peak_rank?: string | null;
   peak_playlist?: string | null;
+  in_player_pool?: boolean | null;
 }
 
 export function OnboardingForm({
@@ -55,15 +57,65 @@ export function OnboardingForm({
 
   const fe = state?.fieldErrors ?? {};
   const d = defaults ?? {};
+  const defaultPoolOptIn = d.in_player_pool ?? true;
+  const showPoolOptIn = from !== "settings";
 
   return (
     <form action={action} className="grid gap-7">
       {from && <input type="hidden" name="_from" value={from} />}
 
+      {showPoolOptIn && (
+        <label
+          htmlFor="join_season_pool"
+          className="group relative block cursor-pointer overflow-hidden rounded-2xl border-2 border-thl-orange bg-thl-orange/10 p-5 shadow-[0_18px_55px_-30px_rgba(247,97,3,0.8)] transition hover:bg-thl-orange/15 md:p-6 dark:bg-thl-orange/12 dark:hover:bg-thl-orange/18"
+        >
+          <input type="hidden" name="join_pool_present" value="1" />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-16 -right-20 h-44 w-44 rounded-full bg-thl-orange/20 blur-3xl"
+          />
+          <div className="relative flex items-start gap-4">
+            <Checkbox
+              id="join_season_pool"
+              name="join_pool"
+              value="1"
+              defaultChecked={defaultPoolOptIn}
+              className="mt-1 h-7 w-7 rounded-lg border-2 border-thl-orange bg-white shadow-sm data-[state=checked]:bg-thl-orange dark:bg-black"
+            />
+            <div className="min-w-0">
+              <div className="text-[10px] font-extrabold tracking-[0.24em] text-thl-orange uppercase">
+                Season 04 pool
+              </div>
+              <div className="mt-1 text-xl leading-tight font-extrabold tracking-[-0.01em] text-neutral-950 md:text-2xl dark:text-white">
+                Yes, put me in the draft pool.
+              </div>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+                Selected by default. Leave this checked if you want captains to
+                see your profile for Season 04. Uncheck it if you&apos;re only
+                setting up an account for now.
+              </p>
+            </div>
+          </div>
+        </label>
+      )}
+
       <Field
         label="Tracker profile URL"
         htmlFor="tracker_url"
-        hint="We use this to pull updated ranks later. Find it on rocketleague.tracker.network."
+        hint={
+          <>
+            We use this to pull updated ranks later. Find it on{' '}
+            <a
+              href="https://rocketleague.tracker.network"
+              target="_blank"
+              rel="noreferrer"
+              className="text-thl-orange underline"
+            >
+              rocketleague.tracker.network
+            </a>
+            .
+          </>
+        }
         error={fe.tracker_url}
       >
         <div className="relative">

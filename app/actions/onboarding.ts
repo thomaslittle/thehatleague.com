@@ -57,6 +57,9 @@ export async function submitOnboarding(
   const rank3v3 = String(formData.get("rank_3v3") ?? "").trim();
   const peakRank = String(formData.get("peak_rank") ?? "").trim();
   const peakPlaylist = String(formData.get("peak_playlist") ?? "").trim();
+  const from = String(formData.get("_from") ?? "");
+  const shouldUpdatePool = formData.get("join_pool_present") === "1";
+  const joinPool = formData.get("join_pool") === "1";
 
   const fieldErrors: Record<string, string> = {};
 
@@ -106,31 +109,35 @@ export async function submitOnboarding(
     },
   });
 
+  const updates: Database["public"]["Tables"]["profiles"]["Update"] = {
+    rl_tracker_url: ranks.trackerUrl,
+    rank_2v2: ranks.rank2v2,
+    rank_3v3: ranks.rank3v3,
+    peak_rank: ranks.peakRank,
+    peak_rank_playlist: ranks.peakPlaylist,
+    ranks_updated_at: new Date().toISOString(),
+  };
+
+  if (shouldUpdatePool) {
+    updates.in_player_pool = joinPool;
+  }
+
   const { error: dbError } = await supabase
     .from("profiles")
-    .update({
-      rl_tracker_url: ranks.trackerUrl,
-      rank_2v2: ranks.rank2v2,
-      rank_3v3: ranks.rank3v3,
-      peak_rank: ranks.peakRank,
-      peak_rank_playlist: ranks.peakPlaylist,
-      ranks_updated_at: new Date().toISOString(),
-      in_player_pool: true,
-    })
+    .update(updates)
     .eq("id", user.id);
 
   if (dbError) {
     return { error: `Couldn't save ranks: ${dbError.message}` };
   }
 
-  const from = String(formData.get("_from") ?? "");
   revalidatePath("/dashboard");
   revalidatePath("/pool");
   if (from === "settings") {
     revalidatePath("/settings");
     redirect("/settings?saved=1");
   }
-  redirect("/dashboard?welcome=1");
+  redirect(`/dashboard?welcome=1${joinPool ? "" : "&left=1"}`);
 }
 
 /** Land the user in the pool without ranks. They get a "finish up" nag on
