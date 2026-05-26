@@ -146,7 +146,7 @@ export function Hero({ viewer }: { viewer?: ViewerInfo | null } = {}) {
                 Season 04
               </div>
               <div className="absolute top-5 right-5 inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-thl-orange" />
+                <span className="h-1.5 w-1.5 rounded-full bg-thl-orange" />
                 Live soon
               </div>
 

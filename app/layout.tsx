@@ -5,7 +5,6 @@ import { readThemePref } from "@/lib/theme";
 import { SITE } from "@/lib/site";
 import { cn } from "@/lib/cn";
 import { QueryProvider } from "@/components/providers/query-provider";
-import { RevealObserver } from "@/components/reveal/reveal-observer";
 
 const interTight = Inter_Tight({
   variable: "--font-inter-tight",
@@ -93,7 +92,6 @@ export default async function RootLayout({
         <a href="#main" className="thl-skip-link">
           Skip to content
         </a>
-        <RevealObserver />
         <QueryProvider>{children}</QueryProvider>
       </body>
     </html>

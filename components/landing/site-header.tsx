@@ -49,7 +49,6 @@ export function SiteHeader({
         <div className="mx-auto flex h-9 max-w-[1320px] items-center justify-between px-6 text-[11px] tracking-[0.18em] uppercase md:px-10">
           <div className="flex min-w-0 items-center gap-2.5 font-bold text-neutral-700 dark:text-neutral-300">
             <span className="relative flex h-2 w-2 shrink-0">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-thl-orange opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-thl-orange" />
             </span>
             {headlineAnnouncement ? (
@@ -135,7 +134,6 @@ export function SiteHeader({
             {twitchLive ? (
               <>
                 <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/70" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
                 </span>
                 Live now

@@ -87,55 +87,20 @@ html {
   font-weight: 400;
 }
 
-/* Scroll-reveal: hidden by default, slides + fades up when JS adds `.in`.
-   The RevealObserver client component manages the trigger. */
-.reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition:
-    opacity 700ms cubic-bezier(0.22, 0.61, 0.36, 1),
-    transform 700ms cubic-bezier(0.22, 0.61, 0.36, 1);
-  will-change: opacity, transform;
-}
-.reveal.in {
+/* `.reveal` markers stay on the markup but render fully visible. The
+   IntersectionObserver-driven scroll-reveal was causing layout/visibility
+   bugs, so everything now renders immediately. */
+.reveal,
+.reveal.in,
+.reveal-delay-1,
+.reveal-delay-2,
+.reveal-delay-3 {
   opacity: 1;
   transform: none;
-}
-.reveal-delay-1 {
-  transition-delay: 80ms;
-}
-.reveal-delay-2 {
-  transition-delay: 160ms;
-}
-.reveal-delay-3 {
-  transition-delay: 240ms;
-}
-@media (prefers-reduced-motion: reduce) {
-  .reveal,
-  .reveal.in,
-  .reveal-delay-1,
-  .reveal-delay-2,
-  .reveal-delay-3 {
-    transition: none;
-    opacity: 1;
-    transform: none;
-  }
+  transition: none;
 }
 
-/* Live-feed ticker marquee. */
-@keyframes thl-ticker {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
 .thl-ticker {
-  animation: thl-ticker 38s linear infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .thl-ticker {
-    animation: none;
-  }
+  /* Ticker no longer scrolls — content sits in place. */
+  animation: none;
 }

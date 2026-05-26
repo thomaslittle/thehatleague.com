@@ -62,7 +62,6 @@ export default async function MvpPage() {
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-thl-orange/30 bg-thl-orange/10 px-6 py-5 md:px-8">
           <div className="flex items-center gap-3">
             <span className="flex h-3 w-3 items-center justify-center">
-              <span className="absolute inline-flex h-3 w-3 animate-ping rounded-full bg-thl-orange opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-thl-orange" />
             </span>
             <div>
