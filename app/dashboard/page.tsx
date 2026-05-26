@@ -17,6 +17,7 @@ import { CopyLinkButton } from "@/components/share/copy-link-button";
 import { env } from "@/lib/env";
 import { rankWeight } from "@/lib/data/rank-sort";
 import { RankBadge } from "@/components/ranks/rank-badge";
+import { getTwitchLive } from "@/lib/twitch/live";
 
 export const metadata = {
   title: "Dashboard",
@@ -33,7 +34,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
   } = await supabase.auth.getUser();
   if (!user) redirect("/signin?redirect=/dashboard");
 
-  const [{ data: profile }, announcements, { data: poolByPeak }] =
+  const [{ data: profile }, announcements, { data: poolByPeak }, twitch] =
     await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).single(),
       getRecentAnnouncements(3),
@@ -41,6 +42,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
         .from("profiles")
         .select("id, peak_rank")
         .eq("in_player_pool", true),
+      getTwitchLive(),
     ]);
   if (!profile) redirect("/onboarding");
   const headline = announcements[0]
@@ -80,6 +82,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
         showSignup={false}
         headlineAnnouncement={headline}
         navCounts={{ "/pool": (poolByPeak ?? []).length }}
+        twitchLive={twitch?.isLive ?? false}
       />
       <main id="main" className="relative overflow-hidden">
         <div

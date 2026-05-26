@@ -14,10 +14,11 @@ import { POOL_SELECT, type PoolRow } from "@/lib/data/pool";
 import { getRecentAnnouncements } from "@/lib/data/announcements";
 import { cleanDiscordUsername } from "@/lib/discord/name";
 import type { ViewerInfo } from "@/components/landing/site-header";
+import { getTwitchLive } from "@/lib/twitch/live";
 
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();
-  const [theme, recent, announcements, { count: poolCount }, { data: { user } }] =
+  const [theme, recent, announcements, { count: poolCount }, { data: { user } }, twitch] =
     await Promise.all([
       readThemePref(),
       supabase
@@ -32,6 +33,7 @@ export default async function HomePage() {
         .select("id", { count: "exact", head: true })
         .eq("in_player_pool", true),
       supabase.auth.getUser(),
+      getTwitchLive(),
     ]);
   const headline = announcements[0]
     ? { slug: announcements[0].slug, title: announcements[0].title }
@@ -63,6 +65,7 @@ export default async function HomePage() {
         headlineAnnouncement={headline}
         navCounts={{ "/pool": poolCount ?? 0 }}
         viewer={viewer}
+        twitchLive={twitch?.isLive ?? false}
       />
       <main id="main">
         <Hero viewer={viewer} />

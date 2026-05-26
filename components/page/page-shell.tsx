@@ -5,10 +5,11 @@ import { SiteFooter } from "@/components/landing/site-footer";
 import { getRecentAnnouncements } from "@/lib/data/announcements";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { cleanDiscordUsername } from "@/lib/discord/name";
+import { getTwitchLive } from "@/lib/twitch/live";
 
 export async function PageShell({ children }: { children: ReactNode }) {
   const supabase = await createSupabaseServerClient();
-  const [theme, announcements, { count: poolCount }, { data: { user } }] =
+  const [theme, announcements, { count: poolCount }, { data: { user } }, twitch] =
     await Promise.all([
       readThemePref(),
       getRecentAnnouncements(1),
@@ -17,6 +18,7 @@ export async function PageShell({ children }: { children: ReactNode }) {
         .select("id", { count: "exact", head: true })
         .eq("in_player_pool", true),
       supabase.auth.getUser(),
+      getTwitchLive(),
     ]);
   const headline = announcements[0]
     ? { slug: announcements[0].slug, title: announcements[0].title }
@@ -48,6 +50,7 @@ export async function PageShell({ children }: { children: ReactNode }) {
         headlineAnnouncement={headline}
         navCounts={{ "/pool": poolCount ?? 0 }}
         viewer={viewer}
+        twitchLive={twitch?.isLive ?? false}
       />
       <main id="main">{children}</main>
       <SiteFooter />

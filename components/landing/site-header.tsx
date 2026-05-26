@@ -26,6 +26,7 @@ export function SiteHeader({
   headlineAnnouncement,
   navCounts,
   viewer,
+  twitchLive,
 }: {
   theme: ThemePref;
   signupHref?: string;
@@ -37,6 +38,8 @@ export function SiteHeader({
   headlineAnnouncement?: { slug: string; title: string } | null;
   /** When provided, the header reflects auth state instead of showing Sign up. */
   viewer?: ViewerInfo | null;
+  /** Set when Twitch reports the league channel is currently streaming. */
+  twitchLive?: boolean;
 }) {
   const showSignupButton = showSignup && !viewer?.isAuthenticated;
   return (
@@ -122,10 +125,24 @@ export function SiteHeader({
             href={SITE.twitchUrl}
             target="_blank"
             rel="noopener"
-            className="hidden items-center gap-2 px-3 py-2 text-sm font-semibold text-neutral-700 transition hover:text-[#9146ff] md:inline-flex dark:text-neutral-300 dark:hover:text-[#a970ff]"
+            className={
+              twitchLive
+                ? "hidden items-center gap-2 rounded-lg bg-[#9146ff] px-3 py-2 text-sm font-bold whitespace-nowrap text-white transition hover:bg-[#7c2bff] md:inline-flex"
+                : "hidden items-center gap-2 px-3 py-2 text-sm font-semibold text-neutral-700 transition hover:text-[#9146ff] md:inline-flex dark:text-neutral-300 dark:hover:text-[#a970ff]"
+            }
           >
             <TwitchIcon className="h-4 w-4" />
-            Watch
+            {twitchLive ? (
+              <>
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/70" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+                </span>
+                Live now
+              </>
+            ) : (
+              "Watch"
+            )}
           </a>
           <a
             href={SITE.discordInvite}
