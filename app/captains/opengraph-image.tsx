@@ -1,5 +1,12 @@
 import { ImageResponse } from "next/og";
-import { BG, OG_CONTENT_TYPE, OG_SIZE, TYPE, loadLogoDataUri } from "@/lib/og";
+import {
+  OG_CONTENT_TYPE,
+  OG_SIZE,
+  TYPE,
+  loadLogoDataUri,
+  loadOgFonts,
+  ogBackgroundStyle,
+} from "@/lib/og";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const alt =
@@ -37,10 +44,10 @@ export default async function Image() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: BG.page,
           color: "#fff",
-          fontFamily: "ui-sans-serif, system-ui, sans-serif",
-          padding: 64,
+          fontFamily: "Inter Tight",
+          padding: 72,
+          ...ogBackgroundStyle(),
         }}
       >
         <div
@@ -73,13 +80,13 @@ export default async function Image() {
           }}
         >
           <div style={{ display: "flex", flexDirection: "column", maxWidth: 760 }}>
-            <div style={{ ...TYPE.display, fontSize: 100 }}>
+            <div style={{ display: "flex", ...TYPE.display, fontSize: 96 }}>
               The ones doing
             </div>
-            <div style={{ ...TYPE.display, fontSize: 100, color: "#f76103" }}>
+            <div style={{ display: "flex", ...TYPE.marker, fontSize: 132, marginTop: -4 }}>
               the picking.
             </div>
-            <div style={{ display: "flex", gap: 56, marginTop: 44 }}>
+            <div style={{ display: "flex", gap: 56, marginTop: 36 }}>
               <Stat label="Confirmed" value={confirmed} />
               <Stat label="Applications" value={pending} />
             </div>
@@ -91,7 +98,7 @@ export default async function Image() {
             alt=""
             width={300}
             height={300}
-            style={{ display: "block" }}
+            style={{ display: "block", filter: "drop-shadow(0 30px 60px rgba(247,97,3,0.5))" }}
           />
         </div>
 
@@ -110,7 +117,7 @@ export default async function Image() {
         </div>
       </div>
     ),
-    size,
+    { ...size, fonts: loadOgFonts() },
   );
 }
 
@@ -120,6 +127,7 @@ function Stat({ label, value }: { label: string; value: number }) {
       <div
         style={{
           display: "flex",
+          fontFamily: "Inter Tight",
           fontSize: 18,
           letterSpacing: 4,
           textTransform: "uppercase",
@@ -132,6 +140,7 @@ function Stat({ label, value }: { label: string; value: number }) {
       <div
         style={{
           display: "flex",
+          fontFamily: "Inter Tight",
           marginTop: 6,
           fontSize: 84,
           fontWeight: 800,

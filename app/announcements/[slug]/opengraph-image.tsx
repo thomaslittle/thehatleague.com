@@ -1,5 +1,12 @@
 import { ImageResponse } from "next/og";
-import { BG, OG_CONTENT_TYPE, OG_SIZE, TYPE, loadLogoDataUri } from "@/lib/og";
+import {
+  OG_CONTENT_TYPE,
+  OG_SIZE,
+  TYPE,
+  loadLogoDataUri,
+  loadOgFonts,
+  ogBackgroundStyle,
+} from "@/lib/og";
 import { getAnnouncementBySlug } from "@/lib/data/announcements";
 
 export const alt = "The Hat League · Announcement";
@@ -34,10 +41,10 @@ export default async function Image(props: {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: BG.page,
           color: "#fff",
-          fontFamily: "ui-sans-serif, system-ui, sans-serif",
-          padding: 64,
+          fontFamily: "Inter Tight",
+          padding: 72,
+          ...ogBackgroundStyle(),
         }}
       >
         <div
@@ -85,6 +92,7 @@ export default async function Image(props: {
             </div>
             <div
               style={{
+                display: "flex",
                 ...TYPE.display,
                 fontSize: titleFontSize,
               }}
@@ -99,7 +107,7 @@ export default async function Image(props: {
             alt=""
             width={260}
             height={260}
-            style={{ display: "block" }}
+            style={{ display: "block", filter: "drop-shadow(0 30px 60px rgba(247,97,3,0.5))" }}
           />
         </div>
 
@@ -118,6 +126,6 @@ export default async function Image(props: {
         </div>
       </div>
     ),
-    size,
+    { ...size, fonts: loadOgFonts() },
   );
 }

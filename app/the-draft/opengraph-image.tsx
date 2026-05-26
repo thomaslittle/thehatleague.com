@@ -1,5 +1,12 @@
 import { ImageResponse } from "next/og";
-import { BG, OG_CONTENT_TYPE, OG_SIZE, TYPE, loadLogoDataUri } from "@/lib/og";
+import {
+  OG_CONTENT_TYPE,
+  OG_SIZE,
+  TYPE,
+  loadLogoDataUri,
+  loadOgFonts,
+  ogBackgroundStyle,
+} from "@/lib/og";
 
 export const alt =
   "The Hat League · Season 04 Draft — live on Twitch. Date TBA.";
@@ -17,10 +24,10 @@ export default async function Image() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: BG.page,
           color: "#fff",
-          fontFamily: "ui-sans-serif, system-ui, sans-serif",
-          padding: 64,
+          fontFamily: "Inter Tight",
+          padding: 72,
+          ...ogBackgroundStyle(),
         }}
       >
         <div style={{ ...TYPE.eyebrow, display: "flex", alignItems: "center", gap: 18 }}>
@@ -38,20 +45,26 @@ export default async function Image() {
           }}
         >
           <div style={{ display: "flex", flexDirection: "column", maxWidth: 720 }}>
-            <div style={{ ...TYPE.display, fontSize: 112 }}>
-              Captains pick live.
+            <div style={{ display: "flex", ...TYPE.display, fontSize: 104 }}>
+              Captains pick
             </div>
-            <div style={{ ...TYPE.display, fontSize: 112, color: "#f76103" }}>
-              One night.
+            <div style={{ display: "flex", ...TYPE.marker, fontSize: 140, marginTop: -6 }}>
+              live.
             </div>
-            <div style={{ ...TYPE.body, marginTop: 28, maxWidth: 680 }}>
+            <div style={{ display: "flex", ...TYPE.body, marginTop: 26, maxWidth: 680 }}>
               Live-streamed draft. Captains pick their squads in front of
               chat — one round, every player, no second chances.
             </div>
           </div>
 
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logoSrc} alt="" width={300} height={300} style={{ display: "block" }} />
+          <img
+            src={logoSrc}
+            alt=""
+            width={300}
+            height={300}
+            style={{ display: "block", filter: "drop-shadow(0 30px 60px rgba(247,97,3,0.5))" }}
+          />
         </div>
 
         <div
@@ -60,8 +73,8 @@ export default async function Image() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            paddingTop: 18,
-            borderTop: "1px solid rgba(255,255,255,0.15)",
+            paddingTop: 22,
+            borderTop: "1px solid rgba(255,255,255,0.18)",
           }}
         >
           <span>thehatleague.com/the-draft</span>
@@ -69,6 +82,6 @@ export default async function Image() {
         </div>
       </div>
     ),
-    size,
+    { ...size, fonts: loadOgFonts() },
   );
 }

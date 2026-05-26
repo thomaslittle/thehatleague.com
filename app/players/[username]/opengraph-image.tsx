@@ -1,5 +1,12 @@
 import { ImageResponse } from "next/og";
-import { BG, OG_CONTENT_TYPE, OG_SIZE, TYPE, loadLogoDataUri } from "@/lib/og";
+import {
+  OG_CONTENT_TYPE,
+  OG_SIZE,
+  TYPE,
+  loadLogoDataUri,
+  loadOgFonts,
+  ogBackgroundStyle,
+} from "@/lib/og";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { cleanDiscordUsername } from "@/lib/discord/name";
 
@@ -43,10 +50,10 @@ export default async function Image(props: {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: BG.page,
           color: "#fff",
-          fontFamily: "ui-sans-serif, system-ui, sans-serif",
-          padding: 56,
+          fontFamily: "Inter Tight",
+          padding: 64,
+          ...ogBackgroundStyle(),
         }}
       >
         <div style={{ ...TYPE.eyebrow, display: "flex", alignItems: "center", gap: 18 }}>
@@ -161,7 +168,7 @@ export default async function Image(props: {
         </div>
       </div>
     ),
-    size,
+    { ...size, fonts: loadOgFonts() },
   );
 }
 

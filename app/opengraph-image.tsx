@@ -1,5 +1,12 @@
 import { ImageResponse } from "next/og";
-import { BG, OG_CONTENT_TYPE, OG_SIZE, TYPE, loadLogoDataUri } from "@/lib/og";
+import {
+  OG_CONTENT_TYPE,
+  OG_SIZE,
+  TYPE,
+  loadLogoDataUri,
+  loadOgFonts,
+  ogBackgroundStyle,
+} from "@/lib/og";
 
 export const alt =
   "The Hat League — A Rocket League tournament series. More than mid, less than pro.";
@@ -17,13 +24,15 @@ export default async function Image() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: BG.page,
+          padding: 72,
           color: "#fff",
-          fontFamily: "ui-sans-serif, system-ui, sans-serif",
-          padding: 64,
+          fontFamily: "Inter Tight",
+          ...ogBackgroundStyle(),
         }}
       >
-        <div style={{ ...TYPE.eyebrow, display: "flex", alignItems: "center", gap: 18 }}>
+        <div
+          style={{ ...TYPE.eyebrow, display: "flex", alignItems: "center", gap: 18 }}
+        >
           <span
             style={{
               width: 10,
@@ -42,19 +51,46 @@ export default async function Image() {
             flex: 1,
             alignItems: "center",
             justifyContent: "space-between",
-            gap: 48,
+            gap: 56,
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", maxWidth: 720 }}>
-            <div style={TYPE.display}>The Hat League</div>
-            <div style={{ ...TYPE.body, marginTop: 28, maxWidth: 640 }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              maxWidth: 720,
+            }}
+          >
+            <div style={{ display: "flex", ...TYPE.display, fontSize: 116 }}>
+              The Hat
+            </div>
+            <div
+              style={{
+                display: "flex",
+                ...TYPE.marker,
+                fontSize: 168,
+                marginTop: -6,
+              }}
+            >
+              League.
+            </div>
+            <div style={{ display: "flex", ...TYPE.body, marginTop: 28 }}>
               More than mid, less than pro. A draft-style RL series — sign
               up, get drafted live on Twitch, bring your hat.
             </div>
           </div>
 
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logoSrc} alt="" width={360} height={360} style={{ display: "block" }} />
+          <img
+            src={logoSrc}
+            alt=""
+            width={360}
+            height={360}
+            style={{
+              display: "block",
+              filter: "drop-shadow(0 30px 60px rgba(247,97,3,0.55))",
+            }}
+          />
         </div>
 
         <div
@@ -63,8 +99,8 @@ export default async function Image() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            paddingTop: 18,
-            borderTop: "1px solid rgba(255,255,255,0.15)",
+            paddingTop: 22,
+            borderTop: "1px solid rgba(255,255,255,0.18)",
           }}
         >
           <span>thehatleague.com</span>
@@ -72,6 +108,6 @@ export default async function Image() {
         </div>
       </div>
     ),
-    size,
+    { ...size, fonts: loadOgFonts() },
   );
 }

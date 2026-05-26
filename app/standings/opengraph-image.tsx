@@ -1,5 +1,12 @@
 import { ImageResponse } from "next/og";
-import { BG, OG_CONTENT_TYPE, OG_SIZE, TYPE, loadLogoDataUri } from "@/lib/og";
+import {
+  OG_CONTENT_TYPE,
+  OG_SIZE,
+  TYPE,
+  loadLogoDataUri,
+  loadOgFonts,
+  ogBackgroundStyle,
+} from "@/lib/og";
 import {
   FEDORA_S3,
   SOMBRERO_S3,
@@ -23,10 +30,10 @@ export default async function Image() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: BG.page,
           color: "#fff",
-          fontFamily: "ui-sans-serif, system-ui, sans-serif",
-          padding: 64,
+          fontFamily: "Inter Tight",
+          padding: 72,
+          ...ogBackgroundStyle(),
         }}
       >
         <div
@@ -59,10 +66,10 @@ export default async function Image() {
           }}
         >
           <div style={{ display: "flex", flexDirection: "column", maxWidth: 720 }}>
-            <div style={{ ...TYPE.display, fontSize: 100 }}>
+            <div style={{ display: "flex", ...TYPE.display, fontSize: 92 }}>
               Two conferences.
             </div>
-            <div style={{ ...TYPE.display, fontSize: 100, color: "#f76103" }}>
+            <div style={{ display: "flex", ...TYPE.marker, fontSize: 132, marginTop: -4 }}>
               One hat.
             </div>
 
@@ -92,7 +99,7 @@ export default async function Image() {
             alt=""
             width={260}
             height={260}
-            style={{ display: "block" }}
+            style={{ display: "block", filter: "drop-shadow(0 30px 60px rgba(247,97,3,0.5))" }}
           />
         </div>
 
@@ -111,7 +118,7 @@ export default async function Image() {
         </div>
       </div>
     ),
-    size,
+    { ...size, fonts: loadOgFonts() },
   );
 }
 

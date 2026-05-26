@@ -1,5 +1,12 @@
 import { ImageResponse } from "next/og";
-import { BG, OG_CONTENT_TYPE, OG_SIZE, TYPE, loadLogoDataUri } from "@/lib/og";
+import {
+  OG_CONTENT_TYPE,
+  OG_SIZE,
+  TYPE,
+  loadLogoDataUri,
+  loadOgFonts,
+  ogBackgroundStyle,
+} from "@/lib/og";
 import { HISTORICAL_PLAYERS } from "@/lib/data/historical-player-stats";
 
 export const alt =
@@ -21,10 +28,10 @@ export default async function Image() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: BG.page,
           color: "#fff",
-          fontFamily: "ui-sans-serif, system-ui, sans-serif",
-          padding: 64,
+          fontFamily: "Inter Tight",
+          padding: 72,
+          ...ogBackgroundStyle(),
         }}
       >
         <div style={{ ...TYPE.eyebrow, display: "flex", alignItems: "center", gap: 18 }}>
@@ -50,8 +57,8 @@ export default async function Image() {
           }}
         >
           <div style={{ display: "flex", flexDirection: "column", maxWidth: 760 }}>
-            <div style={{ ...TYPE.display, fontSize: 108 }}>Every hat,</div>
-            <div style={{ ...TYPE.display, fontSize: 108, color: "#f76103" }}>
+            <div style={{ display: "flex", ...TYPE.display, fontSize: 100 }}>Every hat,</div>
+            <div style={{ display: "flex", ...TYPE.marker, fontSize: 144, marginTop: -4 }}>
               every stat.
             </div>
 
@@ -110,7 +117,7 @@ export default async function Image() {
             alt=""
             width={280}
             height={280}
-            style={{ display: "block" }}
+            style={{ display: "block", filter: "drop-shadow(0 30px 60px rgba(247,97,3,0.5))" }}
           />
         </div>
 
@@ -129,6 +136,6 @@ export default async function Image() {
         </div>
       </div>
     ),
-    size,
+    { ...size, fonts: loadOgFonts() },
   );
 }

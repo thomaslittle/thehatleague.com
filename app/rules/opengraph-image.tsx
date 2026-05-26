@@ -1,5 +1,12 @@
 import { ImageResponse } from "next/og";
-import { BG, OG_CONTENT_TYPE, OG_SIZE, TYPE, loadLogoDataUri } from "@/lib/og";
+import {
+  OG_CONTENT_TYPE,
+  OG_SIZE,
+  TYPE,
+  loadLogoDataUri,
+  loadOgFonts,
+  ogBackgroundStyle,
+} from "@/lib/og";
 
 export const alt =
   "The Hat League · Rules — S03 archive, S04 update in progress.";
@@ -16,10 +23,10 @@ export default async function Image() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: BG.page,
           color: "#fff",
-          fontFamily: "ui-sans-serif, system-ui, sans-serif",
-          padding: 64,
+          fontFamily: "Inter Tight",
+          padding: 72,
+          ...ogBackgroundStyle(),
         }}
       >
         <div
@@ -52,11 +59,9 @@ export default async function Image() {
           }}
         >
           <div style={{ display: "flex", flexDirection: "column", maxWidth: 780 }}>
-            <div style={{ ...TYPE.display, fontSize: 100 }}>Old rules,</div>
-            <div style={{ ...TYPE.display, fontSize: 100 }}>new wrinkles</div>
-            <div
-              style={{ ...TYPE.display, fontSize: 100, color: "#f76103" }}
-            >
+            <div style={{ display: "flex", ...TYPE.display, fontSize: 88 }}>Old rules,</div>
+            <div style={{ display: "flex", ...TYPE.display, fontSize: 88 }}>new wrinkles</div>
+            <div style={{ display: "flex", ...TYPE.marker, fontSize: 120, marginTop: -2 }}>
               coming for S04.
             </div>
           </div>
@@ -67,7 +72,7 @@ export default async function Image() {
             alt=""
             width={240}
             height={240}
-            style={{ display: "block" }}
+            style={{ display: "block", filter: "drop-shadow(0 30px 60px rgba(247,97,3,0.5))" }}
           />
         </div>
 
@@ -77,8 +82,8 @@ export default async function Image() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            paddingTop: 18,
-            borderTop: "1px solid rgba(255,255,255,0.15)",
+            paddingTop: 22,
+            borderTop: "1px solid rgba(255,255,255,0.18)",
           }}
         >
           <span>thehatleague.com/rules</span>
@@ -86,6 +91,6 @@ export default async function Image() {
         </div>
       </div>
     ),
-    size,
+    { ...size, fonts: loadOgFonts() },
   );
 }

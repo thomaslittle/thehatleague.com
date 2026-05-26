@@ -29,7 +29,7 @@ export function PageHero({
           alt=""
           fill
           sizes="100vw"
-          className="object-cover opacity-5 dark:opacity-5"
+          className="object-cover opacity-10 dark:opacity-10"
           style={{ objectPosition: "55% 35%" }}
         />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-white dark:to-black" />

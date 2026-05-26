@@ -1,5 +1,12 @@
 import { ImageResponse } from "next/og";
-import { BG, OG_CONTENT_TYPE, OG_SIZE, TYPE, loadLogoDataUri } from "@/lib/og";
+import {
+  OG_CONTENT_TYPE,
+  OG_SIZE,
+  TYPE,
+  loadLogoDataUri,
+  loadOgFonts,
+  ogBackgroundStyle,
+} from "@/lib/og";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const alt =
@@ -36,10 +43,10 @@ export default async function Image() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: BG.page,
           color: "#fff",
-          fontFamily: "ui-sans-serif, system-ui, sans-serif",
-          padding: 64,
+          fontFamily: "Inter Tight",
+          padding: 72,
+          ...ogBackgroundStyle(),
         }}
       >
         <div style={{ ...TYPE.eyebrow, display: "flex", alignItems: "center", gap: 18 }}>
@@ -57,22 +64,31 @@ export default async function Image() {
           }}
         >
           <div style={{ display: "flex", flexDirection: "column", maxWidth: 760 }}>
-            <div style={{ ...TYPE.display, fontSize: 104 }}>
-              Everyone in the lobby.
+            <div style={{ display: "flex", ...TYPE.display, fontSize: 92 }}>
+              Everyone in the
             </div>
-            <div style={{ ...TYPE.body, marginTop: 22, maxWidth: 680 }}>
+            <div style={{ display: "flex", ...TYPE.marker, fontSize: 132, marginTop: -4 }}>
+              lobby.
+            </div>
+            <div style={{ display: "flex", ...TYPE.body, marginTop: 22, maxWidth: 680 }}>
               The list captains pick from on draft night. Sort by 2v2, 3v3,
               or peak rank.
             </div>
 
-            <div style={{ display: "flex", gap: 56, marginTop: 40 }}>
+            <div style={{ display: "flex", gap: 56, marginTop: 32 }}>
               <Stat label="In the pool" value={totalInPool} />
               <Stat label="Captains" value={captainCount} />
             </div>
           </div>
 
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logoSrc} alt="" width={300} height={300} style={{ display: "block" }} />
+          <img
+            src={logoSrc}
+            alt=""
+            width={300}
+            height={300}
+            style={{ display: "block", filter: "drop-shadow(0 30px 60px rgba(247,97,3,0.5))" }}
+          />
         </div>
 
         <div
@@ -81,8 +97,8 @@ export default async function Image() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            paddingTop: 18,
-            borderTop: "1px solid rgba(255,255,255,0.15)",
+            paddingTop: 22,
+            borderTop: "1px solid rgba(255,255,255,0.18)",
           }}
         >
           <span>thehatleague.com/pool</span>
@@ -90,17 +106,37 @@ export default async function Image() {
         </div>
       </div>
     ),
-    size,
+    { ...size, fonts: loadOgFonts() },
   );
 }
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <div style={{ fontSize: 18, color: "#9a9a9a", letterSpacing: 4, textTransform: "uppercase", fontWeight: 700 }}>
+      <div
+        style={{
+          display: "flex",
+          fontFamily: "Inter Tight",
+          fontSize: 18,
+          color: "#9a9a9a",
+          letterSpacing: 4,
+          textTransform: "uppercase",
+          fontWeight: 700,
+        }}
+      >
         {label}
       </div>
-      <div style={{ marginTop: 6, fontSize: 84, fontWeight: 800, color: "#f76103", lineHeight: 1 }}>
+      <div
+        style={{
+          display: "flex",
+          fontFamily: "Inter Tight",
+          marginTop: 6,
+          fontSize: 84,
+          fontWeight: 800,
+          color: "#f76103",
+          lineHeight: 1,
+        }}
+      >
         {value}
       </div>
     </div>
