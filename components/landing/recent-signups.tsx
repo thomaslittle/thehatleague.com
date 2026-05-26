@@ -16,7 +16,7 @@ const RECENT_LIMIT = 6;
 export function RecentSignups({ initialRows }: { initialRows: PoolRow[] }) {
   const queryClient = useQueryClient();
   const { data = initialRows } = useQuery<PoolRow[]>({
-    queryKey: queryKeys.playerPool(),
+    queryKey: queryKeys.playerPool.recent(),
     initialData: initialRows,
     queryFn: async () => {
       const supabase = getSupabaseBrowserClient();
@@ -40,7 +40,7 @@ export function RecentSignups({ initialRows }: { initialRows: PoolRow[] }) {
         "postgres_changes",
         { event: "*", schema: "public", table: "profiles" },
         () => {
-          queryClient.invalidateQueries({ queryKey: queryKeys.playerPool() });
+          queryClient.invalidateQueries({ queryKey: queryKeys.playerPool.all() });
         },
       )
       .subscribe();

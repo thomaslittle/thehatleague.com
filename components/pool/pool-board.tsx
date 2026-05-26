@@ -31,7 +31,7 @@ export function PoolBoard({
   const queryClient = useQueryClient();
 
   const { data: rows = initialRows } = useQuery<PoolRow[]>({
-    queryKey: queryKeys.playerPool(),
+    queryKey: queryKeys.playerPool.full(),
     initialData: initialRows,
     queryFn: async () => {
       const supabase = getSupabaseBrowserClient();
@@ -56,7 +56,9 @@ export function PoolBoard({
         "postgres_changes",
         { event: "*", schema: "public", table: "profiles" },
         () => {
-          queryClient.invalidateQueries({ queryKey: queryKeys.playerPool() });
+          // Invalidate every player-pool query so the recent-signups
+          // widget on the landing page also picks up the change.
+          queryClient.invalidateQueries({ queryKey: queryKeys.playerPool.all() });
         },
       )
       .subscribe();
