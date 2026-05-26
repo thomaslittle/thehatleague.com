@@ -15,6 +15,14 @@ interface HypeVideo {
 
 const VIDEOS: HypeVideo[] = [
   {
+    id: "s3",
+    ytId: "kWa6LEndXks",
+    startSeconds: 1,
+    title: "Season 3 Grand Finals Hype",
+    eyebrow: "Season 03 · Most recent",
+    blurb: "The most recent run. Stakes higher than ever.",
+  },
+  {
     id: "s2",
     ytId: "HUCRdWOfgvw",
     startSeconds: 7,
@@ -73,7 +81,7 @@ export function HypeReel() {
           </a>
         </div>
 
-        <ul className="reveal mt-10 grid gap-6 md:mt-14 md:grid-cols-2 md:gap-8">
+        <ul className="reveal mt-10 grid gap-6 md:mt-14 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
           {VIDEOS.map((v) => (
             <li key={v.id}>
               <HypeCard video={v} />
