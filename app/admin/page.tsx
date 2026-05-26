@@ -7,7 +7,7 @@ export default async function AdminIndexPage() {
   const [
     { count: pendingCaptains },
     { count: confirmedCaptains },
-    { count: pendingDevops },
+    { count: pendingOps },
     { count: totalPool },
     { count: announcementCount },
   ] = await Promise.all([
@@ -23,8 +23,8 @@ export default async function AdminIndexPage() {
     supabase
       .from("profiles")
       .select("id", { count: "exact", head: true })
-      .eq("is_devops_applicant", true)
-      .eq("is_devops", false),
+      .eq("is_admin_applicant", true)
+      .eq("is_admin", false),
     supabase
       .from("profiles")
       .select("id", { count: "exact", head: true })
@@ -47,7 +47,7 @@ export default async function AdminIndexPage() {
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <Stat label="Pending captain apps" value={pendingCaptains ?? 0} />
         <Stat label="Confirmed captains" value={confirmedCaptains ?? 0} />
-        <Stat label="Pending devops apps" value={pendingDevops ?? 0} />
+        <Stat label="Pending ops apps" value={pendingOps ?? 0} />
         <Stat label="Players in pool" value={totalPool ?? 0} />
         <Stat label="Announcements" value={announcementCount ?? 0} />
       </div>
@@ -60,10 +60,10 @@ export default async function AdminIndexPage() {
           desc="Review the pitches, promote to captain in one click."
         />
         <AdminLink
-          href="/admin/devops"
-          eyebrow="Devops"
-          title="Approve devops crew"
-          desc="Review who wants to help build, ship, and run the site."
+          href="/admin/league-ops"
+          eyebrow="League ops"
+          title="Approve ops requests"
+          desc="Users asking to join league ops. Approving promotes them to admin."
         />
         <AdminLink
           href="/admin/announcements"

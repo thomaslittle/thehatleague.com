@@ -269,20 +269,38 @@ function messageToClip(m: DiscordMessage, guildId: string): Clip | null {
 // ---------------------------------------------------------------------------
 
 async function enrichClips(clips: Clip[]): Promise<Clip[]> {
-  const [profileMap, thumbs] = await Promise.all([
+  const [profileMap, thumbs, resolvedEmbeds] = await Promise.all([
     resolveProfiles(clips.map((c) => c.submitterDiscordId)),
     Promise.all(
       clips.map((c) =>
         c.thumbUrl ? Promise.resolve(c.thumbUrl) : resolveThumb(c),
       ),
     ),
+    Promise.all(clips.map((c) => resolveEmbedUrl(c))),
   ]);
 
-  return clips.map((c, i) => ({
-    ...c,
-    submitterProfile: profileMap.get(c.submitterDiscordId) ?? null,
-    thumbUrl: thumbs[i] ?? c.thumbUrl,
-  }));
+  return clips.map((c, i) => {
+    const resolved = resolvedEmbeds[i];
+    // For GIF Your Game clips, if we resolved a direct video URL, use it
+    // as videoUrl (which renders as a <video> element).
+    // For other sources, keep embedUrl as-is.
+    if (c.source === "gifyourgame" && resolved && resolved.isVideoUrl) {
+      return {
+        ...c,
+        submitterProfile: profileMap.get(c.submitterDiscordId) ?? null,
+        thumbUrl: thumbs[i] ?? c.thumbUrl,
+        videoUrl: resolved.url,
+        embedUrl: undefined,
+      };
+    }
+
+    return {
+      ...c,
+      submitterProfile: profileMap.get(c.submitterDiscordId) ?? null,
+      thumbUrl: thumbs[i] ?? c.thumbUrl,
+      embedUrl: resolved?.url ?? c.embedUrl,
+    };
+  });
 }
 
 async function resolveProfiles(
@@ -322,6 +340,55 @@ async function resolveThumb(c: Clip): Promise<string | undefined> {
       return deriveYouTubeThumb(c.url);
     default:
       return undefined;
+  }
+}
+
+async function resolveEmbedUrl(
+  c: Clip,
+): Promise<{ url: string; isVideoUrl: boolean } | undefined> {
+  // For GIF Your Game, fetch the page server-side to extract the video URL
+  // instead of relying on their embed endpoint (which requires authentication).
+  if (c.source === "gifyourgame" && c.embedUrl) {
+    const videoUrl = await resolveGifYourGameEmbed(c.url);
+    if (videoUrl) {
+      return { url: videoUrl, isVideoUrl: true };
+    }
+  }
+  // For other sources, return the original embedUrl (for iframe embedding)
+  if (c.embedUrl) {
+    return { url: c.embedUrl, isVideoUrl: false };
+  }
+  return undefined;
+}
+
+async function resolveGifYourGameEmbed(
+  url: string,
+): Promise<string | undefined> {
+  try {
+    const res = await fetch(url, {
+      headers: { "User-Agent": "TheHatLeague-Embedder/0.1" },
+      next: { revalidate: 60 * 60 }, // Cache for 1 hour
+    }).catch(() => null);
+
+    if (!res || !res.ok) return undefined;
+
+    const html = await res.text();
+
+    // GIF Your Game embeds the video URL in the page. Look for common patterns:
+    // 1. In a data attribute or script tag with the actual video URL
+    // 2. Look for .mp4 or .webm URLs in the HTML
+    const videoMatch = html.match(
+      /(?:src|data-src|url)\s*[=:]\s*['"](https?:\/\/[^'"]*\.(?:mp4|webm|m3u8))['"]/i,
+    );
+
+    if (videoMatch?.[1]) {
+      return videoMatch[1];
+    }
+
+    // Fallback: if we found a video URL, use it; otherwise fall back to embed
+    return undefined;
+  } catch {
+    return undefined;
   }
 }
 

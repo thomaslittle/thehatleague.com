@@ -26,9 +26,14 @@ export function ClipDialog({
   const [open, setOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="w-[min(96vw,1080px)]">
-        <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-950 shadow-[0_30px_80px_-20px_rgba(247,97,3,0.45)] dark:border-neutral-800">
+      {/* base-ui's Trigger uses `render` instead of `asChild`. We hand it
+          the card-shaped child so the whole card becomes the trigger. */}
+      <DialogTrigger render={children as React.ReactElement} />
+      <DialogContent
+        showCloseButton={false}
+        className="w-[min(96vw,1080px)] !max-w-none bg-neutral-950 p-0 ring-0"
+      >
+        <div className="overflow-hidden rounded-xl border border-neutral-800 shadow-[0_30px_80px_-20px_rgba(247,97,3,0.45)]">
           <ClipPlayer clip={clip} active={open} />
           <div className="flex items-start justify-between gap-3 px-5 py-4 text-white">
             <DialogTitle className="min-w-0 truncate text-base font-bold sm:text-lg">
@@ -36,7 +41,7 @@ export function ClipDialog({
             </DialogTitle>
             <DialogClose
               aria-label="Close"
-              className="-mt-1 -mr-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-neutral-300 transition hover:bg-white/10 hover:text-white"
+              className="-mt-1 -mr-1 inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-neutral-300 transition hover:bg-white/10 hover:text-white"
             >
               ✕
             </DialogClose>
@@ -52,7 +57,8 @@ function ClipPlayer({ clip, active }: { clip: Clip; active: boolean }) {
   // doesn't fire on initial page load.
   if (!active) return <div className="aspect-video w-full bg-black" />;
 
-  if (clip.videoUrl && clip.source === "discord-mp4") {
+  // Direct video URLs (Discord MP4s and resolved GIF Your Game clips)
+  if (clip.videoUrl) {
     return (
       <video
         controls
@@ -65,6 +71,7 @@ function ClipPlayer({ clip, active }: { clip: Clip; active: boolean }) {
     );
   }
 
+  // Embeddable sources (YouTube, Twitch, Medal — these work in iframes)
   if (clip.embedUrl) {
     return (
       <iframe

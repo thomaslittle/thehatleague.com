@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Inter_Tight, Permanent_Marker, JetBrains_Mono } from "next/font/google";
+import { Inter_Tight, Permanent_Marker, JetBrains_Mono, Geist } from "next/font/google";
 import "./globals.css";
 import { readThemePref } from "@/lib/theme";
 import { SITE } from "@/lib/site";
 import { cn } from "@/lib/cn";
 import { QueryProvider } from "@/components/providers/query-provider";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const interTight = Inter_Tight({
   variable: "--font-inter-tight",
@@ -85,7 +87,8 @@ export default async function RootLayout({
         interTight.variable,
         permanentMarker.variable,
         jetbrainsMono.variable,
-        "h-full antialiased",
+        geist.variable,
+        "h-full font-sans antialiased",
       )}
     >
       <body className="min-h-full bg-white text-neutral-900 dark:bg-black dark:text-white">
