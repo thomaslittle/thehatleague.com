@@ -20,7 +20,6 @@ import { rankWeight } from "@/lib/data/rank-sort";
 import { RankBadge } from "@/components/ranks/rank-badge";
 import { LeagueOpsApplication } from "@/components/league-ops/league-ops-application";
 import { getTwitchLive } from "@/lib/twitch/live";
-import { BrandBackdrop } from "@/components/page/brand-backdrop";
 import {
   SettingsSavedToast,
   type SettingsToastKind,
@@ -91,7 +90,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
   const avatarUrl = profile.profile_avatar_url ?? profile.discord_avatar_url;
 
   return (
-    <div className="min-h-screen bg-white text-neutral-900 dark:bg-black dark:text-white">
+    <div className="min-h-screen text-neutral-900 dark:text-white">
       <SiteHeader
         theme={theme}
         showSignup={false}
@@ -101,7 +100,6 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
       />
       <main id="main">
         <SettingsSavedToast kind={settingsSaved} />
-        <BrandBackdrop>
         <div className="mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
           {profile.is_admin && (
             <Link
@@ -520,7 +518,6 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
             />
           </section>
         </div>
-        </BrandBackdrop>
       </main>
       <SiteFooter />
     </div>

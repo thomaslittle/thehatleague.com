@@ -46,7 +46,7 @@ export async function PageShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-white text-neutral-900 dark:bg-black dark:text-white">
+    <div className="min-h-screen text-neutral-900 dark:text-white">
       <SiteHeader
         theme={theme}
         headlineAnnouncement={headline}

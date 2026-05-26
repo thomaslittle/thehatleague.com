@@ -15,7 +15,7 @@ export function RouteViewTransition({ children }: { children: ReactNode }) {
       exit="thl-route"
       default="none"
     >
-      <div>{children}</div>
+      <div className="relative z-10">{children}</div>
     </ViewTransition>
   );
 }

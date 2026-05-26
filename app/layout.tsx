@@ -6,6 +6,7 @@ import { readThemePref } from "@/lib/theme";
 import { SITE } from "@/lib/site";
 import { cn } from "@/lib/cn";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { BrandBackdropLayer } from "@/components/page/brand-backdrop";
 import { PageProgress } from "@/components/page/page-progress";
 import { RouteViewTransition } from "@/components/page/route-view-transition";
 import { Toaster } from "@/components/ui/sonner";
@@ -95,7 +96,8 @@ export default async function RootLayout({
         "h-full font-sans antialiased",
       )}
     >
-      <body className="min-h-full bg-white text-neutral-900 dark:bg-black dark:text-white">
+      <body className="relative min-h-full bg-white text-neutral-900 dark:bg-black dark:text-white">
+        <BrandBackdropLayer />
         <a href="#main" className="thl-skip-link">
           Skip to content
         </a>

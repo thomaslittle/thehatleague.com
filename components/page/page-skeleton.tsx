@@ -11,14 +11,6 @@ export async function PageSkeleton({
   return (
     <PageShell>
       <section className="relative overflow-hidden">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-60"
-          style={{
-            background:
-              "radial-gradient(ellipse at 20% 0%, rgba(247,97,3,0.18), transparent 55%)",
-          }}
-        />
         <div className="relative mx-auto max-w-[1320px] px-6 pt-14 pb-12 md:px-10 md:pt-20 md:pb-16">
           <div className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
             {eyebrow}

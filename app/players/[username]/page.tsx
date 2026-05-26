@@ -51,7 +51,6 @@ export default async function PlayerProfilePage(
   const name =
     player.discord_global_name ?? player.discord_username ?? "Unnamed";
   const avatarUrl = player.profile_avatar_url ?? player.discord_avatar_url;
-  const bannerUrl = player.profile_banner_url ?? "/brand/thl-fennec.png";
   const socialLinks = parseSocialLinks(player.social_links);
   const visibleSocials = SOCIAL_LINKS.filter((link) => socialLinks[link.key]);
   const joined = new Date(player.created_at);
@@ -61,51 +60,7 @@ export default async function PlayerProfilePage(
 
   return (
     <PageShell>
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] overflow-hidden"
-        >
-          <Image
-            src={bannerUrl}
-            alt=""
-            fill
-            sizes="100vw"
-            priority
-            unoptimized={!!player.profile_banner_url}
-            className="object-cover opacity-40 dark:opacity-45"
-            style={{ objectPosition: "50% 32%" }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/55 to-white/25 dark:from-black/80 dark:via-black/45 dark:to-black/20" />
-          <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-white dark:to-black" />
-        </div>
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-80"
-          style={{
-            background:
-              "radial-gradient(ellipse 60% 50% at 18% 10%, rgba(247,97,3,0.32), transparent 60%)",
-          }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-60"
-          style={{
-            background:
-              "radial-gradient(ellipse 50% 40% at 90% 0%, rgba(247,97,3,0.14), transparent 60%)",
-          }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-[0.08] dark:opacity-[0.05]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,0,0,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.5) 1px, transparent 1px)",
-            backgroundSize: "56px 56px",
-            maskImage:
-              "linear-gradient(180deg, rgba(0,0,0,1), transparent 90%)",
-          }}
-        />
+      <section className="relative">
         <div className="relative mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
           <div className="flex items-center justify-between gap-3">
             <Link

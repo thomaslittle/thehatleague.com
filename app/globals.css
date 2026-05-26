@@ -100,6 +100,7 @@
 
 html,
 body {
+  min-height: 100%;
   margin: 0;
   padding: 0;
 }
@@ -109,10 +110,13 @@ body {
   font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: clip;
 }
 
 html {
   scroll-behavior: smooth;
+  overflow-y: scroll;
+  scrollbar-gutter: stable both-edges;
 }
 
 html.theme-transitioning,
@@ -161,6 +165,19 @@ html.theme-transitioning *::after {
 }
 
 ::view-transition-new(site-header) {
+  animation: none;
+}
+
+::view-transition-group(brand-backdrop) {
+  animation: none;
+  z-index: 0;
+}
+
+::view-transition-old(brand-backdrop) {
+  display: none;
+}
+
+::view-transition-new(brand-backdrop) {
   animation: none;
 }
 
