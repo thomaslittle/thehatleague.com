@@ -6,6 +6,10 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Match every path except static assets, image optimization, and favicon.
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|brand|.*\\..*).*)"],
+  // Match every path except static assets, image optimization, favicon,
+  // and uptime probes (which are anonymous — no point hitting Supabase
+  // auth on every health check from Coolify).
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|brand|api/health|.*\\..*).*)",
+  ],
 };
