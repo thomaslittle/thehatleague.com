@@ -1,21 +1,11 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { env } from "@/lib/env";
+import { siteOrigin } from "@/lib/origin";
 
 const DISCORD_SCOPES = ["identify", "guilds", "guilds.members.read"].join(" ");
-
-async function siteOrigin() {
-  // Prefer the deployment URL from the request — falls back to env in CI.
-  const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "https";
-  if (host) return `${proto}://${host}`;
-  return env.SITE_URL;
-}
 
 export async function signInWithDiscord(formData: FormData) {
   const redirectTo = (formData.get("redirect") as string | null) ?? "/dashboard";

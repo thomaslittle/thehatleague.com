@@ -1,12 +1,11 @@
 "use server";
 
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/admin";
 import { broadcastAnnouncementToDiscord } from "@/lib/discord/messaging";
-import { env } from "@/lib/env";
+import { siteOrigin } from "@/lib/origin";
 
 /** Promote an applicant to captain. */
 export async function approveCaptain(formData: FormData) {
@@ -105,10 +104,7 @@ export async function createAnnouncement(
 
   // Fan out to Discord if a webhook is configured. Silent no-op otherwise.
   if (isPublishing) {
-    const h = await headers();
-    const host = h.get("x-forwarded-host") ?? h.get("host");
-    const proto = h.get("x-forwarded-proto") ?? "https";
-    const origin = host ? `${proto}://${host}` : env.SITE_URL;
+    const origin = await siteOrigin();
     void broadcastAnnouncementToDiscord({
       title,
       body,
