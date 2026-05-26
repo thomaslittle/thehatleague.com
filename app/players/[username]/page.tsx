@@ -30,7 +30,7 @@ export default async function PlayerProfilePage(
   const { data: player } = await supabase
     .from("profiles")
     .select(
-      "id, discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, profile_banner_url, bio, social_links, rank_2v2, rank_3v3, peak_rank, peak_rank_playlist, ranks_updated_at, rl_tracker_url, is_captain, is_captain_applicant, is_admin, in_player_pool, captain_pitch, created_at",
+      "id, discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, profile_banner_url, bio, social_links, rank_2v2, rank_3v3, peak_rank, peak_rank_playlist, ranks_updated_at, rl_tracker_url, is_captain, is_captain_applicant, is_admin, is_developer, in_player_pool, captain_pitch, created_at",
     )
     .ilike("discord_username", handle)
     .maybeSingle();
@@ -121,6 +121,11 @@ export default async function PlayerProfilePage(
                   <span className="inline-flex items-center gap-1.5 rounded-md bg-thl-orange px-2 py-0.5 text-[10px] font-extrabold tracking-[0.16em] text-black uppercase">
                     <ShieldGlyph className="h-3 w-3" />
                     League ops
+                  </span>
+                )}
+                {player.is_developer && (
+                  <span className="inline-flex items-center gap-1.5 rounded-md border border-thl-orange/40 bg-black px-2 py-0.5 text-[10px] font-extrabold tracking-[0.16em] text-thl-orange uppercase shadow-[0_0_18px_-8px_rgba(247,97,3,0.9)] dark:bg-thl-orange dark:text-black">
+                    Developer
                   </span>
                 )}
                 {player.is_captain && (

@@ -105,6 +105,7 @@ export type Database = {
           is_admin_applicant: boolean;
           is_captain: boolean;
           is_captain_applicant: boolean;
+          is_developer: boolean;
           peak_rank: string | null;
           peak_rank_playlist: string | null;
           profile_avatar_url: string | null;
@@ -131,6 +132,7 @@ export type Database = {
           is_admin_applicant?: boolean;
           is_captain?: boolean;
           is_captain_applicant?: boolean;
+          is_developer?: boolean;
           peak_rank?: string | null;
           peak_rank_playlist?: string | null;
           profile_avatar_url?: string | null;
@@ -157,6 +159,7 @@ export type Database = {
           is_admin_applicant?: boolean;
           is_captain?: boolean;
           is_captain_applicant?: boolean;
+          is_developer?: boolean;
           peak_rank?: string | null;
           peak_rank_playlist?: string | null;
           profile_avatar_url?: string | null;
