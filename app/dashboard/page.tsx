@@ -20,6 +20,7 @@ import { rankWeight } from "@/lib/data/rank-sort";
 import { RankBadge } from "@/components/ranks/rank-badge";
 import { LeagueOpsApplication } from "@/components/league-ops/league-ops-application";
 import { getTwitchLive } from "@/lib/twitch/live";
+import { BrandBackdrop } from "@/components/page/brand-backdrop";
 import {
   SettingsSavedToast,
   type SettingsToastKind,
@@ -98,57 +99,10 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
         navCounts={{ "/pool": (poolByPeak ?? []).length }}
         twitchLive={twitch?.isLive ?? false}
       />
-      <main id="main" className="relative overflow-hidden">
+      <main id="main">
         <SettingsSavedToast kind={settingsSaved} />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] overflow-hidden"
-        >
-          <Image
-            src="/brand/thl-fennec.png"
-            alt=""
-            fill
-            sizes="100vw"
-            priority
-            className="object-cover opacity-40 dark:opacity-45"
-            style={{ objectPosition: "55% 30%" }}
-          />
-          {/* Soft horizontal scrim so headline copy stays readable, but the
-              fennec hero photo is clearly visible behind the welcome card. */}
-          <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/55 to-white/25 dark:from-black/80 dark:via-black/45 dark:to-black/20" />
-          <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-white dark:to-black" />
-        </div>
-        {/* Brand-orange ambient spotlight from top-left. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-80"
-          style={{
-            background:
-              "radial-gradient(ellipse 60% 50% at 18% 10%, rgba(247,97,3,0.32), transparent 60%)",
-          }}
-        />
-        {/* Subtle counter-glow bottom-right for depth. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-60"
-          style={{
-            background:
-              "radial-gradient(ellipse 50% 40% at 90% 0%, rgba(247,97,3,0.14), transparent 60%)",
-          }}
-        />
-        {/* Faint diagonal grid for texture under the card. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-[0.08] dark:opacity-[0.05]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,0,0,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.5) 1px, transparent 1px)",
-            backgroundSize: "56px 56px",
-            maskImage:
-              "linear-gradient(180deg, rgba(0,0,0,1), transparent 90%)",
-          }}
-        />
-        <div className="relative mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
+        <BrandBackdrop>
+        <div className="mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
           {profile.is_admin && (
             <Link
               href="/admin"
@@ -566,6 +520,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
             />
           </section>
         </div>
+        </BrandBackdrop>
       </main>
       <SiteFooter />
     </div>

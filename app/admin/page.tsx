@@ -37,7 +37,7 @@ export default async function AdminIndexPage() {
       <div className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
         Admin · Season 04
       </div>
-      <h1 className="mt-3 text-4xl leading-tight font-bold tracking-[-0.02em] md:text-5xl">
+      <h1 className="mt-3 text-4xl leading-tight font-bold tracking-[-0.02em] md:text-5xl font-marker" style={{textShadow: '-2px 2px 0px #f76103'}}>
         Run the league.
       </h1>
       <p className="mt-3 max-w-xl text-neutral-600 dark:text-neutral-400">
