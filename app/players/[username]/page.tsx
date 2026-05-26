@@ -125,88 +125,77 @@ export default async function PlayerProfilePage(
             </section>
           )}
 
-          <div className="mt-10 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-            <section className="overflow-hidden rounded-3xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950">
-              <div className="flex items-start justify-between border-b border-neutral-200 px-7 py-5 dark:border-neutral-800">
-                <div>
-                  <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
-                    Ranks
-                  </div>
-
-                </div>
-                <span className="rounded-md bg-thl-orange px-2.5 py-1 text-[10px] font-extrabold tracking-[0.18em] text-black">
-                  S04 pool
-                </span>
-              </div>
-              <dl className="grid gap-px bg-neutral-200 sm:grid-cols-3 dark:bg-neutral-800">
-                <RankCell
-                  label="2v2 (current)"
-                  value={player.rank_2v2}
-                />
-                <RankCell
-                  label="3v3 (current)"
-                  value={player.rank_3v3}
-                />
-                <RankCell
-                  label={`Peak${player.peak_rank_playlist ? " · " + player.peak_rank_playlist : ""}`}
-                  value={player.peak_rank}
-                  highlight
-                />
-              </dl>
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-neutral-200 bg-neutral-50/60 px-7 py-4 text-xs text-neutral-500 dark:border-neutral-800 dark:bg-neutral-900/50">
-                <span>
-                  In pool since{" "}
-                  <span className="font-semibold text-neutral-700 dark:text-neutral-300">
-                    {joined.toLocaleDateString()}
-                  </span>
-                </span>
-                <span>
-                  Ranks updated{" "}
-                  <span className="font-semibold text-neutral-700 dark:text-neutral-300">
-                    {ranksUpdated ? ranksUpdated.toLocaleDateString() : "—"}
-                  </span>
-                </span>
-              </div>
-            </section>
-
-            <aside className="rounded-3xl border border-neutral-200 bg-white p-7 dark:border-neutral-800 dark:bg-neutral-950">
+          <section className="mt-10 overflow-hidden rounded-3xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950">
+            <div className="flex items-start justify-between border-b border-neutral-200 px-7 py-5 dark:border-neutral-800">
               <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
-                Scout links
+                Ranks
               </div>
-              <ul className="mt-3 grid gap-2">
-                {player.rl_tracker_url && (
-                  <li>
-                    <a
-                      href={player.rl_tracker_url}
-                      target="_blank"
-                      rel="noopener"
-                      className="flex items-center justify-between rounded-xl border border-neutral-200 px-4 py-3 text-sm font-semibold transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-800"
-                    >
-                      <span>Tracker.network profile</span>
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </a>
-                  </li>
-                )}
+              <span className="rounded-md bg-thl-orange px-2.5 py-1 text-[10px] font-extrabold tracking-[0.18em] text-black">
+                S04 pool
+              </span>
+            </div>
+            <dl className="grid gap-px bg-neutral-200 sm:grid-cols-3 dark:bg-neutral-800">
+              <RankCell label="2v2 (current)" value={player.rank_2v2} />
+              <RankCell label="3v3 (current)" value={player.rank_3v3} />
+              <RankCell
+                label={`Peak${player.peak_rank_playlist ? " · " + player.peak_rank_playlist : ""}`}
+                value={player.peak_rank}
+                highlight
+              />
+            </dl>
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-neutral-200 bg-neutral-50/60 px-7 py-4 text-xs text-neutral-500 dark:border-neutral-800 dark:bg-neutral-900/50">
+              <span>
+                In pool since{" "}
+                <span className="font-semibold text-neutral-700 dark:text-neutral-300">
+                  {joined.toLocaleDateString()}
+                </span>
+              </span>
+              <span>
+                Ranks updated{" "}
+                <span className="font-semibold text-neutral-700 dark:text-neutral-300">
+                  {ranksUpdated ? ranksUpdated.toLocaleDateString() : "—"}
+                </span>
+              </span>
+            </div>
+          </section>
+
+          <aside className="mt-6 rounded-3xl border border-neutral-200 bg-white p-7 dark:border-neutral-800 dark:bg-neutral-950">
+            <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
+              Scout links
+            </div>
+            <ul className="mt-3 grid gap-2 md:grid-cols-2">
+              {player.rl_tracker_url && (
                 <li>
                   <a
-                    href={SITE.discordInvite}
+                    href={player.rl_tracker_url}
                     target="_blank"
                     rel="noopener"
                     className="flex items-center justify-between rounded-xl border border-neutral-200 px-4 py-3 text-sm font-semibold transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-800"
                   >
-                    <span className="inline-flex items-center gap-2">
-                      <DiscordIcon className="h-4 w-4" /> DM on the THL Discord
-                    </span>
+                    <span>Tracker.network profile</span>
                     <ArrowRight className="h-3.5 w-3.5" />
                   </a>
                 </li>
-              </ul>
-              <p className="mt-5 text-xs leading-relaxed text-neutral-500">
-                We&apos;ll surface per-match stats here once Season 4 starts
-                and ballchasing.com ingestion is live.
-              </p>
-            </aside>
-          </div>
+              )}
+              <li>
+                <a
+                  href={SITE.discordInvite}
+                  target="_blank"
+                  rel="noopener"
+                  className="flex items-center justify-between rounded-xl border border-neutral-200 px-4 py-3 text-sm font-semibold transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-800"
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <DiscordIcon className="h-4 w-4" /> DM on the THL Discord
+                  </span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </a>
+              </li>
+            </ul>
+            <p className="mt-5 text-xs leading-relaxed text-neutral-500">
+              We&apos;ll surface per-match stats here once Season 4 starts
+              and ballchasing.com ingestion is live.
+            </p>
+          </aside>
         </div>
       </section>
     </PageShell>
@@ -224,18 +213,18 @@ function RankCell({
 }) {
   return (
     <div
-      className={`min-w-0 bg-white px-5 py-6 sm:px-6 lg:px-7 dark:bg-neutral-950 ${
+      className={`bg-white px-7 py-6 dark:bg-neutral-950 ${
         highlight ? "ring-1 ring-thl-orange/20" : ""
       }`}
     >
-      <div className="truncate text-[10px] font-bold tracking-[0.22em] text-neutral-500 uppercase">
+      <div className="text-[10px] font-bold tracking-[0.22em] text-neutral-500 uppercase">
         {label}
       </div>
-      <div className="mt-2 flex min-w-0">
+      <div className="mt-2">
         <RankBadge
           value={value}
-          size={28}
-          textClassName={`text-lg font-extrabold tracking-tight lg:text-xl ${
+          size={32}
+          textClassName={`text-xl font-extrabold tracking-tight ${
             highlight ? "text-thl-orange" : "text-neutral-900 dark:text-white"
           }`}
         />
