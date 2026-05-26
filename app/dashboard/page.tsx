@@ -270,7 +270,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
                   </div>
                   <h1 className="mt-1 text-4xl leading-[1.04] font-bold tracking-[-0.02em] md:text-5xl">
                     Hey,{" "}
-                    <span className="font-marker font-normal text-thl-orange">
+                    <span className="font-marker font-normal text-thl-orange" style={{textShadow: '-2px 2px 0px #FFFFFF'}}>
                       {firstName}.
                     </span>
                   </h1>

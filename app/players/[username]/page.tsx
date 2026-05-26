@@ -139,7 +139,7 @@ export default async function PlayerProfilePage(
                   </span>
                 )}
               </div>
-              <h1 className="mt-2 text-4xl leading-tight font-bold tracking-[-0.02em] md:text-5xl">
+              <h1 className="mt-2 text-4xl leading-tight font-bold tracking-[-0.02em] md:text-5xl font-marker drop-shadow-lg" style={{textShadow: '-2px 2px 0px #f76103'}}>
                 {name}
               </h1>
               <div className="mt-1 text-sm text-neutral-500">
