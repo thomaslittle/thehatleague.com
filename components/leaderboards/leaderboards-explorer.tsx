@@ -48,20 +48,25 @@ export function LeaderboardsExplorer() {
             className="w-full rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-3 text-sm font-semibold text-neutral-900 outline-none focus:border-thl-orange focus:ring-2 focus:ring-thl-orange/30 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white"
           />
         </div>
-        <div className="inline-flex rounded-lg border border-neutral-200 bg-neutral-100 p-1 dark:border-neutral-800 dark:bg-neutral-900">
+        <div
+          role="tablist"
+          className="grid w-full grid-cols-3 gap-1 rounded-lg border border-neutral-200 bg-neutral-100 p-1 md:inline-flex md:w-auto dark:border-neutral-800 dark:bg-neutral-900"
+        >
           {CONFERENCE_OPTIONS.map((opt) => (
             <button
               key={opt.key}
+              role="tab"
+              aria-selected={conf === opt.key}
               type="button"
               onClick={() => setConf(opt.key)}
-              className={`inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-bold transition ${
+              className={`inline-flex items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-bold whitespace-nowrap transition md:gap-2 md:px-3 ${
                 conf === opt.key
                   ? "bg-thl-orange text-black"
                   : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
               }`}
             >
               {opt.dot && (
-                <span className={`h-1.5 w-1.5 rounded-full ${opt.dot}`} />
+                <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${opt.dot}`} />
               )}
               {opt.label}
             </button>
@@ -69,21 +74,28 @@ export function LeaderboardsExplorer() {
         </div>
       </div>
 
-      <div className="mt-5 flex w-fit max-w-full flex-wrap gap-2 rounded-xl border border-neutral-200 bg-white p-1 dark:border-neutral-800 dark:bg-neutral-900">
-        {STAT_CATEGORIES.map((c) => (
-          <button
-            key={c.key}
-            type="button"
-            onClick={() => setTab(c.key)}
-            className={`rounded-lg px-4 py-2 text-sm font-bold whitespace-nowrap transition ${
-              tab === c.key
-                ? "bg-thl-orange text-black shadow-sm"
-                : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
-            }`}
-          >
-            {c.label}
-          </button>
-        ))}
+      <div className="mt-5 -mx-6 overflow-x-auto px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:overflow-visible md:px-0">
+        <div
+          role="tablist"
+          className="inline-flex w-max gap-1 rounded-xl border border-neutral-200 bg-white p-1 md:w-fit md:max-w-full dark:border-neutral-800 dark:bg-neutral-900"
+        >
+          {STAT_CATEGORIES.map((c) => (
+            <button
+              key={c.key}
+              role="tab"
+              aria-selected={tab === c.key}
+              type="button"
+              onClick={() => setTab(c.key)}
+              className={`shrink-0 rounded-lg px-3 py-2 text-xs font-bold whitespace-nowrap transition md:px-4 md:text-sm ${
+                tab === c.key
+                  ? "bg-thl-orange text-black shadow-sm"
+                  : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
+              }`}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <p className="mt-3 text-sm text-neutral-500">

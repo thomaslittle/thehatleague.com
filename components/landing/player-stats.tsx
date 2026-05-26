@@ -54,26 +54,33 @@ export function PlayerStats() {
           <ConferenceSwitch value={conference} onChange={setConference} />
         </div>
 
-        <div className="mb-6 flex w-fit max-w-full flex-wrap gap-2 rounded-xl border border-neutral-200 bg-white p-1 dark:border-neutral-800 dark:bg-neutral-900">
-          {STAT_CATEGORIES.map((c) => (
-            <button
-              key={c.key}
-              type="button"
-              onClick={() => setTab(c.key)}
-              className={`rounded-lg px-4 py-2 text-sm font-bold whitespace-nowrap transition ${
-                tab === c.key
-                  ? "bg-thl-orange text-black shadow-sm"
-                  : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
-              }`}
-            >
-              {c.label}
-            </button>
-          ))}
+        <div className="mb-6 -mx-6 overflow-x-auto px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:overflow-visible md:px-0">
+          <div
+            role="tablist"
+            className="inline-flex w-max gap-1 rounded-xl border border-neutral-200 bg-white p-1 md:w-fit md:max-w-full dark:border-neutral-800 dark:bg-neutral-900"
+          >
+            {STAT_CATEGORIES.map((c) => (
+              <button
+                key={c.key}
+                role="tab"
+                aria-selected={tab === c.key}
+                type="button"
+                onClick={() => setTab(c.key)}
+                className={`shrink-0 rounded-lg px-3 py-2 text-xs font-bold whitespace-nowrap transition md:px-4 md:text-sm ${
+                  tab === c.key
+                    ? "bg-thl-orange text-black shadow-sm"
+                    : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
+                }`}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-black">
-          <div className="grid grid-cols-[60px_1fr_120px_120px] gap-2 border-b border-neutral-200 px-5 py-3.5 text-[10px] font-bold tracking-[0.18em] text-neutral-500 uppercase md:grid-cols-[80px_1fr_180px_140px] md:gap-4 md:px-6 dark:border-neutral-800">
-            <span>Rank</span>
+          <div className="grid grid-cols-[36px_1fr_64px] gap-2 border-b border-neutral-200 px-4 py-3 text-[10px] font-bold tracking-[0.18em] text-neutral-500 uppercase md:grid-cols-[80px_1fr_180px_140px] md:gap-4 md:px-6 md:py-3.5 dark:border-neutral-800">
+            <span>#</span>
             <span>Player</span>
             <span className="hidden md:block">Conference</span>
             <span className="text-right">{cat.label}</span>
@@ -84,7 +91,7 @@ export function PlayerStats() {
               return (
                 <li
                   key={row.name}
-                  className={`grid grid-cols-[60px_1fr_120px_120px] items-center gap-2 px-5 py-4 transition md:grid-cols-[80px_1fr_180px_140px] md:gap-4 md:px-6 ${
+                  className={`grid grid-cols-[36px_1fr_64px] items-center gap-2 px-4 py-3 transition md:grid-cols-[80px_1fr_180px_140px] md:gap-4 md:px-6 md:py-4 ${
                     i === 0
                       ? "bg-thl-orange/10"
                       : "border-t border-neutral-100 hover:bg-neutral-50 dark:border-neutral-900 dark:hover:bg-neutral-950"
@@ -184,19 +191,26 @@ function ConferenceSwitch({
     { key: "Fedora", label: "Fedora", dot: "bg-thl-fedora" },
   ];
   return (
-    <div className="inline-flex rounded-lg border border-neutral-200 bg-neutral-100 p-1 dark:border-neutral-800 dark:bg-neutral-900">
+    <div
+      role="tablist"
+      className="grid w-full grid-cols-3 gap-1 rounded-lg border border-neutral-200 bg-neutral-100 p-1 md:inline-flex md:w-auto dark:border-neutral-800 dark:bg-neutral-900"
+    >
       {options.map((opt) => (
         <button
           key={opt.key}
+          role="tab"
+          aria-selected={value === opt.key}
           type="button"
           onClick={() => onChange(opt.key)}
-          className={`inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-bold transition ${
+          className={`inline-flex items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-bold whitespace-nowrap transition md:gap-2 md:px-3 ${
             value === opt.key
               ? "bg-thl-orange text-black"
               : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
           }`}
         >
-          {opt.dot && <span className={`h-1.5 w-1.5 rounded-full ${opt.dot}`} />}
+          {opt.dot && (
+            <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${opt.dot}`} />
+          )}
           {opt.label}
         </button>
       ))}

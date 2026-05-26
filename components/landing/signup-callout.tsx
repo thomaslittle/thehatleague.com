@@ -91,12 +91,12 @@ export function SignupCallout() {
 function StepHead({ n, label }: { n: 1 | 2; label: string }) {
   return (
     <div
-      className={`flex items-center gap-3 px-6 py-4 md:px-8 ${
+      className={`flex min-w-0 items-center gap-2.5 px-3 py-4 sm:gap-3 sm:px-6 md:px-8 ${
         n === 1 ? "bg-neutral-50 dark:bg-neutral-900" : "border-l border-neutral-200 dark:border-neutral-800"
       }`}
     >
       <div
-        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition ${
+        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition sm:h-8 sm:w-8 sm:text-sm ${
           n === 1
             ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
             : "bg-neutral-200 text-neutral-500 dark:bg-neutral-800"
@@ -104,11 +104,11 @@ function StepHead({ n, label }: { n: 1 | 2; label: string }) {
       >
         {String(n).padStart(2, "0")}
       </div>
-      <div>
-        <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
+      <div className="min-w-0">
+        <div className="truncate text-[9px] font-bold tracking-[0.18em] text-thl-orange uppercase sm:text-[10px] sm:tracking-[0.22em]">
           Step {n}
         </div>
-        <div className="text-sm font-semibold whitespace-nowrap text-neutral-900 dark:text-white">
+        <div className="truncate text-xs font-semibold text-neutral-900 sm:text-sm dark:text-white">
           {label}
         </div>
       </div>

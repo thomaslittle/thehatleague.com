@@ -96,7 +96,7 @@ export function Hero({ viewer }: { viewer?: ViewerInfo | null } = {}) {
               {isAuthed ? (
                 <>
                   Welcome back{firstName ? `, ${firstName}` : ""}. You&apos;re
-                  in the Season 4 pool. Captains start scouting now — keep your
+                  in the Season 4 pool. Captains start scouting now. Keep your
                   ranks current, watch for the draft announcement.
                 </>
               ) : (
@@ -108,11 +108,11 @@ export function Hero({ viewer }: { viewer?: ViewerInfo | null } = {}) {
               )}
             </p>
 
-            <div className="mt-9 flex flex-wrap items-center gap-3">
+            <div className="mt-9 grid grid-cols-1 gap-3 sm:grid-cols-[auto_auto] sm:items-center">
               {isAuthed ? (
                 <Link
                   href="/dashboard"
-                  className="inline-flex items-center gap-3 rounded-xl bg-thl-orange px-6 py-4 text-base font-bold whitespace-nowrap text-black shadow-[0_10px_40px_-12px_rgba(247,97,3,0.6)] transition hover:bg-thl-orange-deep active:scale-[0.98]"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded-xl bg-thl-orange px-6 py-4 text-base font-bold whitespace-nowrap text-black shadow-[0_10px_40px_-12px_rgba(247,97,3,0.6)] transition hover:bg-thl-orange-deep active:scale-[0.98] sm:w-auto"
                 >
                   Open your dashboard
                   <ArrowRight className="h-4 w-4" />
@@ -120,7 +120,7 @@ export function Hero({ viewer }: { viewer?: ViewerInfo | null } = {}) {
               ) : (
                 <Link
                   href="/signin"
-                  className="inline-flex items-center gap-3 rounded-xl bg-thl-orange px-6 py-4 text-base font-bold whitespace-nowrap text-black shadow-[0_10px_40px_-12px_rgba(247,97,3,0.6)] transition hover:bg-thl-orange-deep active:scale-[0.98]"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded-xl bg-thl-orange px-6 py-4 text-base font-bold whitespace-nowrap text-black shadow-[0_10px_40px_-12px_rgba(247,97,3,0.6)] transition hover:bg-thl-orange-deep active:scale-[0.98] sm:w-auto"
                 >
                   <DiscordIcon className="h-5 w-5" />
                   Sign up with Discord
@@ -131,7 +131,7 @@ export function Hero({ viewer }: { viewer?: ViewerInfo | null } = {}) {
                 href={SITE.twitchUrl}
                 target="_blank"
                 rel="noopener"
-                className="inline-flex items-center gap-2.5 rounded-xl bg-[#9146ff] px-5 py-4 font-bold whitespace-nowrap text-white shadow-[0_10px_40px_-12px_rgba(145,70,255,0.6)] transition hover:bg-[#7c2bff] active:scale-[0.98]"
+                className="inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#9146ff] px-6 py-4 text-base font-bold whitespace-nowrap text-white shadow-[0_10px_40px_-12px_rgba(145,70,255,0.6)] transition hover:bg-[#7c2bff] active:scale-[0.98] sm:w-auto"
               >
                 <TwitchIcon className="h-5 w-5" />
                 Watch on Twitch
@@ -141,27 +141,27 @@ export function Hero({ viewer }: { viewer?: ViewerInfo | null } = {}) {
           </div>
 
           <div className="relative">
-            <div className="relative flex aspect-[1/1.05] flex-col items-center justify-between overflow-hidden rounded-2xl border border-white/40 bg-white/20 p-8 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.25)] lg:p-10 dark:border-white/15 dark:bg-black/35 dark:shadow-[0_30px_80px_-20px_rgba(247,97,3,0.3)]">
-              <div className="absolute top-5 left-5 text-[10px] font-bold tracking-[0.22em] text-neutral-400 uppercase dark:text-neutral-600">
+            <div className="relative flex flex-col items-center justify-between gap-8 overflow-hidden rounded-2xl border border-white/40 bg-white/20 px-6 pt-12 pb-6 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.25)] md:aspect-[1/1.05] md:gap-0 md:p-8 lg:p-10 dark:border-white/15 dark:bg-black/35 dark:shadow-[0_30px_80px_-20px_rgba(247,97,3,0.3)]">
+              <div className="absolute top-4 left-5 text-[10px] font-bold tracking-[0.22em] text-neutral-400 uppercase md:top-5 dark:text-neutral-600">
                 Season 04
               </div>
-              <div className="absolute top-5 right-5 inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
+              <div className="absolute top-4 right-5 inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.22em] whitespace-nowrap text-thl-orange uppercase md:top-5">
                 <span className="h-1.5 w-1.5 rounded-full bg-thl-orange" />
                 Live soon
               </div>
 
-              <div className="flex w-full flex-1 items-center justify-center pt-4">
+              <div className="flex w-full flex-1 items-center justify-center md:pt-4">
                 <Image
                   src="/brand/thl-logo.png"
                   alt="The Hat League"
                   width={520}
                   height={520}
-                  className="w-[78%] max-w-[420px] drop-shadow-2xl"
+                  className="w-[68%] max-w-[420px] drop-shadow-2xl sm:w-[72%] md:w-[78%]"
                   priority
                 />
               </div>
 
-              <div className="flex w-full items-end justify-between border-t border-dashed border-neutral-300 pt-6 dark:border-neutral-800">
+              <div className="flex w-full items-end justify-between gap-4 border-t border-dashed border-neutral-300 pt-5 md:pt-6 dark:border-neutral-800">
                 <div>
                   <div className="text-[10px] font-bold tracking-[0.22em] text-neutral-500 uppercase dark:text-neutral-500">
                     Draft Night
@@ -195,14 +195,14 @@ export function Hero({ viewer }: { viewer?: ViewerInfo | null } = {}) {
         the section's bottom-fade gradient overlays it. */}
     <div className="relative z-10 overflow-hidden border-y-2 border-black bg-thl-orange text-black shadow-[0_8px_30px_-8px_rgba(247,97,3,0.55)] dark:border-white/10">
       <div className="flex items-stretch">
-        <div className="flex shrink-0 items-center bg-black px-6 py-3.5 text-xs font-extrabold tracking-[0.22em] whitespace-nowrap text-thl-orange md:px-10">
+        <div className="flex shrink-0 items-center bg-black px-4 py-3 text-[10px] font-extrabold tracking-[0.18em] whitespace-nowrap text-thl-orange md:px-10 md:py-3.5 md:text-xs md:tracking-[0.22em]">
           ⚡ LIVE FEED
         </div>
-        <div className="relative flex-1 overflow-hidden">
-          <div className="thl-ticker flex w-max gap-10 py-3.5 pl-6 text-sm font-bold whitespace-nowrap">
+        <div className="relative min-w-0 flex-1 overflow-hidden">
+          <div className="thl-ticker flex w-max gap-6 py-3 pl-4 text-xs font-bold whitespace-nowrap md:gap-10 md:py-3.5 md:pl-6 md:text-sm">
             {[...TICKER, ...TICKER].map((item, i) => (
-              <span key={i} className="flex items-center gap-10">
-                <span>{item}</span>
+              <span key={i} className="inline-flex items-center gap-6 whitespace-nowrap md:gap-10">
+                <span className="whitespace-nowrap">{item}</span>
                 <span className="opacity-60">◆</span>
               </span>
             ))}

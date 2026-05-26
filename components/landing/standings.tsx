@@ -10,9 +10,9 @@ import {
 } from "@/lib/data/season3-standings";
 
 const TABS = [
-  { key: "top6", label: "Top 6" },
-  { key: "full", label: "Full table" },
-  { key: "bracket", label: "Playoff bracket" },
+  { key: "top6", label: "Top 6", shortLabel: "Top 6" },
+  { key: "full", label: "Full table", shortLabel: "Full" },
+  { key: "bracket", label: "Playoff bracket", shortLabel: "Bracket" },
 ] as const;
 
 type Tab = (typeof TABS)[number]["key"];
@@ -35,19 +35,25 @@ export function Standings() {
               </span>
             </h2>
           </div>
-          <div className="inline-flex rounded-lg border border-neutral-200 bg-neutral-100 p-1 dark:border-neutral-800 dark:bg-neutral-900">
+          <div
+            role="tablist"
+            className="grid w-full grid-cols-3 gap-1 rounded-lg border border-neutral-200 bg-neutral-100 p-1 md:inline-flex md:w-auto dark:border-neutral-800 dark:bg-neutral-900"
+          >
             {TABS.map((t) => (
               <button
                 key={t.key}
+                role="tab"
+                aria-selected={tab === t.key}
                 type="button"
                 onClick={() => setTab(t.key)}
-                className={`rounded-md px-3.5 py-1.5 text-xs font-bold transition ${
+                className={`rounded-md px-3 py-1.5 text-xs font-bold whitespace-nowrap transition md:px-3.5 ${
                   tab === t.key
                     ? "bg-thl-orange text-black"
                     : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
                 }`}
               >
-                {t.label}
+                <span className="md:hidden">{t.shortLabel}</span>
+                <span className="hidden md:inline">{t.label}</span>
               </button>
             ))}
           </div>
