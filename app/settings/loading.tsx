@@ -1,5 +1,0 @@
-import { PageSkeleton } from "@/components/page/page-skeleton";
-
-export default function Loading() {
-  return <PageSkeleton eyebrow="Settings" variant="form" />;
-}

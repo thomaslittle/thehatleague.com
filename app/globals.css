@@ -168,6 +168,19 @@ html.theme-transitioning *::after {
   animation: none;
 }
 
+::view-transition-group(admin-tabs) {
+  z-index: 70;
+  animation: none;
+}
+
+::view-transition-old(admin-tabs) {
+  display: none;
+}
+
+::view-transition-new(admin-tabs) {
+  animation: none;
+}
+
 ::view-transition-group(brand-backdrop) {
   animation: none;
   z-index: 0;

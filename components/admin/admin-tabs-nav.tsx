@@ -26,6 +26,11 @@ const TABS: { href: string; label: string }[] = [
  */
 export function AdminTabsNav() {
   const pathname = usePathname();
+
+  return <AdminTabsNavContent key={pathname} pathname={pathname} />;
+}
+
+function AdminTabsNavContent({ pathname }: { pathname: string }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -36,8 +41,8 @@ export function AdminTabsNav() {
     .find((t) => pathname === t.href || pathname.startsWith(t.href + "/"));
 
   // EFFECT JUSTIFICATION: open-state cleanup that needs document-level
-  // listeners (outside click + ESC) and a pathname-change side-effect to
-  // auto-close after navigation. None of these are derivable from render.
+  // listeners (outside click + ESC). Path changes remount this keyed component,
+  // so the dropdown closes without a synchronous setState effect.
   useEffect(() => {
     if (!open) return;
     const onPointer = (e: MouseEvent | TouchEvent) => {
@@ -57,11 +62,6 @@ export function AdminTabsNav() {
       document.removeEventListener("keydown", onKey);
     };
   }, [open]);
-
-  // Close after a navigation completes.
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
 
   return (
     <>
