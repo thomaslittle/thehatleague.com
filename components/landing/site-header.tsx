@@ -165,9 +165,10 @@ export function SiteHeader({
             Discord
           </a>
 
-          {/* Utility group: search + theme toggle. Separated from external
-              links by a vertical divider on md+. */}
-          <div className="hidden h-9 items-center gap-0.5 md:flex md:border-l md:border-neutral-200 md:pl-2 dark:md:border-neutral-800">
+          {/* Utility group: search + theme toggle live in the same visual
+              "neutral-pill" treatment so they read as a pair. Both are h-9
+              and use the same background. */}
+          <div className="hidden items-center gap-1 md:flex md:border-l md:border-neutral-200 md:pl-2 dark:md:border-neutral-800">
             <SiteSearch
               isAuthenticated={!!viewer?.isAuthenticated}
               isAdmin={!!viewer?.isAdmin}
@@ -175,8 +176,8 @@ export function SiteHeader({
             <ThemeToggle theme={theme} />
           </div>
 
-          {/* Primary auth CTA — rightmost so the user's identity / sign-up
-              lives where every other site puts it. */}
+          {/* Primary auth CTA — rightmost. Sign-up is the full button,
+              avatar is a bare 36-px circle (no chrome). */}
           {showSignupButton && (
             <Link
               href={signupHref}
@@ -189,27 +190,26 @@ export function SiteHeader({
           {viewer?.isAuthenticated && (
             <Link
               href="/dashboard"
-              className="inline-flex h-9 items-center gap-2 rounded-lg border border-neutral-300 pr-3 pl-1 text-sm font-semibold text-neutral-700 transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-700 dark:text-neutral-300"
-              aria-label="Go to dashboard"
+              className="group relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full ring-2 ring-transparent ring-offset-0 transition hover:ring-thl-orange focus-visible:ring-thl-orange dark:hover:ring-thl-orange"
+              aria-label={viewer.displayName ?? "Open dashboard"}
               title={viewer.displayName ?? "Dashboard"}
             >
               {viewer.avatarUrl ? (
                 <Image
                   src={viewer.avatarUrl}
                   alt=""
-                  width={28}
-                  height={28}
+                  width={36}
+                  height={36}
                   unoptimized
-                  className="h-7 w-7 rounded-full"
+                  className="h-9 w-9 rounded-full"
                 />
               ) : (
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-thl-orange text-xs font-extrabold text-black">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-thl-orange text-xs font-extrabold text-black">
                   {(viewer.displayName ?? viewer.username ?? "?")
                     .slice(0, 2)
                     .toUpperCase()}
                 </span>
               )}
-              <span className="hidden lg:inline">Dashboard</span>
             </Link>
           )}
 
