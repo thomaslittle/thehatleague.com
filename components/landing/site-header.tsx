@@ -165,14 +165,16 @@ export function SiteHeader({
             Discord
           </a>
 
-          {/* Utility group: search + theme toggle live in the same visual
-              "neutral-pill" treatment so they read as a pair. Both are h-9
-              and use the same background. */}
-          <div className="hidden items-center gap-1 md:flex md:border-l md:border-neutral-200 md:pl-2 dark:md:border-neutral-800">
-            <SiteSearch
-              isAuthenticated={!!viewer?.isAuthenticated}
-              isAdmin={!!viewer?.isAdmin}
-            />
+          {/* Search lives outside the desktop utility group so mobile
+              keeps the ⌘K-equivalent next to the hamburger. */}
+          <SiteSearch
+            isAuthenticated={!!viewer?.isAuthenticated}
+            isAdmin={!!viewer?.isAdmin}
+          />
+
+          {/* Theme toggle — desktop only. The mobile nav sheet has its
+              own theme switcher inside. */}
+          <div className="hidden items-center md:flex md:border-l md:border-neutral-200 md:pl-2 dark:md:border-neutral-800">
             <ThemeToggle theme={theme} />
           </div>
 
