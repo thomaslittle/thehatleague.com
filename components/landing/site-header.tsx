@@ -183,7 +183,10 @@ export function SiteHeader({
           {showSignupButton && (
             <Link
               href={signupHref}
-              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-thl-orange px-3.5 text-sm font-bold whitespace-nowrap text-black transition hover:bg-thl-orange-deep"
+              // Hide below sm — the mobile nav sheet has its own Sign-up
+              // CTA, so a duplicate header button would push the
+              // hamburger trigger off-canvas on narrow screens.
+              className="hidden h-9 items-center gap-1.5 rounded-lg bg-thl-orange px-3.5 text-sm font-bold whitespace-nowrap text-black transition hover:bg-thl-orange-deep sm:inline-flex"
             >
               Sign up
               <ArrowRight className="h-3.5 w-3.5" />
