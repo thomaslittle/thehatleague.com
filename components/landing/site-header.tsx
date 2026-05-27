@@ -123,15 +123,22 @@ export function SiteHeader({
           })}
         </nav>
 
-        <div className="flex items-center gap-2 md:gap-3">
+        {/*
+          Right-side action cluster. Order follows common header conventions:
+          community links → search/theme utilities → primary auth CTA →
+          mobile menu. Every interactive control is exactly h-9 (36 px) so
+          they sit on a clean baseline.
+        */}
+        <div className="flex items-center gap-1.5 md:gap-2">
+          {/* Twitch — colored pill when live, ghost text otherwise. */}
           <a
             href={SITE.twitchUrl}
             target="_blank"
             rel="noopener"
             className={
               twitchLive
-                ? "hidden items-center gap-2 rounded-lg bg-[#9146ff] px-3 py-2 text-sm font-bold whitespace-nowrap text-white transition hover:bg-[#7c2bff] md:inline-flex"
-                : "hidden items-center gap-2 px-3 py-2 text-sm font-semibold text-neutral-700 transition hover:text-[#9146ff] md:inline-flex dark:text-neutral-300 dark:hover:text-[#a970ff]"
+                ? "hidden h-9 items-center gap-2 rounded-lg bg-[#9146ff] px-3 text-sm font-bold whitespace-nowrap text-white transition hover:bg-[#7c2bff] md:inline-flex"
+                : "hidden h-9 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-neutral-700 transition hover:bg-neutral-100 hover:text-[#9146ff] md:inline-flex dark:text-neutral-300 dark:hover:bg-neutral-900 dark:hover:text-[#a970ff]"
             }
           >
             <TwitchIcon className="h-4 w-4" />
@@ -146,19 +153,34 @@ export function SiteHeader({
               "Watch"
             )}
           </a>
+
+          {/* Discord — outlined ghost button. */}
           <a
             href={SITE.discordInvite}
             target="_blank"
             rel="noopener"
-            className="hidden items-center gap-2 rounded-lg border border-neutral-300 px-3.5 py-2 text-sm font-semibold text-neutral-700 transition hover:border-thl-orange hover:text-thl-orange sm:inline-flex dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-thl-orange dark:hover:text-thl-orange"
+            className="hidden h-9 items-center gap-2 rounded-lg border border-neutral-300 px-3 text-sm font-semibold text-neutral-700 transition hover:border-thl-orange hover:text-thl-orange sm:inline-flex dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-thl-orange dark:hover:text-thl-orange"
           >
             <DiscordIcon className="h-4 w-4" />
             Discord
           </a>
+
+          {/* Utility group: search + theme toggle. Separated from external
+              links by a vertical divider on md+. */}
+          <div className="hidden h-9 items-center gap-0.5 md:flex md:border-l md:border-neutral-200 md:pl-2 dark:md:border-neutral-800">
+            <SiteSearch
+              isAuthenticated={!!viewer?.isAuthenticated}
+              isAdmin={!!viewer?.isAdmin}
+            />
+            <ThemeToggle theme={theme} />
+          </div>
+
+          {/* Primary auth CTA — rightmost so the user's identity / sign-up
+              lives where every other site puts it. */}
           {showSignupButton && (
             <Link
               href={signupHref}
-              className="inline-flex items-center gap-2 rounded-lg bg-thl-orange px-4 py-2.5 text-sm font-bold whitespace-nowrap text-black transition hover:bg-thl-orange-deep"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-thl-orange px-3.5 text-sm font-bold whitespace-nowrap text-black transition hover:bg-thl-orange-deep"
             >
               Sign up
               <ArrowRight className="h-3.5 w-3.5" />
@@ -167,12 +189,11 @@ export function SiteHeader({
           {viewer?.isAuthenticated && (
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 px-2 py-1.2 text-sm font-semibold text-neutral-700 transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-700 dark:text-neutral-300"
+              className="inline-flex h-9 items-center gap-2 rounded-lg border border-neutral-300 pr-3 pl-1 text-sm font-semibold text-neutral-700 transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-700 dark:text-neutral-300"
               aria-label="Go to dashboard"
               title={viewer.displayName ?? "Dashboard"}
             >
               {viewer.avatarUrl ? (
-                /* Discord CDN avatars are remote — Next/Image whitelist is set */
                 <Image
                   src={viewer.avatarUrl}
                   alt=""
@@ -188,16 +209,10 @@ export function SiteHeader({
                     .toUpperCase()}
                 </span>
               )}
-              <span className="hidden">Dashboard</span>
+              <span className="hidden lg:inline">Dashboard</span>
             </Link>
           )}
-          <div className="hidden pl-3 ml-1 md:flex md:items-center md:gap-1 md:border-l md:border-neutral-200 dark:md:border-neutral-800">
-            <SiteSearch
-              isAuthenticated={!!viewer?.isAuthenticated}
-              isAdmin={!!viewer?.isAdmin}
-            />
-            <ThemeToggle theme={theme} />
-          </div>
+
           <MobileNavTrigger />
         </div>
       </div>
