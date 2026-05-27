@@ -255,9 +255,9 @@ function SearchTrigger({ onClick }: { onClick: () => void }) {
       onClick={onClick}
       aria-label="Search the league"
       title="Search (⌘K)"
-      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-200 text-neutral-700 transition hover:text-thl-orange dark:bg-neutral-800 dark:text-neutral-200 dark:hover:text-thl-orange"
+      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-neutral-500 transition hover:text-thl-orange dark:text-neutral-400 dark:hover:text-thl-orange"
     >
-      <SearchGlyph className="h-[18px] w-[18px]" />
+      <SearchGlyph className="h-[14px] w-[14px]" />
     </button>
   );
 }
