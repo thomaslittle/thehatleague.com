@@ -253,16 +253,11 @@ function SearchTrigger({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      title="Search the league"
-      className="inline-flex h-9 items-center gap-2 rounded-lg border border-neutral-300 bg-white/70 px-3 text-sm font-semibold text-neutral-600 transition hover:border-thl-orange hover:text-thl-orange md:w-[200px] md:justify-between dark:border-neutral-700 dark:bg-neutral-900/60 dark:text-neutral-300 dark:hover:border-thl-orange"
+      aria-label="Search the league"
+      title="Search (⌘K)"
+      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-neutral-600 transition hover:bg-neutral-100 hover:text-thl-orange dark:text-neutral-300 dark:hover:bg-neutral-900 dark:hover:text-thl-orange"
     >
-      <span className="inline-flex items-center gap-2">
-        <SearchGlyph className="h-4 w-4" />
-        <span className="hidden md:inline">Search…</span>
-      </span>
-      <CommandShortcut className="hidden md:inline-flex">
-        ⌘K
-      </CommandShortcut>
+      <SearchGlyph className="h-[18px] w-[18px]" />
     </button>
   );
 }

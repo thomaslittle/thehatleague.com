@@ -124,10 +124,6 @@ export function SiteHeader({
         </nav>
 
         <div className="flex items-center gap-2 md:gap-3">
-          <SiteSearch
-            isAuthenticated={!!viewer?.isAuthenticated}
-            isAdmin={!!viewer?.isAdmin}
-          />
           <a
             href={SITE.twitchUrl}
             target="_blank"
@@ -171,7 +167,7 @@ export function SiteHeader({
           {viewer?.isAuthenticated && (
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 px-2 py-1.5 text-sm font-semibold text-neutral-700 transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-700 dark:text-neutral-300"
+              className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 px-2 py-1.2 text-sm font-semibold text-neutral-700 transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-700 dark:text-neutral-300"
               aria-label="Go to dashboard"
               title={viewer.displayName ?? "Dashboard"}
             >
@@ -192,10 +188,14 @@ export function SiteHeader({
                     .toUpperCase()}
                 </span>
               )}
-              <span className="hidden sm:inline">Dashboard</span>
+              <span className="hidden">Dashboard</span>
             </Link>
           )}
-          <div className="hidden pl-3 ml-1 md:flex md:border-l md:border-neutral-200 dark:md:border-neutral-800">
+          <div className="hidden pl-3 ml-1 md:flex md:items-center md:gap-1 md:border-l md:border-neutral-200 dark:md:border-neutral-800">
+            <SiteSearch
+              isAuthenticated={!!viewer?.isAuthenticated}
+              isAdmin={!!viewer?.isAdmin}
+            />
             <ThemeToggle theme={theme} />
           </div>
           <MobileNavTrigger />
