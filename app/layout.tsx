@@ -70,6 +70,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  // Explicit width / initialScale — without them, defining a `viewport`
+  // export overrides Next's default and the resulting meta tag drops
+  // width=device-width, so mobile browsers load the page on a desktop
+  // canvas and zoom in.
+  width: "device-width",
+  initialScale: 1,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
