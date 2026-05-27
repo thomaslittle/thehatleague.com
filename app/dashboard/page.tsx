@@ -89,6 +89,26 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
   const firstName = displayName.split(/[\s_]/)[0] ?? displayName;
   const avatarUrl = profile.profile_avatar_url ?? profile.discord_avatar_url;
 
+  // Pending captain/league-ops applications drive the header avatar
+  // badge; only worth fetching for admins.
+  let pendingAdminQueue = 0;
+  if (profile.is_admin) {
+    const [captainQueue, leagueOpsQueue] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select("id", { count: "exact", head: true })
+        .eq("is_captain_applicant", true)
+        .eq("is_captain", false),
+      supabase
+        .from("profiles")
+        .select("id", { count: "exact", head: true })
+        .eq("is_admin_applicant", true)
+        .eq("is_admin", false),
+    ]);
+    pendingAdminQueue =
+      (captainQueue.count ?? 0) + (leagueOpsQueue.count ?? 0);
+  }
+
   return (
     <div className="min-h-screen text-neutral-900 dark:text-white">
       <SiteHeader
@@ -97,6 +117,14 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
         headlineAnnouncement={headline}
         navCounts={{ "/pool": (poolByPeak ?? []).length }}
         twitchLive={twitch?.isLive ?? false}
+        viewer={{
+          isAuthenticated: true,
+          displayName: profile.discord_global_name ?? profile.discord_username,
+          username: profile.discord_username,
+          avatarUrl,
+          isAdmin: !!profile.is_admin,
+          pendingAdminQueue,
+        }}
       />
       <main id="main">
         <SettingsSavedToast kind={settingsSaved} />

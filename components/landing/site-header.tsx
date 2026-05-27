@@ -17,6 +17,10 @@ export interface ViewerInfo {
   username: string | null;
   avatarUrl: string | null;
   isAdmin: boolean;
+  /** Admin-only: count of captain + league-ops applications waiting on
+   *  review. Drives the notification dot on the header avatar. 0 means
+   *  no badge. */
+  pendingAdminQueue?: number;
 }
 
 export function SiteHeader({
@@ -194,10 +198,22 @@ export function SiteHeader({
           )}
           {viewer?.isAuthenticated && (
             <Link
-              href="/dashboard"
+              href={
+                viewer.isAdmin && (viewer.pendingAdminQueue ?? 0) > 0
+                  ? "/admin"
+                  : "/dashboard"
+              }
               className="group relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full ring-2 ring-transparent ring-offset-0 transition hover:ring-thl-orange focus-visible:ring-thl-orange dark:hover:ring-thl-orange"
-              aria-label={viewer.displayName ?? "Open dashboard"}
-              title={viewer.displayName ?? "Dashboard"}
+              aria-label={
+                (viewer.pendingAdminQueue ?? 0) > 0
+                  ? `${viewer.displayName ?? "Open dashboard"} — ${viewer.pendingAdminQueue} pending application${viewer.pendingAdminQueue === 1 ? "" : "s"}`
+                  : (viewer.displayName ?? "Open dashboard")
+              }
+              title={
+                (viewer.pendingAdminQueue ?? 0) > 0
+                  ? `${viewer.pendingAdminQueue} pending application${viewer.pendingAdminQueue === 1 ? "" : "s"} · open league ops`
+                  : (viewer.displayName ?? "Dashboard")
+              }
             >
               {viewer.avatarUrl ? (
                 <Image
@@ -213,6 +229,16 @@ export function SiteHeader({
                   {(viewer.displayName ?? viewer.username ?? "?")
                     .slice(0, 2)
                     .toUpperCase()}
+                </span>
+              )}
+              {(viewer.pendingAdminQueue ?? 0) > 0 && (
+                <span
+                  aria-hidden
+                  className="absolute -top-1 -right-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-thl-orange px-1 text-[10px] font-extrabold tabular-nums leading-none text-black shadow-sm dark:border-black"
+                >
+                  {(viewer.pendingAdminQueue ?? 0) > 9
+                    ? "9+"
+                    : viewer.pendingAdminQueue}
                 </span>
               )}
             </Link>

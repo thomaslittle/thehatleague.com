@@ -44,9 +44,26 @@ export default async function HomePage() {
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("discord_username, discord_global_name, discord_avatar_url, is_admin")
+      .select("discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, is_admin")
       .eq("id", user.id)
       .single();
+    let pendingAdminQueue = 0;
+    if (profile?.is_admin) {
+      const [captainQueue, leagueOpsQueue] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("id", { count: "exact", head: true })
+          .eq("is_captain_applicant", true)
+          .eq("is_captain", false),
+        supabase
+          .from("profiles")
+          .select("id", { count: "exact", head: true })
+          .eq("is_admin_applicant", true)
+          .eq("is_admin", false),
+      ]);
+      pendingAdminQueue =
+        (captainQueue.count ?? 0) + (leagueOpsQueue.count ?? 0);
+    }
     viewer = {
       isAuthenticated: true,
       displayName:
@@ -54,8 +71,10 @@ export default async function HomePage() {
         cleanDiscordUsername(profile?.discord_username) ??
         null,
       username: cleanDiscordUsername(profile?.discord_username),
-      avatarUrl: profile?.discord_avatar_url ?? null,
+      avatarUrl:
+        profile?.profile_avatar_url ?? profile?.discord_avatar_url ?? null,
       isAdmin: !!profile?.is_admin,
+      pendingAdminQueue,
     };
   }
 

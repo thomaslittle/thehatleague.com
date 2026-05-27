@@ -33,6 +33,28 @@ export async function PageShell({ children }: { children: ReactNode }) {
       )
       .eq("id", user.id)
       .single();
+
+    // Admins get a count of pending captain + league-ops applications
+    // so the avatar can show a notification badge that links to the
+    // queue. Skip the query entirely for non-admins (saves a round-trip).
+    let pendingAdminQueue = 0;
+    if (profile?.is_admin) {
+      const [captainQueue, leagueOpsQueue] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("id", { count: "exact", head: true })
+          .eq("is_captain_applicant", true)
+          .eq("is_captain", false),
+        supabase
+          .from("profiles")
+          .select("id", { count: "exact", head: true })
+          .eq("is_admin_applicant", true)
+          .eq("is_admin", false),
+      ]);
+      pendingAdminQueue =
+        (captainQueue.count ?? 0) + (leagueOpsQueue.count ?? 0);
+    }
+
     viewer = {
       isAuthenticated: true,
       displayName:
@@ -42,6 +64,7 @@ export async function PageShell({ children }: { children: ReactNode }) {
       username: cleanDiscordUsername(profile?.discord_username),
       avatarUrl: profile?.profile_avatar_url ?? profile?.discord_avatar_url ?? null,
       isAdmin: !!profile?.is_admin,
+      pendingAdminQueue,
     };
   }
 
