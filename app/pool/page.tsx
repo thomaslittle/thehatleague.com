@@ -1,10 +1,11 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import { PageShell } from "@/components/page/page-shell";
 import { PageHero } from "@/components/page/page-hero";
-import { ArrowRight, DiscordIcon } from "@/components/icons/brand";
+import { HeroStats } from "@/components/page/hero-stats";
+import { SessionCta } from "@/components/page/session-cta";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { PoolBoard, type SortKey } from "@/components/pool/pool-board";
+import { getViewer, getPoolStats } from "@/lib/auth/viewer";
+import { PoolBoard, type SortKey, type ViewKey } from "@/components/pool/pool-board";
 import { POOL_SELECT, type PoolRow } from "@/lib/data/pool";
 
 export const metadata = {
@@ -25,7 +26,10 @@ export default async function PoolPage(props: PageProps<"/pool">) {
       : "peak";
   const role: RoleFilter =
     sp.role === "captains" || sp.role === "players" ? sp.role : "everyone";
+  const view: ViewKey = sp.view === "grid" ? "grid" : "list";
   const query = typeof sp.q === "string" ? sp.q : "";
+
+  const [viewer, stats] = await Promise.all([getViewer(), getPoolStats()]);
 
   return (
     <PageShell>
@@ -40,19 +44,16 @@ export default async function PoolPage(props: PageProps<"/pool">) {
             any way you want.
           </>
         }
-        actions={
-          <Link
-            href="/signin"
-            className="inline-flex items-center gap-2 rounded-xl bg-thl-orange px-5 py-3.5 font-bold text-black transition hover:bg-thl-orange-deep"
-          >
-            <DiscordIcon className="h-5 w-5" />
-            Add yourself
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+        actions={<SessionCta viewer={viewer} signedOutLabel="Add yourself" />}
+        aside={
+          <HeroStats
+            poolCount={stats.poolCount}
+            captainCount={stats.captainCount}
+          />
         }
       />
       <Suspense fallback={<PoolBoardSkeleton />}>
-        <PoolBoardLoader sort={sort} role={role} query={query} />
+        <PoolBoardLoader sort={sort} role={role} query={query} view={view} />
       </Suspense>
     </PageShell>
   );
@@ -62,16 +63,18 @@ async function PoolBoardLoader({
   sort,
   role,
   query,
+  view,
 }: {
   sort: SortKey;
   role: RoleFilter;
   query: string;
+  view: ViewKey;
 }) {
   const supabase = await createSupabaseServerClient();
-  const { data: players } = await supabase
-    .from("profiles")
-    .select(POOL_SELECT)
-    .eq("in_player_pool", true);
+  const [{ data: players }, viewer] = await Promise.all([
+    supabase.from("profiles").select(POOL_SELECT).eq("in_player_pool", true),
+    getViewer(),
+  ]);
   const initialRows: PoolRow[] = (players ?? []) as PoolRow[];
 
   return (
@@ -80,6 +83,9 @@ async function PoolBoardLoader({
       sort={sort}
       role={role}
       query={query}
+      view={view}
+      viewerAuthed={!!viewer?.isAuthenticated}
+      viewerInPool={!!viewer?.inPool}
     />
   );
 }

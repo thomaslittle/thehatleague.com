@@ -6,6 +6,7 @@ export function PageHero({
   accent,
   subtitle,
   actions,
+  aside,
   children,
 }: {
   eyebrow: string;
@@ -15,34 +16,50 @@ export function PageHero({
   accent?: ReactNode;
   subtitle?: ReactNode;
   actions?: ReactNode;
+  /** Optional featured content rendered to the right of the copy on large
+   *  screens (e.g. a live-stats block). Stacks below on mobile. */
+  aside?: ReactNode;
   children?: ReactNode;
 }) {
+  const copy = (
+    <div>
+      <div className="text-[10px] font-bold tracking-[0.24em] text-thl-orange uppercase md:text-xs md:tracking-[0.28em]">
+        {eyebrow}
+      </div>
+      <h1 className="mt-3 max-w-3xl text-[2.25rem] leading-[1] font-bold tracking-[-0.03em] sm:text-5xl md:mt-4 md:text-6xl md:leading-[0.95] md:tracking-[-0.035em] lg:text-7xl">
+        {title}
+        {accent && (
+          <>
+            {" "}
+            <span className="font-marker font-normal text-thl-orange">
+              {accent}
+            </span>
+          </>
+        )}
+      </h1>
+      {subtitle && (
+        <p className="mt-5 max-w-2xl text-base leading-relaxed text-neutral-600 md:mt-6 md:text-lg dark:text-neutral-400">
+          {subtitle}
+        </p>
+      )}
+      {actions && (
+        <div className="mt-7 grid grid-cols-1 gap-3 [&>a]:w-full [&>button]:w-full [&>a]:justify-center [&>button]:justify-center sm:flex sm:flex-wrap sm:[&>a]:w-auto sm:[&>button]:w-auto md:mt-8">
+          {actions}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <section className="relative">
       <div className="relative mx-auto max-w-[1320px] px-6 pt-12 pb-10 md:px-10 md:pt-20 md:pb-16">
-        <div className="text-[10px] font-bold tracking-[0.24em] text-thl-orange uppercase md:text-xs md:tracking-[0.28em]">
-          {eyebrow}
-        </div>
-        <h1 className="mt-3 max-w-3xl text-[2.25rem] leading-[1] font-bold tracking-[-0.03em] sm:text-5xl md:mt-4 md:text-6xl md:leading-[0.95] md:tracking-[-0.035em] lg:text-7xl">
-          {title}
-          {accent && (
-            <>
-              {" "}
-              <span className="font-marker font-normal text-thl-orange">
-                {accent}
-              </span>
-            </>
-          )}
-        </h1>
-        {subtitle && (
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-neutral-600 md:mt-6 md:text-lg dark:text-neutral-400">
-            {subtitle}
-          </p>
-        )}
-        {actions && (
-          <div className="mt-7 grid grid-cols-1 gap-3 [&>a]:w-full [&>button]:w-full [&>a]:justify-center [&>button]:justify-center sm:flex sm:flex-wrap sm:[&>a]:w-auto sm:[&>button]:w-auto md:mt-8">
-            {actions}
+        {aside ? (
+          <div className="grid items-center gap-8 lg:grid-cols-[1.5fr_minmax(300px,1fr)] lg:gap-14">
+            {copy}
+            <div className="w-full">{aside}</div>
           </div>
+        ) : (
+          copy
         )}
         {children}
       </div>

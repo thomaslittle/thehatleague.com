@@ -13,8 +13,17 @@ const TICKER = [
   "Games scheduled Fri–Sun · 9–11pm EST",
 ];
 
-export function Hero({ viewer }: { viewer?: ViewerInfo | null } = {}) {
+export function Hero({
+  viewer,
+  poolCount = 0,
+  captainCount = 0,
+}: {
+  viewer?: ViewerInfo | null;
+  poolCount?: number;
+  captainCount?: number;
+} = {}) {
   const isAuthed = !!viewer?.isAuthenticated;
+  const inPool = !!viewer?.inPool;
   const firstName = viewer?.displayName?.split(/[\s_]/)[0] ?? null;
   return (
     <>
@@ -107,11 +116,17 @@ export function Hero({ viewer }: { viewer?: ViewerInfo | null } = {}) {
             </div>
 
             <p className="mt-7 max-w-xl text-lg leading-relaxed text-neutral-600 md:text-xl dark:text-neutral-400">
-              {isAuthed ? (
+              {isAuthed && inPool ? (
                 <>
                   Welcome back{firstName ? `, ${firstName}` : ""}. You&apos;re
                   in the Season 4 pool. Captains start scouting now. Keep your
                   ranks current, watch for the draft announcement.
+                </>
+              ) : isAuthed ? (
+                <>
+                  Welcome back{firstName ? `, ${firstName}` : ""}. You&apos;re
+                  signed in but not in the pool yet — jump in so captains can
+                  scout you before the draft.
                 </>
               ) : (
                 <>
@@ -123,12 +138,20 @@ export function Hero({ viewer }: { viewer?: ViewerInfo | null } = {}) {
             </p>
 
             <div className="mt-9 grid grid-cols-1 gap-3 sm:grid-cols-[auto_auto] sm:items-center">
-              {isAuthed ? (
+              {isAuthed && inPool ? (
                 <Link
                   href="/dashboard"
                   className="inline-flex w-full items-center justify-center gap-3 rounded-xl bg-thl-orange px-6 py-4 text-base font-bold whitespace-nowrap text-black shadow-[0_10px_40px_-12px_rgba(247,97,3,0.6)] transition hover:bg-thl-orange-deep active:scale-[0.98] sm:w-auto"
                 >
                   Open your dashboard
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              ) : isAuthed ? (
+                <Link
+                  href="/settings"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded-xl bg-thl-orange px-6 py-4 text-base font-bold whitespace-nowrap text-black shadow-[0_10px_40px_-12px_rgba(247,97,3,0.6)] transition hover:bg-thl-orange-deep active:scale-[0.98] sm:w-auto"
+                >
+                  Join the player pool
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               ) : (
@@ -193,10 +216,22 @@ export function Hero({ viewer }: { viewer?: ViewerInfo | null } = {}) {
                     {SITE.twitchHandle}
                   </a>
                 </div>
-                <div className="rounded-lg bg-thl-orange px-3 py-2 text-center text-black">
-                  <div className="text-2xl leading-none font-extrabold">∞</div>
-                  <div className="mt-1 text-[9px] font-bold tracking-[0.2em] uppercase">
-                    Spots left
+                <div className="flex items-center gap-2">
+                  <div className="rounded-lg bg-thl-orange px-3 py-2 text-center text-black">
+                    <div className="text-2xl leading-none font-extrabold tabular-nums">
+                      {poolCount.toLocaleString()}
+                    </div>
+                    <div className="mt-1 text-[9px] font-bold tracking-[0.2em] uppercase">
+                      In pool
+                    </div>
+                  </div>
+                  <div className="rounded-lg border border-neutral-300 px-3 py-2 text-center dark:border-neutral-700">
+                    <div className="text-2xl leading-none font-extrabold tabular-nums text-neutral-900 dark:text-white">
+                      {captainCount.toLocaleString()}
+                    </div>
+                    <div className="mt-1 text-[9px] font-bold tracking-[0.2em] text-neutral-500 uppercase">
+                      Captains
+                    </div>
                   </div>
                 </div>
               </div>

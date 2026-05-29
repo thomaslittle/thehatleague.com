@@ -2,8 +2,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, TwitchIcon } from "@/components/icons/brand";
 import { SITE } from "@/lib/site";
+import type { ViewerInfo } from "@/components/landing/site-header";
 
-export function Manifesto() {
+export function Manifesto({ viewer }: { viewer?: ViewerInfo | null } = {}) {
+  const isAuthed = !!viewer?.isAuthenticated;
+  const inPool = !!viewer?.inPool;
+  const joinHref = !isAuthed ? "/signin" : inPool ? "/dashboard" : "/settings";
+  const joinLabel = !isAuthed
+    ? "Put your hat in"
+    : inPool
+      ? "Open your dashboard"
+      : "Join the player pool";
   return (
     <section className="relative overflow-hidden bg-black text-white">
       <div
@@ -89,10 +98,10 @@ export function Manifesto() {
               <ArrowRight className="h-4 w-4" />
             </a>
             <Link
-              href="/signin"
+              href={joinHref}
               className="inline-flex w-full items-center justify-center gap-3 rounded-xl border border-white/20 px-5 py-4 text-base font-semibold whitespace-nowrap text-white transition hover:border-thl-orange hover:text-thl-orange sm:w-auto"
             >
-              Put your hat in
+              {joinLabel}
             </Link>
           </div>
         </div>

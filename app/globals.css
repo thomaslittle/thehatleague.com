@@ -301,6 +301,29 @@ html.theme-transitioning *::after {
   }
 }
 
+/* Hand-drawn "sharpie" underline for the active nav item. The marker is a
+   filled, left-heavy taper (thick on the left, lifting to a point on the
+   right). It "draws" itself in with a left-to-right reveal on mount and on
+   every route change (the active <Link> remounts its marker). */
+.thl-underline-draw {
+  transform-origin: left center;
+  animation: thl-underline-draw 0.5s cubic-bezier(0.22, 0.7, 0.2, 1) 0.04s both;
+}
+@keyframes thl-underline-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thl-underline-draw {
+    animation: none;
+    transform: none;
+  }
+}
+
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);

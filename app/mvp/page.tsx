@@ -2,8 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { PageShell } from "@/components/page/page-shell";
 import { PageHero } from "@/components/page/page-hero";
+import { SessionCta } from "@/components/page/session-cta";
 import { ArrowRight, DiscordIcon } from "@/components/icons/brand";
 import { SITE } from "@/lib/site";
+import { getViewer } from "@/lib/auth/viewer";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { POOL_SELECT, type PoolRow } from "@/lib/data/pool";
 import { rankWeight } from "@/lib/data/rank-sort";
@@ -17,10 +19,10 @@ export const metadata = {
 
 export default async function MvpPage() {
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
-    .from("profiles")
-    .select(POOL_SELECT)
-    .eq("in_player_pool", true);
+  const [{ data }, viewer] = await Promise.all([
+    supabase.from("profiles").select(POOL_SELECT).eq("in_player_pool", true),
+    getViewer(),
+  ]);
   const pool = (data ?? []) as PoolRow[];
 
   // For the placeholder lineup we surface a "form chart" — the top of the
@@ -114,13 +116,9 @@ export default async function MvpPage() {
               Once captains start drafting, the field of MVP candidates fills
               in automatically.
             </p>
-            <Link
-              href="/signin"
-              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-thl-orange px-5 py-3 font-bold text-black transition hover:bg-thl-orange-deep"
-            >
-              Hat in the ring
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            <div className="mt-6 flex justify-center">
+              <SessionCta viewer={viewer} signedOutLabel="Hat in the ring" />
+            </div>
           </div>
         ) : (
           <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

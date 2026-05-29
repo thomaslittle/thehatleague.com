@@ -7,8 +7,9 @@ import {
   TwitchIcon,
 } from "@/components/icons/brand";
 import { MobileNavSheet, MobileNavTrigger } from "@/components/landing/mobile-nav";
+import { PrimaryNav } from "@/components/landing/primary-nav";
 import { SiteSearch } from "@/components/search/site-search";
-import { NAV_PRIMARY, SITE } from "@/lib/site";
+import { SITE } from "@/lib/site";
 import type { ThemePref } from "@/lib/site";
 
 export interface ViewerInfo {
@@ -17,6 +18,11 @@ export interface ViewerInfo {
   username: string | null;
   avatarUrl: string | null;
   isAdmin: boolean;
+  /** Whether the viewer is currently in the draft pool. Drives
+   *  session-aware CTAs (e.g. "Add yourself" → "You're in the pool"). */
+  inPool?: boolean;
+  /** Whether the viewer is a captain. */
+  isCaptain?: boolean;
   /** Admin-only: count of captain + league-ops applications waiting on
    *  review. Drives the notification dot on the header avatar. 0 means
    *  no badge. */
@@ -107,25 +113,7 @@ export function SiteHeader({
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-1 xl:flex">
-          {NAV_PRIMARY.map((item) => {
-            const count = navCounts?.[item.href];
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-neutral-700 transition hover:text-thl-orange dark:text-neutral-300 dark:hover:text-thl-orange"
-              >
-                {item.label}
-                {typeof count === "number" && count > 0 && (
-                  <span className="rounded-full bg-thl-orange/15 px-1.5 py-0.5 text-[10px] font-extrabold tabular-nums text-thl-orange">
-                    {count > 99 ? "99+" : count}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
-        </nav>
+        <PrimaryNav navCounts={navCounts} />
 
         {/*
           Right-side action cluster. Order follows common header conventions:

@@ -8,6 +8,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  type ReactNode,
 } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { DiscordIcon } from "@/components/icons/brand";
@@ -17,6 +18,7 @@ import { queryKeys } from "@/lib/query-keys";
 import { POOL_SELECT, type PoolRow } from "@/lib/data/pool";
 import { SITE } from "@/lib/site";
 import { RankBadge } from "@/components/ranks/rank-badge";
+import { PoolTable } from "@/components/pool/pool-table";
 import {
   Select,
   SelectContent,
@@ -26,6 +28,7 @@ import {
 } from "@/components/ui/select";
 
 export type SortKey = "peak" | "rank_3v3" | "rank_2v2" | "joined";
+export type ViewKey = "grid" | "list";
 
 const SORT_LABEL: Record<SortKey, string> = {
   peak: "Peak rank",
@@ -47,11 +50,17 @@ export function PoolBoard({
   sort: initialSort,
   query: initialQuery = "",
   role: initialRole = "everyone",
+  view: initialView = "list",
+  viewerAuthed = false,
+  viewerInPool = false,
 }: {
   initialRows: PoolRow[];
   sort: SortKey;
   query?: string;
   role?: RoleFilter;
+  view?: ViewKey;
+  viewerAuthed?: boolean;
+  viewerInPool?: boolean;
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -62,6 +71,7 @@ export function PoolBoard({
   const [sort, setSort] = useState<SortKey>(initialSort);
   const [role, setRole] = useState<RoleFilter>(initialRole);
   const [search, setSearch] = useState<string>(initialQuery);
+  const [view, setView] = useState<ViewKey>(initialView);
   const deferredSearch = useDeferredValue(search);
 
   const { data: rows = initialRows } = useQuery<PoolRow[]>({
@@ -145,11 +155,12 @@ export function PoolBoard({
     const params = new URLSearchParams();
     if (sort !== "peak") params.set("sort", sort);
     if (role !== "everyone") params.set("role", role);
+    if (view !== "list") params.set("view", view);
     const trimmed = deferredSearch.trim();
     if (trimmed) params.set("q", trimmed);
     const next = params.toString();
     router.replace(next ? `/pool?${next}` : "/pool", { scroll: false });
-  }, [sort, role, deferredSearch, router]);
+  }, [sort, role, view, deferredSearch, router]);
 
   const resetFilters = () => {
     setSearch("");
@@ -222,25 +233,53 @@ export function PoolBoard({
               ))}
             </div>
 
-            <div className="flex shrink-0 items-center gap-2">
-              <span className="text-[10px] font-bold tracking-[0.18em] text-neutral-500 uppercase">
-                Sort
-              </span>
-              <Select
-                value={sort}
-                onValueChange={(v) => setSort(v as SortKey)}
+            <div className="flex shrink-0 flex-wrap items-center gap-2">
+              {/* Sort dropdown is the sort mechanism for the card grid only.
+                  In list view the table's own clickable column headers take
+                  over, so we hide the redundant control. */}
+              {view === "grid" && (
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold tracking-[0.18em] text-neutral-500 uppercase">
+                    Sort
+                  </span>
+                  <Select
+                    value={sort}
+                    onValueChange={(v) => setSort(v as SortKey)}
+                  >
+                    <SelectTrigger className="h-9 w-[170px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(SORT_LABEL) as SortKey[]).map((k) => (
+                        <SelectItem key={k} value={k}>
+                          {SORT_LABEL[k]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              <div
+                role="tablist"
+                aria-label="View layout"
+                className="inline-flex shrink-0 rounded-lg border border-neutral-200 bg-neutral-50 p-1 dark:border-neutral-800 dark:bg-neutral-900"
               >
-                <SelectTrigger className="h-9 w-[170px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {(Object.keys(SORT_LABEL) as SortKey[]).map((k) => (
-                    <SelectItem key={k} value={k}>
-                      {SORT_LABEL[k]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <ViewTab
+                  active={view === "grid"}
+                  onClick={() => setView("grid")}
+                  label="Cards"
+                >
+                  <GridIcon className="h-4 w-4" />
+                </ViewTab>
+                <ViewTab
+                  active={view === "list"}
+                  onClick={() => setView("list")}
+                  label="List"
+                >
+                  <ListIcon className="h-4 w-4" />
+                </ViewTab>
+              </div>
             </div>
           </div>
 
@@ -274,8 +313,13 @@ export function PoolBoard({
           isFiltering ? (
             <NoMatchesState onReset={resetFilters} />
           ) : (
-            <EmptyState />
+            <EmptyState authed={viewerAuthed} inPool={viewerInPool} />
           )
+        ) : view === "list" ? (
+          // The table sorts itself via its column headers, so it takes the
+          // filtered (role + search) list and seeds its initial sort from
+          // the toolbar's last-chosen key.
+          <PoolTable rows={filtered} sort={sort} />
         ) : (
           <ul className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {sorted.map((p) => (
@@ -285,6 +329,78 @@ export function PoolBoard({
         )}
       </section>
     </>
+  );
+}
+
+function ViewTab({
+  active,
+  onClick,
+  label,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      title={`${label} view`}
+      className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-bold transition ${
+        active
+          ? "bg-thl-orange text-black"
+          : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
+      }`}
+    >
+      {children}
+      <span className="hidden sm:inline">{label}</span>
+    </button>
+  );
+}
+
+function GridIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+      <rect x="14" y="14" width="7" height="7" rx="1.5" />
+    </svg>
+  );
+}
+
+function ListIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <line x1="8" y1="6" x2="21" y2="6" />
+      <line x1="8" y1="12" x2="21" y2="12" />
+      <line x1="8" y1="18" x2="21" y2="18" />
+      <line x1="3" y1="6" x2="3.01" y2="6" />
+      <line x1="3" y1="12" x2="3.01" y2="12" />
+      <line x1="3" y1="18" x2="3.01" y2="18" />
+    </svg>
   );
 }
 
@@ -454,7 +570,16 @@ function RankCell({
   );
 }
 
-function EmptyState() {
+function EmptyState({
+  authed = false,
+  inPool = false,
+}: {
+  authed?: boolean;
+  inPool?: boolean;
+}) {
+  // A signed-in viewer who isn't in the pool is the one we most want to
+  // convert here — point them straight at the join toggle in settings.
+  const showJoin = authed && !inPool;
   return (
     <div className="rounded-3xl border border-dashed border-neutral-300 bg-white p-10 text-center md:p-14 dark:border-neutral-800 dark:bg-neutral-950">
       <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
@@ -464,17 +589,27 @@ function EmptyState() {
         No one&apos;s in the pool yet.
       </h3>
       <p className="mx-auto mt-3 max-w-md text-neutral-600 dark:text-neutral-400">
-        Be the first hat in the ring. Sign in with Discord and confirm your
-        ranks — captains can start scouting today.
+        {showJoin
+          ? "Be the first hat in the ring — flip yourself into the pool so captains can start scouting today."
+          : "Be the first hat in the ring. Sign in with Discord and confirm your ranks — captains can start scouting today."}
       </p>
       <div className="mt-6 flex flex-wrap justify-center gap-3">
-        <Link
-          href="/signin"
-          className="inline-flex items-center gap-2 rounded-xl bg-thl-orange px-4 py-2.5 font-bold text-black hover:bg-thl-orange-deep"
-        >
-          <DiscordIcon className="h-4 w-4" />
-          Sign me up
-        </Link>
+        {showJoin ? (
+          <Link
+            href="/settings"
+            className="inline-flex items-center gap-2 rounded-xl bg-thl-orange px-4 py-2.5 font-bold text-black hover:bg-thl-orange-deep"
+          >
+            Join the pool
+          </Link>
+        ) : (
+          <Link
+            href="/signin"
+            className="inline-flex items-center gap-2 rounded-xl bg-thl-orange px-4 py-2.5 font-bold text-black hover:bg-thl-orange-deep"
+          >
+            <DiscordIcon className="h-4 w-4" />
+            Sign me up
+          </Link>
+        )}
         <a
           href={SITE.discordInvite}
           target="_blank"

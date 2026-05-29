@@ -13,13 +13,12 @@ import { RecentSignups } from "@/components/landing/recent-signups";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { POOL_SELECT, type PoolRow } from "@/lib/data/pool";
 import { getRecentAnnouncements } from "@/lib/data/announcements";
-import { cleanDiscordUsername } from "@/lib/discord/name";
-import type { ViewerInfo } from "@/components/landing/site-header";
+import { getViewer, getPoolStats } from "@/lib/auth/viewer";
 import { getTwitchLive } from "@/lib/twitch/live";
 
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();
-  const [theme, recent, announcements, { count: poolCount }, { data: { user } }, twitch] =
+  const [theme, recent, announcements, stats, viewer, twitch] =
     await Promise.all([
       readThemePref(),
       supabase
@@ -29,67 +28,30 @@ export default async function HomePage() {
         .order("created_at", { ascending: false })
         .limit(6),
       getRecentAnnouncements(1),
-      supabase
-        .from("profiles")
-        .select("id", { count: "exact", head: true })
-        .eq("in_player_pool", true),
-      supabase.auth.getUser(),
+      getPoolStats(),
+      getViewer(),
       getTwitchLive(),
     ]);
   const headline = announcements[0]
     ? { slug: announcements[0].slug, title: announcements[0].title }
     : null;
 
-  let viewer: ViewerInfo | null = null;
-  if (user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, is_admin")
-      .eq("id", user.id)
-      .single();
-    let pendingAdminQueue = 0;
-    if (profile?.is_admin) {
-      const [captainQueue, leagueOpsQueue] = await Promise.all([
-        supabase
-          .from("profiles")
-          .select("id", { count: "exact", head: true })
-          .eq("is_captain_applicant", true)
-          .eq("is_captain", false),
-        supabase
-          .from("profiles")
-          .select("id", { count: "exact", head: true })
-          .eq("is_admin_applicant", true)
-          .eq("is_admin", false),
-      ]);
-      pendingAdminQueue =
-        (captainQueue.count ?? 0) + (leagueOpsQueue.count ?? 0);
-    }
-    viewer = {
-      isAuthenticated: true,
-      displayName:
-        profile?.discord_global_name ??
-        cleanDiscordUsername(profile?.discord_username) ??
-        null,
-      username: cleanDiscordUsername(profile?.discord_username),
-      avatarUrl:
-        profile?.profile_avatar_url ?? profile?.discord_avatar_url ?? null,
-      isAdmin: !!profile?.is_admin,
-      pendingAdminQueue,
-    };
-  }
-
   return (
     <div className="min-h-screen bg-white text-neutral-900 antialiased dark:bg-black dark:text-white">
       <SiteHeader
         theme={theme}
         headlineAnnouncement={headline}
-        navCounts={{ "/pool": poolCount ?? 0 }}
+        navCounts={{ "/pool": stats.poolCount }}
         viewer={viewer}
         twitchLive={twitch?.isLive ?? false}
       />
       <main id="main">
-        <Hero viewer={viewer} />
-        <Manifesto />
+        <Hero
+          viewer={viewer}
+          poolCount={stats.poolCount}
+          captainCount={stats.captainCount}
+        />
+        <Manifesto viewer={viewer} />
         {!viewer?.isAuthenticated && <SignupCallout />}
         <RecentSignups initialRows={(recent.data ?? []) as PoolRow[]} />
         <Standings />

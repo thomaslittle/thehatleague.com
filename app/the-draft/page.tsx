@@ -1,11 +1,9 @@
 import Link from "next/link";
 import { PageShell } from "@/components/page/page-shell";
 import { PageHero } from "@/components/page/page-hero";
-import {
-  ArrowRight,
-  DiscordIcon,
-  TwitchIcon,
-} from "@/components/icons/brand";
+import { SessionCta } from "@/components/page/session-cta";
+import { ArrowRight, TwitchIcon } from "@/components/icons/brand";
+import { getViewer } from "@/lib/auth/viewer";
 import { SITE } from "@/lib/site";
 
 export const metadata = {
@@ -38,7 +36,8 @@ const READINESS = [
   },
 ];
 
-export default function DraftPage() {
+export default async function DraftPage() {
+  const viewer = await getViewer();
   return (
     <PageShell>
       <PageHero
@@ -62,14 +61,7 @@ export default function DraftPage() {
         }
         actions={
           <>
-            <Link
-              href="/signin"
-              className="inline-flex items-center gap-2 rounded-xl bg-thl-orange px-5 py-3.5 font-bold text-black transition hover:bg-thl-orange-deep"
-            >
-              <DiscordIcon className="h-5 w-5" />
-              Get in the pool
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            <SessionCta viewer={viewer} signedOutLabel="Get in the pool" />
             <a
               href={SITE.twitchUrl}
               target="_blank"

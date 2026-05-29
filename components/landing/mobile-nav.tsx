@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useUiStore } from "@/lib/stores/ui-store";
 import { CloseIcon, MenuIcon } from "@/components/icons/glyphs";
 import {
@@ -43,6 +44,7 @@ export function MobileNavSheet({
   const open = useUiStore((s) => s.navOpen);
   const setOpen = useUiStore((s) => s.setNavOpen);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const pathname = usePathname();
 
   // EFFECT JUSTIFICATION: this synchronises imperative DOM concerns with
   // open/close state — body scroll lock, ESC keydown listener, and initial
@@ -113,18 +115,34 @@ export function MobileNavSheet({
 
         <nav className="flex flex-1 flex-col px-5 py-6">
           <ul className="grid gap-1">
-            {NAV_PRIMARY.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className="flex items-center justify-between rounded-xl px-3 py-3 text-lg font-bold text-neutral-900 transition hover:bg-neutral-100 hover:text-thl-orange dark:text-white dark:hover:bg-neutral-900"
-                >
-                  {item.label}
-                  <ArrowRight className="h-4 w-4 opacity-60" />
-                </Link>
-              </li>
-            ))}
+            {NAV_PRIMARY.map((item) => {
+              const active =
+                pathname === item.href ||
+                pathname.startsWith(`${item.href}/`);
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "flex items-center justify-between rounded-xl px-3 py-3 text-lg font-bold transition",
+                      active
+                        ? "bg-thl-orange/10 text-thl-orange"
+                        : "text-neutral-900 hover:bg-neutral-100 hover:text-thl-orange dark:text-white dark:hover:bg-neutral-900",
+                    )}
+                  >
+                    {item.label}
+                    <ArrowRight
+                      className={cn(
+                        "h-4 w-4",
+                        active ? "opacity-100" : "opacity-60",
+                      )}
+                    />
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
           <div className="mt-auto grid gap-3 pt-8">

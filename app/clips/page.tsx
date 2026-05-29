@@ -75,13 +75,25 @@ async function ClipsGrid() {
             <span className="font-semibold">#clips-and-highlights</span>{" "}
             on the Discord, the whole grid populates automatically.
           </p>
-          <Link
-            href="/signin"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-thl-orange px-5 py-3 text-sm font-bold text-black hover:bg-thl-orange-deep"
-          >
-            Join the Discord
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+          {user ? (
+            <a
+              href={SITE.discordInvite}
+              target="_blank"
+              rel="noopener"
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-thl-orange px-5 py-3 text-sm font-bold text-black hover:bg-thl-orange-deep"
+            >
+              Open the Discord
+              <ArrowRight className="h-4 w-4" />
+            </a>
+          ) : (
+            <Link
+              href="/signin"
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-thl-orange px-5 py-3 text-sm font-bold text-black hover:bg-thl-orange-deep"
+            >
+              Join the Discord
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">

@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { PageShell } from "@/components/page/page-shell";
 import { PageHero } from "@/components/page/page-hero";
+import { SessionCta } from "@/components/page/session-cta";
 import { ArrowRight, DiscordIcon, TwitchIcon } from "@/components/icons/brand";
+import { getViewer } from "@/lib/auth/viewer";
 import { SITE } from "@/lib/site";
 
 export const metadata = {
@@ -59,7 +61,8 @@ const VALUES = [
   },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const viewer = await getViewer();
   return (
     <PageShell>
       <PageHero
@@ -176,14 +179,7 @@ export default function AboutPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3 md:flex-col md:items-stretch">
-            <Link
-              href="/signin"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-thl-orange px-5 py-3 font-bold text-black transition hover:bg-thl-orange-deep"
-            >
-              <DiscordIcon className="h-4 w-4" />
-              Sign up
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+            <SessionCta viewer={viewer} signedOutLabel="Sign up" />
             <a
               href={SITE.twitchUrl}
               target="_blank"
