@@ -415,6 +415,57 @@ html.theme-transitioning *::after {
   }
 }
 
+/* Section depth — soft directional color washes (a unique tint per section)
+   plus a touch of film grain for a grungier, less-flat feel. No geometric
+   grids/dots. Washes layer behind content via the element's own background. */
+.thl-wash-orange {
+  background-image: radial-gradient(
+    ellipse 115% 85% at 12% -25%,
+    color-mix(in srgb, var(--color-thl-orange) 20%, transparent),
+    transparent 55%
+  );
+}
+.thl-wash-blue {
+  background-image: radial-gradient(
+    ellipse 115% 85% at 88% -25%,
+    color-mix(in srgb, #4f9dff 22%, transparent),
+    transparent 55%
+  );
+}
+.thl-wash-green {
+  background-image: radial-gradient(
+    ellipse 120% 90% at 50% -30%,
+    color-mix(in srgb, #34d399 18%, transparent),
+    transparent 55%
+  );
+}
+.thl-wash-violet {
+  background-image: radial-gradient(
+    ellipse 115% 85% at 85% -25%,
+    color-mix(in srgb, #a78bfa 22%, transparent),
+    transparent 55%
+  );
+}
+
+/* Subtle film grain. Sits over the section at low opacity for grunge. */
+.thl-grain {
+  position: relative;
+}
+.thl-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (prefers-reduced-motion: reduce) {
+  .thl-grain::after {
+    opacity: 0.04;
+  }
+}
+
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);

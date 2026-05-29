@@ -54,7 +54,7 @@ export function RecentSignups({ initialRows }: { initialRows: PoolRow[] }) {
   if (rows.length === 0) return null;
 
   return (
-    <section className="relative border-y border-neutral-200 bg-white dark:border-neutral-900 dark:bg-black">
+    <section className="thl-grain thl-wash-orange relative border-y border-neutral-200 bg-white dark:border-neutral-900 dark:bg-black">
       <div className="mx-auto max-w-[1320px] px-6 py-16 md:px-10 md:py-20">
         <div className="grid items-end gap-6 md:grid-cols-[1fr_auto]">
           <div>

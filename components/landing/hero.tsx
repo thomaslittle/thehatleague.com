@@ -1,3 +1,6 @@
+"use client";
+
+import { useCallback, useRef, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, DiscordIcon, TwitchIcon } from "@/components/icons/brand";
@@ -31,22 +34,77 @@ export function Hero({
   const isAuthed = !!viewer?.isAuthenticated;
   const inPool = !!viewer?.inPool;
   const firstName = viewer?.displayName?.split(/[\s_]/)[0] ?? null;
+
+  // Mouse-driven parallax on the background image. Writes the transform
+  // straight to the ref (no per-move React state) so it stays smooth; the
+  // CSS transition eases it. No useEffect — it's a plain event handler.
+  const bgRef = useRef<HTMLDivElement>(null);
+  const onParallax = (e: MouseEvent<HTMLElement>) => {
+    const el = bgRef.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `scale(1.12) translate3d(${(-x * 34).toFixed(1)}px, ${(-y * 26).toFixed(1)}px, 0)`;
+  };
+  const resetParallax = () => {
+    if (bgRef.current) bgRef.current.style.transform = "scale(1.12)";
+  };
+
+  // Scroll parallax via a ref callback (React 19 cleanup return) — no
+  // useEffect. Writes the CSS `translate` property, which composes with the
+  // mouse-driven `transform` above instead of overwriting it.
+  const scrollParallaxSetup = useCallback((node: HTMLElement | null) => {
+    if (!node || typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        if (bgRef.current) {
+          const offset = Math.min(window.scrollY * 0.35, 60);
+          bgRef.current.style.translate = `0 ${offset.toFixed(1)}px`;
+        }
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <>
-    <section id="top" className="relative overflow-hidden">
+    <section
+      id="top"
+      ref={scrollParallaxSetup}
+      onMouseMove={onParallax}
+      onMouseLeave={resetParallax}
+      className="relative overflow-hidden"
+    >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 overflow-hidden"
       >
-        <Image
-          src="/brand/thl-fennec.png"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover opacity-30 dark:opacity-40"
-          style={{ objectPosition: "55% 35%" }}
-        />
+        {/* Parallax layer — only the photo moves with the mouse; the
+            gradients below stay fixed so the headline stays readable. */}
+        <div
+          ref={bgRef}
+          className="absolute -inset-y-24 inset-x-0 transition-transform duration-300 ease-out will-change-transform motion-reduce:transition-none"
+          style={{ transform: "scale(1.12)" }}
+        >
+          <Image
+            src="/brand/thl-fennec.png"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-30 dark:opacity-40"
+            style={{ objectPosition: "55% 35%" }}
+          />
+        </div>
         {/* Soft left-side fade — headline stays readable, photo still reads. */}
         <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/45 to-white/0 dark:from-black/80 dark:via-black/35 dark:to-black/0" />
         <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-white dark:to-black" />
@@ -164,25 +222,6 @@ export function Hero({
               </a>
             </div>
 
-            {/* Social proof — pool members already signed up. */}
-            {poolAvatars.length > 0 && (
-              <div className="mt-9">
-                <p className="mb-3 inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.18em] text-neutral-500 uppercase">
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-thl-orange opacity-75" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-thl-orange" />
-                  </span>
-                  <span>
-                    <span className="text-thl-orange">
-                      {poolCount.toLocaleString()} player
-                      {poolCount === 1 ? "" : "s"}
-                    </span>{" "}
-                    already in the pool
-                  </span>
-                </p>
-                <PoolAvatarStack avatars={poolAvatars} count={poolCount} />
-              </div>
-            )}
           </div>
 
           <div className="relative">
@@ -239,6 +278,27 @@ export function Hero({
             </div>
           </div>
         </div>
+
+        {/* Full-width social-proof row — avatars span the whole hero so they
+            can run all the way across instead of stopping at the column. */}
+        {poolAvatars.length > 0 && (
+          <div className="mt-12 flex flex-col gap-3 border-t border-neutral-200/60 pt-6 md:mt-14 dark:border-white/10">
+            <p className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.18em] text-neutral-500 uppercase">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-thl-orange opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-thl-orange" />
+              </span>
+              <span>
+                <span className="text-thl-orange">
+                  {poolCount.toLocaleString()} player
+                  {poolCount === 1 ? "" : "s"}
+                </span>{" "}
+                already in the pool
+              </span>
+            </p>
+            <PoolAvatarStack avatars={poolAvatars} count={poolCount} />
+          </div>
+        )}
       </div>
     </section>
     {/* Ticker is its own block — must NOT be inside the hero section, or

@@ -97,6 +97,8 @@ export interface PoolAvatar {
   username: string | null;
   avatarUrl: string | null;
   peakRank: string | null;
+  /** Highest org role, for the avatar ring + tooltip. */
+  role: "ops" | "captain" | null;
 }
 
 /**
@@ -109,7 +111,7 @@ export const getPoolAvatars = cache(
     const { data } = await supabase
       .from("profiles")
       .select(
-        "id, discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, peak_rank, created_at",
+        "id, discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, peak_rank, is_captain, is_admin, created_at",
       )
       .eq("in_player_pool", true)
       .order("created_at", { ascending: false })
@@ -120,6 +122,7 @@ export const getPoolAvatars = cache(
       username: cleanDiscordUsername(p.discord_username),
       avatarUrl: p.profile_avatar_url ?? p.discord_avatar_url ?? null,
       peakRank: p.peak_rank ?? null,
+      role: p.is_admin ? ("ops" as const) : p.is_captain ? ("captain" as const) : null,
     }));
   },
 );

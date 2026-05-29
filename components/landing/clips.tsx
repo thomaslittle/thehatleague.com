@@ -35,7 +35,7 @@ export async function Clips() {
   return (
     <section
       id="clips"
-      className="border-b border-neutral-200 bg-white dark:border-neutral-900 dark:bg-black"
+      className="thl-grain thl-wash-violet border-b border-neutral-200 bg-white dark:border-neutral-900 dark:bg-black"
     >
       <div className="mx-auto max-w-[1320px] px-6 py-20 md:px-10 md:py-28">
         <div className="mb-10 grid items-end gap-8 md:grid-cols-[1fr_auto]">

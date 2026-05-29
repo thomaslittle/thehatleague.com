@@ -33,7 +33,7 @@ export function PlayerStats() {
   return (
     <section
       id="stats"
-      className="border-y border-neutral-200 bg-neutral-100/60 dark:border-neutral-900 dark:bg-neutral-950"
+      className="thl-grain thl-wash-green border-y border-neutral-200 bg-neutral-100/60 dark:border-neutral-900 dark:bg-neutral-950"
     >
       <div className="mx-auto max-w-[1320px] px-6 py-20 md:px-10 md:py-28">
         <div className="mb-10 grid items-end gap-8 md:grid-cols-[1fr_auto]">
