@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The TanStack Start workspace lives outside Next's runtime. It has
+    // its own lint config under apps/tanstack/ (no `next/image` here).
+    "apps/**",
   ]),
 ]);
 
