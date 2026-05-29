@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, DiscordIcon, TwitchIcon } from "@/components/icons/brand";
+import { HeroLogoIntro } from "@/components/landing/hero-logo-intro";
 import { SITE } from "@/lib/site";
 import type { ViewerInfo } from "@/components/landing/site-header";
 
@@ -188,14 +189,7 @@ export function Hero({
               </div>
 
               <div className="flex w-full flex-1 items-center justify-center md:pt-4">
-                <Image
-                  src="/brand/thl-logo.png"
-                  alt="The Hat League"
-                  width={520}
-                  height={520}
-                  className="w-[68%] max-w-[420px] drop-shadow-2xl sm:w-[72%] md:w-[78%]"
-                  priority
-                />
+                <HeroLogoIntro />
               </div>
 
               <div className="flex w-full items-end justify-between gap-4 border-t border-dashed border-neutral-300 pt-5 md:pt-6 dark:border-neutral-800">
