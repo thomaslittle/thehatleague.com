@@ -13,12 +13,12 @@ import { RecentSignups } from "@/components/landing/recent-signups";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { POOL_SELECT, type PoolRow } from "@/lib/data/pool";
 import { getRecentAnnouncements } from "@/lib/data/announcements";
-import { getViewer, getPoolStats } from "@/lib/auth/viewer";
+import { getViewer, getPoolStats, getPoolAvatars } from "@/lib/auth/viewer";
 import { getTwitchLive } from "@/lib/twitch/live";
 
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();
-  const [theme, recent, announcements, stats, viewer, twitch] =
+  const [theme, recent, announcements, stats, viewer, twitch, poolAvatars] =
     await Promise.all([
       readThemePref(),
       supabase
@@ -31,6 +31,7 @@ export default async function HomePage() {
       getPoolStats(),
       getViewer(),
       getTwitchLive(),
+      getPoolAvatars(),
     ]);
   const headline = announcements[0]
     ? { slug: announcements[0].slug, title: announcements[0].title }
@@ -50,6 +51,7 @@ export default async function HomePage() {
           viewer={viewer}
           poolCount={stats.poolCount}
           captainCount={stats.captainCount}
+          poolAvatars={poolAvatars}
         />
         <Manifesto viewer={viewer} />
         {!viewer?.isAuthenticated && <SignupCallout />}

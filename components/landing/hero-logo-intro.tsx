@@ -28,6 +28,7 @@ export function HeroLogoIntro() {
         alt="The Hat League"
         fill
         priority
+        sizes="(min-width: 1024px) 440px, (min-width: 640px) 45vw, 90vw"
         className="object-contain p-6"
       />
 

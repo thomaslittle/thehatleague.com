@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { Spotlight } from "@/components/landing/spotlight";
 
 /**
  * Single persistent brand-glow layer for app pages. It lives outside route
@@ -30,20 +31,8 @@ export function BrandBackdropLayer() {
       />
       <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/55 to-white/25 dark:from-black/80 dark:via-black/45 dark:to-black/20" />
       <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-white dark:to-black" />
-      <div
-        className="absolute inset-0 opacity-80"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 50% at 18% 10%, rgba(247,97,3,0.32), transparent 60%)",
-        }}
-      />
-      <div
-        className="absolute inset-0 opacity-60"
-        style={{
-          background:
-            "radial-gradient(ellipse 50% 40% at 90% 0%, rgba(247,97,3,0.14), transparent 60%)",
-        }}
-      />
+      {/* Spotlight beams own the corner glow: orange left, blue right. */}
+      <Spotlight />
       <div
         className="absolute inset-0 opacity-[0.08] dark:opacity-[0.05]"
         style={{

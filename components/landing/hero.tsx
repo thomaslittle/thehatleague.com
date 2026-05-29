@@ -2,6 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, DiscordIcon, TwitchIcon } from "@/components/icons/brand";
 import { HeroLogoIntro } from "@/components/landing/hero-logo-intro";
+import { Spotlight } from "@/components/landing/spotlight";
+import { PoolAvatarStack } from "@/components/landing/pool-avatar-stack";
+import type { PoolAvatar } from "@/lib/auth/viewer";
 import { SITE } from "@/lib/site";
 import type { ViewerInfo } from "@/components/landing/site-header";
 
@@ -18,10 +21,12 @@ export function Hero({
   viewer,
   poolCount = 0,
   captainCount = 0,
+  poolAvatars = [],
 }: {
   viewer?: ViewerInfo | null;
   poolCount?: number;
   captainCount?: number;
+  poolAvatars?: PoolAvatar[];
 } = {}) {
   const isAuthed = !!viewer?.isAuthenticated;
   const inPool = !!viewer?.inPool;
@@ -61,25 +66,8 @@ export function Hero({
         />
       </div>
 
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-80 dark:opacity-100"
-      >
-        <div
-          className="absolute top-[-10%] right-[-10%] h-[640px] w-[640px] rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(247,97,3,0.18), transparent 65%)",
-          }}
-        />
-        <div
-          className="absolute bottom-[-20%] left-[-10%] h-[520px] w-[520px] rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(247,97,3,0.08), transparent 70%)",
-          }}
-        />
-      </div>
+      {/* Spotlight beams own the top-corner glow: orange left, blue right. */}
+      <Spotlight />
 
       <div className="relative mx-auto max-w-[1320px] px-6 pt-16 pb-16 md:px-10 md:pt-24 md:pb-24">
         <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
@@ -176,6 +164,25 @@ export function Hero({
               </a>
             </div>
 
+            {/* Social proof — pool members already signed up. */}
+            {poolAvatars.length > 0 && (
+              <div className="mt-9">
+                <p className="mb-3 inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.18em] text-neutral-500 uppercase">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-thl-orange opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-thl-orange" />
+                  </span>
+                  <span>
+                    <span className="text-thl-orange">
+                      {poolCount.toLocaleString()} player
+                      {poolCount === 1 ? "" : "s"}
+                    </span>{" "}
+                    already in the pool
+                  </span>
+                </p>
+                <PoolAvatarStack avatars={poolAvatars} count={poolCount} />
+              </div>
+            )}
           </div>
 
           <div className="relative">

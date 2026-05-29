@@ -335,6 +335,40 @@ html.theme-transitioning *::after {
     opacity: 1;
   }
 }
+
+/* Header logo hover sheen. (v2) */
+/* Diagonal light sweep across the header logo on hover. Self-contained
+   (not Tailwind utilities) so the base offset and the keyframe both drive the
+   same `transform` property and can't fight a separate `translate`. */
+@keyframes thl-logo-shimmer {
+  from {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(220%) skewX(-18deg);
+  }
+}
+.thl-logo-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Parked off the left edge until the sweep runs. */
+  transform: translateX(-120%) skewX(-18deg);
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.7) 50%,
+    transparent 65%
+  );
+}
+.group:hover .thl-logo-sheen {
+  animation: thl-logo-shimmer 0.8s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .group:hover .thl-logo-sheen {
+    animation: none;
+  }
+}
 .thl-hero-intro-in {
   /* backwards (not forwards/both): show the from-state at t=0 to avoid a
      first-paint flash, but release opacity after so the fade-OUT transition
@@ -343,6 +377,40 @@ html.theme-transitioning *::after {
 }
 @media (prefers-reduced-motion: reduce) {
   .thl-hero-intro-in {
+    animation: none;
+  }
+}
+
+/* Spotlight beams. */
+/* Spotlight (new) — twin beams drift slowly side to side. Visible at rest;
+   the drift is enhancement only, disabled for reduced motion. */
+@keyframes thl-spotlight-drift-left {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(70px);
+  }
+}
+@keyframes thl-spotlight-drift-right {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-70px);
+  }
+}
+.thl-spotlight-left {
+  animation: thl-spotlight-drift-left 9s ease-in-out infinite;
+}
+.thl-spotlight-right {
+  animation: thl-spotlight-drift-right 9s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .thl-spotlight-left,
+  .thl-spotlight-right {
     animation: none;
   }
 }

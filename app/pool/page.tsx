@@ -3,8 +3,9 @@ import { PageShell } from "@/components/page/page-shell";
 import { PageHero } from "@/components/page/page-hero";
 import { HeroStats } from "@/components/page/hero-stats";
 import { SessionCta } from "@/components/page/session-cta";
+import { PoolAvatarStack } from "@/components/landing/pool-avatar-stack";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { getViewer, getPoolStats } from "@/lib/auth/viewer";
+import { getViewer, getPoolStats, getPoolAvatars } from "@/lib/auth/viewer";
 import { PoolBoard, type SortKey, type ViewKey } from "@/components/pool/pool-board";
 import { POOL_SELECT, type PoolRow } from "@/lib/data/pool";
 
@@ -29,7 +30,11 @@ export default async function PoolPage(props: PageProps<"/pool">) {
   const view: ViewKey = sp.view === "grid" ? "grid" : "list";
   const query = typeof sp.q === "string" ? sp.q : "";
 
-  const [viewer, stats] = await Promise.all([getViewer(), getPoolStats()]);
+  const [viewer, stats, poolAvatars] = await Promise.all([
+    getViewer(),
+    getPoolStats(),
+    getPoolAvatars(),
+  ]);
 
   return (
     <PageShell>
@@ -46,10 +51,20 @@ export default async function PoolPage(props: PageProps<"/pool">) {
         }
         actions={<SessionCta viewer={viewer} signedOutLabel="Add yourself" />}
         aside={
-          <HeroStats
-            poolCount={stats.poolCount}
-            captainCount={stats.captainCount}
-          />
+          <div className="flex flex-col gap-5">
+            <HeroStats
+              poolCount={stats.poolCount}
+              captainCount={stats.captainCount}
+            />
+            {poolAvatars.length > 0 && (
+              <PoolAvatarStack
+                avatars={poolAvatars}
+                count={stats.poolCount}
+                max={10}
+                className="max-w-full"
+              />
+            )}
+          </div>
         }
       />
       <Suspense fallback={<PoolBoardSkeleton />}>

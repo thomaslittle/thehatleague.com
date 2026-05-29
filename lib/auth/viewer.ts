@@ -90,3 +90,36 @@ export const getPoolStats = cache(async (): Promise<PoolStats> => {
     captainCount: captainCount ?? 0,
   };
 });
+
+export interface PoolAvatar {
+  id: string;
+  name: string;
+  username: string | null;
+  avatarUrl: string | null;
+  peakRank: string | null;
+}
+
+/**
+ * Minimal avatar data for everyone in the pool (newest first), for the hero
+ * avatar-stack social proof. Cached per request.
+ */
+export const getPoolAvatars = cache(
+  async (limit = 40): Promise<PoolAvatar[]> => {
+    const supabase = await createSupabaseServerClient();
+    const { data } = await supabase
+      .from("profiles")
+      .select(
+        "id, discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, peak_rank, created_at",
+      )
+      .eq("in_player_pool", true)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+    return (data ?? []).map((p) => ({
+      id: p.id,
+      name: p.discord_global_name ?? p.discord_username ?? "Player",
+      username: cleanDiscordUsername(p.discord_username),
+      avatarUrl: p.profile_avatar_url ?? p.discord_avatar_url ?? null,
+      peakRank: p.peak_rank ?? null,
+    }));
+  },
+);
