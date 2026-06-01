@@ -3,6 +3,11 @@ import { PageShell } from "@/components/page/page-shell";
 import { PageHero } from "@/components/page/page-hero";
 import { ArrowRight, DiscordIcon } from "@/components/icons/brand";
 import { SITE } from "@/lib/site";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getActiveSeason } from "@/lib/data/season";
+import { loadSchedule } from "@/lib/data/tournament";
+import { ScheduleBoard } from "@/components/tournament/schedule-board";
+import { RealtimeRefresh } from "@/components/realtime/realtime-refresh";
 
 export const metadata = {
   title: "Schedule",
@@ -16,7 +21,31 @@ const RHYTHM = [
   { label: "Reschedules", value: "Allowed mid-week" },
 ];
 
-export default function SchedulePage() {
+export default async function SchedulePage() {
+  const season = await getActiveSeason();
+  const supabase = await createSupabaseServerClient();
+  const matches = season ? await loadSchedule(season.id) : [];
+
+  // Viewer's team (for the "my team" filter).
+  let myTeamId: string | null = null;
+  if (season) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const { data: tm } = await supabase
+        .from("team_members")
+        .select("team_id")
+        .eq("season_id", season.id)
+        .eq("profile_id", user.id)
+        .maybeSingle();
+      myTeamId = tm?.team_id ?? null;
+    }
+  }
+
+  const conferences = season?.conferences ?? [];
+  const hasMatches = matches.length > 0;
+
   return (
     <PageShell>
       <PageHero
@@ -54,36 +83,38 @@ export default function SchedulePage() {
               <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
                 {r.label}
               </div>
-              <div className="mt-2 font-marker text-2xl">{r.value}</div>
+              <div className="mt-2 text-2xl font-bold tracking-tight">{r.value}</div>
             </div>
           ))}
         </div>
       </section>
 
       <section className="border-t border-neutral-200 bg-neutral-50 dark:border-neutral-900 dark:bg-neutral-950">
-        <div className="mx-auto grid max-w-[1320px] gap-10 px-6 py-16 md:grid-cols-[1fr_auto] md:px-10 md:py-20">
-          <div>
-            <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
-              Reserved · Season 04 calendar
-            </div>
-            <h2 className="mt-3 font-marker text-3xl md:text-4xl">
-              Week-by-week calendar slots in here.
-            </h2>
-            <p className="mt-4 max-w-2xl text-neutral-600 dark:text-neutral-400">
-              When the draft is done, we drop the full schedule (team vs team,
-              by week) here. Captain reschedules go through the
-              Discord and reflect here automatically.
-            </p>
-            <Link
-              href="/the-draft"
-              className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-thl-orange underline-offset-4 hover:underline"
-            >
-              See the draft format <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+        <div className="mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
+          <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
+            {season?.name ?? "Season 04"} · Calendar
           </div>
-          <div className="h-48 rounded-2xl border border-dashed border-neutral-300 bg-white/40 md:w-80 dark:border-neutral-800 dark:bg-black/40" />
+          <h2 className="mt-3 text-3xl font-bold tracking-[-0.02em] md:text-4xl">
+            {hasMatches ? "Every match, every week." : "The calendar drops after the draft."}
+          </h2>
+          {!hasMatches && (
+            <p className="mt-4 max-w-2xl text-neutral-600 dark:text-neutral-400">
+              Once the draft sets the teams, the full week-by-week schedule lands
+              here and updates live as captains report results.{" "}
+              <Link href="/the-draft" className="font-semibold text-thl-orange underline-offset-4 hover:underline">
+                See the draft format <ArrowRight className="inline h-3.5 w-3.5" />
+              </Link>
+            </p>
+          )}
         </div>
       </section>
+
+      {hasMatches && (
+        <div className="pt-10">
+          <RealtimeRefresh tables={["matches"]} channel="schedule" />
+          <ScheduleBoard matches={matches} conferences={conferences} myTeamId={myTeamId} />
+        </div>
+      )}
     </PageShell>
   );
 }

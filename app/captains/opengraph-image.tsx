@@ -24,7 +24,8 @@ export default async function Image() {
     const { count: c } = await supabase
       .from("profiles")
       .select("id", { count: "exact", head: true })
-      .eq("is_captain", true);
+      .eq("is_captain", true)
+      .eq("is_mock", false);
     const { count: p } = await supabase
       .from("profiles")
       .select("id", { count: "exact", head: true })
@@ -94,7 +95,7 @@ export default async function Image() {
             </div>
           </div>
 
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          { }
           <img
             src={logoSrc}
             alt=""

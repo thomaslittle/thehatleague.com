@@ -45,6 +45,7 @@ export default async function CaptainsPage() {
       "id, discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, peak_rank, peak_rank_playlist, captain_pitch",
     )
     .eq("is_captain", true)
+    .eq("is_mock", false)
     .order("created_at", { ascending: true });
 
   let viewerProfile: {
@@ -105,7 +106,7 @@ export default async function CaptainsPage() {
             <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
               Reserved · S04 captains roster
             </div>
-            <h2 className="mt-3 font-marker text-3xl md:text-4xl">
+            <h2 className="mt-3 text-3xl font-bold tracking-[-0.02em] md:text-4xl">
               Avatars and team names slot in here.
             </h2>
             <p className="mt-4 max-w-2xl text-neutral-600 dark:text-neutral-400">
@@ -236,7 +237,7 @@ export default async function CaptainsPage() {
                 key={h.title}
                 className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-black"
               >
-                <h3 className="font-marker text-2xl">{h.title}</h3>
+                <h3 className="text-xl font-bold tracking-tight">{h.title}</h3>
                 <p className="mt-2 leading-relaxed text-neutral-600 dark:text-neutral-400">
                   {h.body}
                 </p>

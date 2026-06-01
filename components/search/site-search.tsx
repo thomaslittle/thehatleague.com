@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/command";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { queryKeys } from "@/lib/query-keys";
-import { NAV_PRIMARY } from "@/lib/site";
+import { NAV_ALL } from "@/lib/site";
 import { cleanDiscordUsername } from "@/lib/discord/name";
 
 interface SearchablePlayer {
@@ -30,13 +30,11 @@ interface SearchablePlayer {
 
 const PAGE_GROUP: { label: string; href: string; hint?: string }[] = [
   { label: "Landing", href: "/", hint: "Home" },
-  ...NAV_PRIMARY.map((n) => ({ label: n.label, href: n.href })),
-  { label: "Replays", href: "/replays" },
-  { label: "Rules", href: "/rules" },
+  ...NAV_ALL.map((n) => ({ label: n.label, href: n.href })),
   { label: "Announcements", href: "/announcements" },
-  { label: "Leaderboards", href: "/leaderboards" },
-  { label: "MVP vote", href: "/mvp" },
-];
+  // NAV_ALL already carries /rules (Ruleset) and /mvp (MVP Vote), so dedupe
+  // by href to avoid duplicate React keys.
+].filter((p, i, all) => all.findIndex((o) => o.href === p.href) === i);
 
 const ACCOUNT_GROUP_AUTHED: { label: string; href: string; hint?: string }[] = [
   { label: "Dashboard", href: "/dashboard", hint: "Your hub" },
@@ -92,6 +90,7 @@ export function SiteSearch({
         .select(
           "id, discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, is_captain",
         )
+        .eq("is_mock", false)
         .order("discord_username", { ascending: true });
       return (data ?? []) as SearchablePlayer[];
     },
@@ -257,7 +256,7 @@ function SearchTrigger({ onClick }: { onClick: () => void }) {
       title="Search (⌘K)"
       className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-neutral-500 transition hover:text-thl-orange dark:text-neutral-400 dark:hover:text-thl-orange"
     >
-      <SearchGlyph className="h-[14px] w-[14px]" />
+      <SearchGlyph className="h-[18px] w-[18px]" />
     </button>
   );
 }

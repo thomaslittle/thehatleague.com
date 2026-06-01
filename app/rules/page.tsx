@@ -136,7 +136,7 @@ export default function RulesPage() {
                 <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
                   {s.eyebrow}
                 </div>
-                <h2 className="mt-2 font-marker text-3xl md:text-4xl">
+                <h2 className="mt-2 text-3xl font-bold tracking-[-0.02em] md:text-4xl">
                   {s.title}
                 </h2>
                 <ul className="mt-5 space-y-3 text-neutral-700 dark:text-neutral-300">

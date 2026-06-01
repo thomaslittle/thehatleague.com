@@ -15,6 +15,9 @@ import { POOL_SELECT, type PoolRow } from "@/lib/data/pool";
 import { getRecentAnnouncements } from "@/lib/data/announcements";
 import { getViewer, getPoolStats, getPoolAvatars } from "@/lib/auth/viewer";
 import { getTwitchLive } from "@/lib/twitch/live";
+import { getActiveSeason } from "@/lib/data/season";
+import { deriveEvents } from "@/lib/data/events";
+import { UpcomingEvents } from "@/components/landing/upcoming-events";
 
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();
@@ -25,6 +28,7 @@ export default async function HomePage() {
         .from("profiles")
         .select(POOL_SELECT)
         .eq("in_player_pool", true)
+        .eq("is_mock", false)
         .order("created_at", { ascending: false })
         .limit(6),
       getRecentAnnouncements(1),
@@ -36,6 +40,8 @@ export default async function HomePage() {
   const headline = announcements[0]
     ? { slug: announcements[0].slug, title: announcements[0].title }
     : null;
+  const season = await getActiveSeason();
+  const events = deriveEvents(season);
 
   return (
     <div className="min-h-screen bg-white text-neutral-900 antialiased dark:bg-black dark:text-white">
@@ -53,6 +59,7 @@ export default async function HomePage() {
           captainCount={stats.captainCount}
           poolAvatars={poolAvatars}
         />
+        <UpcomingEvents events={events} />
         <Manifesto viewer={viewer} />
         {!viewer?.isAuthenticated && <SignupCallout />}
         <RecentSignups initialRows={(recent.data ?? []) as PoolRow[]} />

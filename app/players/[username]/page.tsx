@@ -10,7 +10,16 @@ import { env } from "@/lib/env";
 import { RankBadge } from "@/components/ranks/rank-badge";
 import { ClipCard } from "@/components/landing/clips";
 import { getClips } from "@/lib/discord/clips";
+import { PlayerScouting } from "@/components/players/player-scouting";
+import { RealtimeRefresh } from "@/components/realtime/realtime-refresh";
 import { parseSocialLinks, SOCIAL_LINKS } from "@/lib/profile/customization";
+import { loadProfileSocial } from "@/lib/data/social";
+import { ProfileSocialActions } from "@/components/social/profile-social-actions";
+import { loadAssets } from "@/lib/data/assets";
+import { AssetGallery } from "@/components/assets/asset-gallery";
+import { AssetSubmit } from "@/components/assets/asset-submit";
+import { loadPlayerCombine } from "@/lib/data/combine";
+import { CombineProfileCard } from "@/components/combine/combine-profile-card";
 
 export async function generateMetadata(props: PageProps<"/players/[username]">) {
   const { username } = await props.params;
@@ -48,6 +57,17 @@ export default async function PlayerProfilePage(
     (c) => c.submitterProfile?.username === player.discord_username,
   );
 
+  const social = user ? await loadProfileSocial(user.id, player.id) : null;
+  const playerAssets = await loadAssets("player", player.id, user?.id ?? null);
+  // Same combine entry captains see on the /combine board — surfaced here so
+  // scouting info (role, availability, showcase reel) lives in one place.
+  const combine = await loadPlayerCombine(player.id);
+  let canModerateAssets = false;
+  if (user) {
+    const { data: viewer } = await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle();
+    canModerateAssets = Boolean(viewer?.is_admin);
+  }
+
   const name =
     player.discord_global_name ?? player.discord_username ?? "Unnamed";
   const avatarUrl = player.profile_avatar_url ?? player.discord_avatar_url;
@@ -61,6 +81,10 @@ export default async function PlayerProfilePage(
 
   return (
     <PageShell>
+      <RealtimeRefresh
+        tables={["player_stats", "player_badges", "point_events", "team_members", "assets"]}
+        channel={`player:${player.id}`}
+      />
       {bannerUrl && <PlayerProfileBackdrop src={bannerUrl} />}
       <section className="relative z-10">
         <div className="relative mx-auto max-w-[1320px] px-6 py-12 md:px-10 md:py-16">
@@ -145,7 +169,7 @@ export default async function PlayerProfilePage(
                 )}
               </div>
               <h1
-                className="mt-2 font-marker text-4xl leading-tight font-bold tracking-[-0.02em] drop-shadow-lg md:text-5xl"
+                className="mt-2 text-4xl leading-tight font-extrabold tracking-[-0.03em] drop-shadow-lg md:text-5xl"
                 style={{ textShadow: "-2px 2px 0px #f76103" }}
               >
                 {name}
@@ -153,6 +177,13 @@ export default async function PlayerProfilePage(
               <div className="mt-1 text-sm text-neutral-500">
                 @{player.discord_username ?? "—"}
               </div>
+              {social && player.discord_username && (
+                <ProfileSocialActions
+                  targetId={player.id}
+                  targetUsername={player.discord_username}
+                  social={social}
+                />
+              )}
               {player.is_admin && (
                 <p className="mt-3 max-w-xl text-sm text-neutral-600 dark:text-neutral-400">
                   Runs league ops — point of contact for scheduling, rules
@@ -172,7 +203,7 @@ export default async function PlayerProfilePage(
               <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
                 Captain&apos;s pitch
               </div>
-              <blockquote className="mt-3 font-marker text-2xl leading-tight md:text-3xl">
+              <blockquote className="mt-3 text-2xl font-bold tracking-tight leading-tight md:text-3xl">
                 &ldquo;{player.captain_pitch}&rdquo;
               </blockquote>
             </section>
@@ -211,6 +242,8 @@ export default async function PlayerProfilePage(
               </span>
             </div>
           </section>
+
+          {combine && <CombineProfileCard combine={combine} name={name} />}
 
           <aside className="mt-6 rounded-3xl border border-neutral-200 bg-white p-7 dark:border-neutral-800 dark:bg-neutral-950">
             <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
@@ -262,6 +295,24 @@ export default async function PlayerProfilePage(
               and ballchasing.com ingestion is live.
             </p>
           </aside>
+
+          <PlayerScouting profileId={player.id} username={player.discord_username} />
+
+          {(playerAssets.length > 0 || user) && (
+            <section className="mt-12">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h2 className="text-2xl leading-tight font-bold tracking-tight md:text-3xl">Highlights</h2>
+                {user && <AssetSubmit targetType="player" targetId={player.id} label="Add highlight" />}
+              </div>
+              {playerAssets.length === 0 ? (
+                <p className="mt-3 text-sm text-neutral-500">No highlights yet.</p>
+              ) : (
+                <div className="mt-5">
+                  <AssetGallery assets={playerAssets} canModerate={canModerateAssets} />
+                </div>
+              )}
+            </section>
+          )}
 
           {myClips.length > 0 && (
             <section className="mt-12">

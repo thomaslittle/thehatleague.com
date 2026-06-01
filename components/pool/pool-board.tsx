@@ -82,7 +82,8 @@ export function PoolBoard({
       const { data, error } = await supabase
         .from("profiles")
         .select(POOL_SELECT)
-        .eq("in_player_pool", true);
+        .eq("in_player_pool", true)
+        .eq("is_mock", false);
       if (error) throw error;
       return data ?? [];
     },
@@ -95,7 +96,7 @@ export function PoolBoard({
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
     const channel = supabase
-      .channel("public:profiles:pool")
+      .channel(`public:profiles:pool:${crypto.randomUUID()}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "profiles" },
@@ -428,7 +429,7 @@ function NoMatchesState({ onReset }: { onReset: () => void }) {
       <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
         No matches
       </div>
-      <div className="mt-2 font-marker text-2xl md:text-3xl">
+      <div className="mt-2 text-2xl font-bold tracking-tight md:text-3xl">
         Nobody fits those filters.
       </div>
       <p className="mt-3 text-sm text-neutral-500">
@@ -531,7 +532,7 @@ function Stat({
       <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
         {label}
       </div>
-      <div className={`mt-0.5 font-marker text-2xl ${valueClass}`}>{value}</div>
+      <div className={`mt-0.5 text-2xl font-bold tabular-nums ${valueClass}`}>{value}</div>
     </div>
   );
 }
@@ -585,7 +586,7 @@ function EmptyState({
       <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
         Pool · 0 players
       </div>
-      <h3 className="mt-3 font-marker text-3xl md:text-4xl">
+      <h3 className="mt-3 text-3xl font-bold tracking-[-0.02em] md:text-4xl">
         No one&apos;s in the pool yet.
       </h3>
       <p className="mx-auto mt-3 max-w-md text-neutral-600 dark:text-neutral-400">

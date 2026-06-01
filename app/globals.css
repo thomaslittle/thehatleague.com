@@ -381,6 +381,31 @@ html.theme-transitioning *::after {
   }
 }
 
+/* OBS overlay routes: a transparent, chrome-less canvas so browser sources
+   composite cleanly over the stream. The marker sits on the overlay page
+   wrapper; :has() lifts it to neutralize the global body bg + brand backdrop. */
+body:has(.thl-overlay-root) {
+  background: transparent !important;
+  /* OBS captures the whole source — a scrollbar would show on stream. Clip it. */
+  overflow: hidden !important;
+  scrollbar-width: none;
+}
+html:has(.thl-overlay-root) {
+  overflow: hidden !important;
+  scrollbar-width: none;
+}
+.thl-overlay-root {
+  scrollbar-width: none;
+}
+body:has(.thl-overlay-root)::-webkit-scrollbar,
+html:has(.thl-overlay-root)::-webkit-scrollbar,
+.thl-overlay-root ::-webkit-scrollbar {
+  display: none;
+}
+body:has(.thl-overlay-root) .thl-brand-backdrop {
+  display: none !important;
+}
+
 /* Spotlight beams. */
 /* Spotlight (new) — twin beams drift slowly side to side. Visible at rest;
    the drift is enhancement only, disabled for reduced motion. */
@@ -412,57 +437,6 @@ html.theme-transitioning *::after {
   .thl-spotlight-left,
   .thl-spotlight-right {
     animation: none;
-  }
-}
-
-/* Section depth — soft directional color washes (a unique tint per section)
-   plus a touch of film grain for a grungier, less-flat feel. No geometric
-   grids/dots. Washes layer behind content via the element's own background. */
-.thl-wash-orange {
-  background-image: radial-gradient(
-    ellipse 115% 85% at 12% -25%,
-    color-mix(in srgb, var(--color-thl-orange) 20%, transparent),
-    transparent 55%
-  );
-}
-.thl-wash-blue {
-  background-image: radial-gradient(
-    ellipse 115% 85% at 88% -25%,
-    color-mix(in srgb, #4f9dff 22%, transparent),
-    transparent 55%
-  );
-}
-.thl-wash-green {
-  background-image: radial-gradient(
-    ellipse 120% 90% at 50% -30%,
-    color-mix(in srgb, #34d399 18%, transparent),
-    transparent 55%
-  );
-}
-.thl-wash-violet {
-  background-image: radial-gradient(
-    ellipse 115% 85% at 85% -25%,
-    color-mix(in srgb, #a78bfa 22%, transparent),
-    transparent 55%
-  );
-}
-
-/* Subtle film grain. Sits over the section at low opacity for grunge. */
-.thl-grain {
-  position: relative;
-}
-.thl-grain::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.06;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-@media (prefers-reduced-motion: reduce) {
-  .thl-grain::after {
-    opacity: 0.04;
   }
 }
 
@@ -518,5 +492,113 @@ html.theme-transitioning *::after {
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* ── OBS broadcast overlay motion ───────────────────────────────────────────
+   Overlays render in OBS as browser sources, so motion is a feature — panels
+   rise in, the accent bar sweeps, list rows stagger. Disabled for reduced
+   motion. */
+@keyframes thl-ovl-rise {
+  from {
+    opacity: 0;
+    transform: translateY(26px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.thl-ovl-rise {
+  animation: thl-ovl-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes thl-ovl-fade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.thl-ovl-fade {
+  animation: thl-ovl-fade 0.5s ease both;
+}
+
+@keyframes thl-ovl-sweep {
+  0% {
+    transform: translateX(-130%);
+  }
+  60%,
+  100% {
+    transform: translateX(360%);
+  }
+}
+.thl-ovl-sweep {
+  animation: thl-ovl-sweep 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes thl-ovl-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+.thl-ovl-pulse {
+  animation: thl-ovl-pulse 2.4s ease-in-out infinite;
+}
+
+.thl-ovl-stagger > * {
+  opacity: 0;
+  animation: thl-ovl-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.thl-ovl-stagger > *:nth-child(1) {
+  animation-delay: 0.06s;
+}
+.thl-ovl-stagger > *:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.thl-ovl-stagger > *:nth-child(3) {
+  animation-delay: 0.18s;
+}
+.thl-ovl-stagger > *:nth-child(4) {
+  animation-delay: 0.24s;
+}
+.thl-ovl-stagger > *:nth-child(5) {
+  animation-delay: 0.3s;
+}
+.thl-ovl-stagger > *:nth-child(6) {
+  animation-delay: 0.36s;
+}
+.thl-ovl-stagger > *:nth-child(7) {
+  animation-delay: 0.42s;
+}
+.thl-ovl-stagger > *:nth-child(8) {
+  animation-delay: 0.48s;
+}
+.thl-ovl-stagger > *:nth-child(9) {
+  animation-delay: 0.54s;
+}
+.thl-ovl-stagger > *:nth-child(10) {
+  animation-delay: 0.6s;
+}
+.thl-ovl-stagger > *:nth-child(n + 11) {
+  animation-delay: 0.66s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thl-ovl-rise,
+  .thl-ovl-fade,
+  .thl-ovl-sweep,
+  .thl-ovl-pulse,
+  .thl-ovl-stagger > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

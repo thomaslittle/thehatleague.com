@@ -20,6 +20,7 @@ import { rankWeight } from "@/lib/data/rank-sort";
 import { RankBadge } from "@/components/ranks/rank-badge";
 import { LeagueOpsApplication } from "@/components/league-ops/league-ops-application";
 import { getTwitchLive } from "@/lib/twitch/live";
+import { DashboardTeamCard } from "@/components/dashboard/team-card";
 import {
   SettingsSavedToast,
   type SettingsToastKind,
@@ -54,7 +55,8 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
       supabase
         .from("profiles")
         .select("id, peak_rank")
-        .eq("in_player_pool", true),
+        .eq("in_player_pool", true)
+        .eq("is_mock", false),
       getTwitchLive(),
     ]);
   if (!profile) redirect("/onboarding");
@@ -132,7 +134,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
           {profile.is_admin && (
             <Link
               href="/admin"
-              className="group mb-10 flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-thl-orange bg-thl-orange/10 px-5 py-4 shadow-[0_15px_50px_-20px_rgba(247,97,3,0.55)] transition hover:bg-thl-orange/15 sm:px-6 sm:py-5"
+              className="backdrop-blur-md group mb-10 flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-thl-orange bg-thl-orange/10 px-5 py-4 shadow-[0_15px_50px_-20px_rgba(247,97,3,0.55)] transition hover:bg-thl-orange/15 sm:px-6 sm:py-5"
             >
               <div className="flex min-w-0 items-center gap-4">
                 <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-thl-orange text-black shadow-md">
@@ -377,6 +379,8 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
             </section>
           )}
 
+          <DashboardTeamCard userId={user.id} />
+
           <div className="mt-10 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
             {/* Ranks card */}
             <section className="overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
@@ -443,7 +447,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
               <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
                 Season 04 draft
               </div>
-              <div className="mt-2 font-marker text-3xl">Date TBA</div>
+              <div className="mt-2 text-3xl font-bold tracking-tight">Date TBA</div>
               {poolPosition > 0 && (
                 <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-thl-orange/15 px-3 py-1 text-xs font-bold tracking-tight text-thl-orange">
                   Pool · #{poolPosition} of {poolTotal} by peak
@@ -520,6 +524,18 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
 
           {/* Quick links */}
           <section className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <QuickLink
+              href="/messages"
+              eyebrow="Inbox"
+              title="Messages"
+              desc="Direct messages and your team chat."
+            />
+            <QuickLink
+              href="/friends"
+              eyebrow="Social"
+              title="Friends"
+              desc="Add players, manage requests, start a DM."
+            />
             <QuickLink
               href="/the-draft"
               eyebrow="Draft"

@@ -38,7 +38,7 @@ export default async function AnnouncementsPage() {
       <section className="mx-auto max-w-[860px] px-6 pb-24 md:px-10">
         {items.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-neutral-300 bg-white p-10 text-center md:p-14 dark:border-neutral-800 dark:bg-neutral-950">
-            <h2 className="font-marker text-3xl md:text-4xl">All quiet.</h2>
+            <h2 className="text-3xl font-bold tracking-[-0.02em] md:text-4xl">All quiet.</h2>
             <p className="mx-auto mt-3 max-w-md text-neutral-600 dark:text-neutral-400">
               No announcements yet. We&apos;ll post here as Season 4 takes
               shape.

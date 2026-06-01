@@ -85,7 +85,7 @@ export default async function Image(props: {
           }}
         >
           {avatar ? (
-            /* eslint-disable-next-line @next/next/no-img-element */
+             
             <img
               src={avatar}
               alt=""
@@ -177,7 +177,7 @@ export default async function Image(props: {
           }}
         >
           <span>thehatleague.com/players/{at}</span>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          { }
           <img
             src={logoSrc}
             alt=""
@@ -239,7 +239,7 @@ function RankChip({
         }}
       >
         {icon && (
-          /* eslint-disable-next-line @next/next/no-img-element */
+           
           <img
             src={icon}
             alt=""

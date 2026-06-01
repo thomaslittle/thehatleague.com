@@ -7,6 +7,8 @@ import { cn } from "@/lib/cn";
 
 const TABS: { href: string; label: string }[] = [
   { href: "/admin", label: "Overview" },
+  { href: "/admin/draft", label: "Draft" },
+  { href: "/admin/mock", label: "Mock lab" },
   { href: "/admin/players", label: "Players" },
   { href: "/admin/captains", label: "Captains" },
   { href: "/admin/league-ops", label: "League ops" },

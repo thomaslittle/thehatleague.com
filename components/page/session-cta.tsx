@@ -3,9 +3,9 @@ import { ArrowRight, DiscordIcon } from "@/components/icons/brand";
 import type { ViewerInfo } from "@/components/landing/site-header";
 
 const PRIMARY =
-  "inline-flex items-center gap-2 rounded-xl bg-thl-orange px-5 py-3.5 font-bold text-black transition hover:bg-thl-orange-deep";
+  "backdrop-blur-sm inline-flex items-center gap-2 rounded-xl bg-thl-orange px-5 py-3.5 font-bold text-black transition hover:bg-thl-orange-deep";
 const SECONDARY =
-  "inline-flex items-center gap-2 rounded-xl border border-neutral-300 px-5 py-3.5 font-semibold text-neutral-700 transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-700 dark:text-neutral-300";
+  "backdrop-blur-sm inline-flex items-center gap-2 rounded-xl border border-neutral-300 px-5 py-3.5 font-semibold text-neutral-700 transition hover:border-thl-orange hover:text-thl-orange dark:border-neutral-700 dark:text-neutral-300";
 
 /**
  * Session-aware primary CTA used across page heros. Swaps copy + target
@@ -43,7 +43,7 @@ export function SessionCta({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <span className="inline-flex items-center gap-2 rounded-xl border border-thl-orange/40 bg-thl-orange/10 px-4 py-3 text-sm font-bold text-thl-orange">
+      <span className="backdrop-blur-sm inline-flex items-center gap-2 rounded-xl border border-thl-orange/40 bg-thl-orange/10 px-4 py-3 text-sm font-bold text-thl-orange">
         <CheckIcon className="h-4 w-4" />
         You&apos;re in the pool
       </span>

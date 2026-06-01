@@ -67,7 +67,7 @@ async function ClipsGrid() {
           <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
             No clips yet
           </div>
-          <h2 className="mt-3 font-marker text-3xl md:text-4xl">
+          <h2 className="mt-3 text-3xl font-bold tracking-[-0.02em] md:text-4xl">
             Be the first to post one.
           </h2>
           <p className="mt-4 max-w-2xl text-neutral-600 dark:text-neutral-400">

@@ -5,28 +5,33 @@ import type {
   BallchasingGroupSummary,
   GetBallchasingStatsArgs,
 } from "./types";
+import { parseBallchasingGroup } from "./parse";
 
 /**
- * Automated ballchasing.com adapter — STUBBED.
+ * Automated ballchasing.com adapter. Fetches a group's aggregated per-player
+ * stats from the ballchasing API and maps them to our adapter-blind shape.
  *
- * When the league commissioner has provisioned:
- *   - a ballchasing.com group per Season 4 conference/bracket,
- *   - an API key on a league-controlled account (BALLCHASING_API_KEY),
- *
- * implement this by hitting:
- *   GET https://ballchasing.com/api/groups/{groupId}
- *   GET https://ballchasing.com/api/replays?group={groupId}
- *
- * Cache with `next: { revalidate, tags: ['ballchasing:' + groupId] }`
- * so each match-night replay drop refreshes the leaderboards.
+ * Auth: ballchasing expects the raw API key in the `Authorization` header (no
+ * "Bearer " prefix). Requires `BALLCHASING_API_KEY` + a group id minted for the
+ * Season 4 bracket/conference. Cached per group with a tag so a match-night
+ * replay drop can revalidate.
  */
 export const automatedBallchasingAdapter: BallchasingAdapter = {
-  name: "automated-stub",
+  name: "automated",
   isAutomated: true,
-  async getGroupStats(_args: GetBallchasingStatsArgs): Promise<BallchasingGroupSummary> {
-    throw new Error(
-      "Automated ballchasing adapter not configured yet. Set " +
-        "BALLCHASING_API_KEY and wire the group ids for Season 4.",
-    );
+  async getGroupStats({ groupId }: GetBallchasingStatsArgs): Promise<BallchasingGroupSummary> {
+    const key = process.env.BALLCHASING_API_KEY;
+    if (!key) throw new Error("BALLCHASING_API_KEY is not set.");
+    if (!groupId) throw new Error("A ballchasing group id is required.");
+
+    const res = await fetch(`https://ballchasing.com/api/groups/${encodeURIComponent(groupId)}`, {
+      headers: { Authorization: key },
+      next: { revalidate: 300, tags: [`ballchasing:${groupId}`] },
+    });
+    if (!res.ok) {
+      throw new Error(`ballchasing.com responded ${res.status} for group ${groupId}`);
+    }
+    const data = await res.json();
+    return parseBallchasingGroup(data, groupId);
   },
 };
