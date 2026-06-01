@@ -4,7 +4,7 @@ import { useCallback, useRef, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, DiscordIcon, TwitchIcon } from "@/components/icons/brand";
-import { HeroLogoIntro } from "@/components/landing/hero-logo-intro";
+import { HeroPromoVideo } from "@/components/landing/hero-promo-video";
 import { Spotlight } from "@/components/landing/spotlight";
 import { PoolAvatarStack } from "@/components/landing/pool-avatar-stack";
 import type { PoolAvatar } from "@/lib/auth/viewer";
@@ -235,7 +235,7 @@ export function Hero({
               </div>
 
               <div className="flex w-full flex-1 items-center justify-center md:pt-4">
-                <HeroLogoIntro />
+                <HeroPromoVideo />
               </div>
 
               <div className="flex w-full items-end justify-between gap-4 border-t border-dashed border-neutral-300 pt-5 md:pt-6 dark:border-neutral-800">
