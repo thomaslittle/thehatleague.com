@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Trophy } from "lucide-react";
 import { PageShell } from "@/components/page/page-shell";
 import { PageHero } from "@/components/page/page-hero";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -94,6 +95,7 @@ export default async function FridayNiteFightsPage(
     getFnfHistory(),
     getFnfAllTimeStats(),
   ]);
+  const isOver = !!championTeam;
 
   const statusLine =
     tournament.status === "swiss"
@@ -108,19 +110,28 @@ export default async function FridayNiteFightsPage(
         title="Friday Nite"
         accent="Fights"
         subtitle={
-          <>
-            Connect Discord and jump in. We auto-build rank-balanced 2v2 teams,
-            run a Swiss bracket over {tournament.swissRounds} rounds, then the
-            top {tournament.playoffCut} fight it out in the playoffs.
-          </>
+          isOver ? (
+            <>
+              That&apos;s a wrap. The bracket&apos;s done and the champions are
+              crowned — relive every round below.
+            </>
+          ) : (
+            <>
+              Connect Discord and jump in. We auto-build rank-balanced 2v2
+              teams, run a Swiss bracket over {tournament.swissRounds} rounds,
+              then the top {tournament.playoffCut} fight it out in the playoffs.
+            </>
+          )
         }
         actions={
-          <RegisterButton
-            tournamentId={tournament.id}
-            isAuthenticated={!!user}
-            isRegistered={isRegistered}
-            locked={tournament.status !== "registration"}
-          />
+          isOver ? undefined : (
+            <RegisterButton
+              tournamentId={tournament.id}
+              isAuthenticated={!!user}
+              isRegistered={isRegistered}
+              locked={tournament.status !== "registration"}
+            />
+          )
         }
         aside={
           <div className="relative mx-auto aspect-square w-full max-w-[320px]">
@@ -141,10 +152,16 @@ export default async function FridayNiteFightsPage(
           <ChampionHero team={championTeam} runnerUp={runnerUpTeam} />
         )}
         <div className="flex flex-wrap items-center gap-3">
-          <span className="inline-flex items-center gap-2 rounded-full border border-thl-orange/30 bg-thl-orange/[0.06] px-3 py-1 text-xs font-bold tracking-wide text-thl-orange uppercase">
-            <span className="size-1.5 animate-pulse rounded-full bg-thl-orange" />
-            {statusLine}
-          </span>
+          {isOver ? (
+            <span className="inline-flex items-center gap-2 rounded-full border border-amber-400/40 bg-amber-400/10 px-3 py-1 text-xs font-bold tracking-wide text-amber-300 uppercase">
+              <Trophy className="size-3.5" /> Champions crowned
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-2 rounded-full border border-thl-orange/30 bg-thl-orange/[0.06] px-3 py-1 text-xs font-bold tracking-wide text-thl-orange uppercase">
+              <span className="size-1.5 animate-pulse rounded-full bg-thl-orange" />
+              {statusLine}
+            </span>
+          )}
           {tournament.startsAt && tournament.status === "registration" && (
             <span className="text-xs text-neutral-500">
               Starts <LocalTime iso={tournament.startsAt} />
@@ -165,6 +182,7 @@ export default async function FridayNiteFightsPage(
             finalBestOf={tournament.finalBestOf}
             playoffCut={tournament.playoffCut}
             startsAt={tournament.startsAt}
+            isOver={isOver}
           />
         )}
 
@@ -206,51 +224,86 @@ export default async function FridayNiteFightsPage(
           tournament.status === "complete" ||
           tournament.status === "playoffs") &&
           teams.length > 0 && (
-            <section className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-              <div className="order-2 lg:order-1">
-                {tournament.status === "playoffs" ? (
-                  <>
-                    <h2 className="mb-3 text-lg font-bold">Playoff bracket</h2>
-                    <BracketView
-                      matches={matches}
-                      viewerTeamIds={viewerTeamIds}
-                      isAdmin={isAdmin}
-                    />
-                    <h2 className="mt-8 mb-3 text-lg font-bold">
-                      Swiss rounds
-                    </h2>
+            isOver ? (
+              // Results layout: full-width bracket, then swiss history + final
+              // standings side by side.
+              <div className="space-y-10">
+                <div>
+                  <h2 className="mb-4 text-lg font-bold">Playoff bracket</h2>
+                  <BracketView
+                    matches={matches}
+                    viewerTeamIds={viewerTeamIds}
+                    isAdmin={isAdmin}
+                  />
+                </div>
+                <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+                  <div className="order-2 lg:order-1">
+                    <h2 className="mb-3 text-lg font-bold">Swiss rounds</h2>
                     <RoundsView
                       matches={matches}
                       viewerTeamIds={viewerTeamIds}
                       isAdmin={isAdmin}
                     />
-                  </>
-                ) : (
-                  <>
-                    <h2 className="mb-3 text-lg font-bold">Matches</h2>
-                    <RoundsView
-                      matches={matches}
-                      viewerTeamIds={viewerTeamIds}
-                      isAdmin={isAdmin}
+                  </div>
+                  <div className="order-1 lg:order-2 lg:sticky lg:top-24">
+                    <h2 className="mb-3 text-lg font-bold">Final standings</h2>
+                    <StandingsTable
+                      standings={standings}
+                      teams={teams}
+                      playoffCut={tournament.playoffCut}
                     />
-                  </>
-                )}
+                  </div>
+                </div>
               </div>
-              <div className="order-1 lg:order-2">
-                <h2 className="mb-3 text-lg font-bold">Standings</h2>
-                <StandingsTable
-                  standings={standings}
-                  teams={teams}
-                  playoffCut={tournament.playoffCut}
-                />
-                {tournament.status === "complete" && (
-                  <p className="mt-3 text-xs text-neutral-500">
-                    Swiss complete. Top {tournament.playoffCut} qualify — an
-                    admin can now generate the playoff bracket.
-                  </p>
-                )}
-              </div>
-            </section>
+            ) : (
+              <section className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+                <div className="order-2 lg:order-1">
+                  {tournament.status === "playoffs" ? (
+                    <>
+                      <h2 className="mb-3 text-lg font-bold">
+                        Playoff bracket
+                      </h2>
+                      <BracketView
+                        matches={matches}
+                        viewerTeamIds={viewerTeamIds}
+                        isAdmin={isAdmin}
+                      />
+                      <h2 className="mt-8 mb-3 text-lg font-bold">
+                        Swiss rounds
+                      </h2>
+                      <RoundsView
+                        matches={matches}
+                        viewerTeamIds={viewerTeamIds}
+                        isAdmin={isAdmin}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <h2 className="mb-3 text-lg font-bold">Matches</h2>
+                      <RoundsView
+                        matches={matches}
+                        viewerTeamIds={viewerTeamIds}
+                        isAdmin={isAdmin}
+                      />
+                    </>
+                  )}
+                </div>
+                <div className="order-1 lg:order-2 lg:sticky lg:top-24">
+                  <h2 className="mb-3 text-lg font-bold">Standings</h2>
+                  <StandingsTable
+                    standings={standings}
+                    teams={teams}
+                    playoffCut={tournament.playoffCut}
+                  />
+                  {tournament.status === "complete" && (
+                    <p className="mt-3 text-xs text-neutral-500">
+                      Swiss complete. Top {tournament.playoffCut} qualify — an
+                      admin can now generate the playoff bracket.
+                    </p>
+                  )}
+                </div>
+              </section>
+            )
           )}
 
         {history.length > 0 && (

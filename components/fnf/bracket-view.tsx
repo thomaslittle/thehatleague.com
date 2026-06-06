@@ -76,14 +76,22 @@ export function BracketView({
                       className="absolute top-1/2 left-full hidden h-px w-6 bg-gradient-to-r from-neutral-300 to-transparent md:block dark:from-neutral-700"
                     />
                   )}
-                  <MatchCard
-                    match={m}
-                    canReport={
-                      isAdmin ||
-                      (!!m.teamAId && viewerSet.has(m.teamAId)) ||
-                      (!!m.teamBId && viewerSet.has(m.teamBId))
+                  <div
+                    className={
+                      isFinalCol
+                        ? "rounded-xl bg-gradient-to-br from-amber-400/15 to-transparent p-[2px] shadow-lg shadow-amber-500/10 ring-1 ring-amber-400/40"
+                        : undefined
                     }
-                  />
+                  >
+                    <MatchCard
+                      match={m}
+                      canReport={
+                        isAdmin ||
+                        (!!m.teamAId && viewerSet.has(m.teamAId)) ||
+                        (!!m.teamBId && viewerSet.has(m.teamBId))
+                      }
+                    />
+                  </div>
                 </div>
               ))}
             </div>

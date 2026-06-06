@@ -26,6 +26,7 @@ import {
   startSwiss,
   generatePlayoffs,
   resetTournament,
+  createFnfTournament,
   type FnfActionState,
 } from "@/app/actions/fnf";
 import type { FnfStatus } from "@/lib/data/fnf";
@@ -47,6 +48,7 @@ export function AdminControls({
   finalBestOf,
   playoffCut,
   startsAt,
+  isOver = false,
 }: {
   tournamentId: string;
   status: FnfStatus;
@@ -59,6 +61,8 @@ export function AdminControls({
   finalBestOf: number;
   playoffCut: number;
   startsAt: string | null;
+  /** The current tournament has a crowned champion (it's over). */
+  isOver?: boolean;
 }) {
   const [pending, startTransition] = useTransition();
   const [showSettings, setShowSettings] = useState(false);
@@ -152,6 +156,22 @@ export function AdminControls({
           >
             <Trophy className="size-3.5" />
             Generate playoff bracket
+          </Button>
+        )}
+        {isOver && (
+          <Button
+            size="sm"
+            className={PRIMARY}
+            disabled={pending}
+            onClick={() =>
+              run(
+                () => createFnfTournament(),
+                "Next tournament started — registration open.",
+              )
+            }
+          >
+            <Sparkles className="size-3.5" />
+            Start next tournament
           </Button>
         )}
         <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-2.5 py-1 text-[11px] font-semibold text-neutral-500 dark:bg-neutral-800/80 dark:text-neutral-400">

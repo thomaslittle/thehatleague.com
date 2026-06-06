@@ -122,6 +122,26 @@ export async function updateFnfSettings(
   return { ok: true };
 }
 
+/** Admin: start a fresh tournament for next week (past ones are kept for the
+ *  records / hall of champions). The new one becomes active. */
+export async function createFnfTournament(): Promise<FnfActionState> {
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.rpc("fnf_upsert_tournament", {
+    p_id: null,
+    p_name: "Friday Nite Fights",
+    p_swiss_rounds: null,
+    p_swiss_games: null,
+    p_playoff_best_of: null,
+    p_final_best_of: null,
+    p_playoff_cut: null,
+    p_starts_at: null,
+  });
+  if (error) return { error: error.message };
+
+  revalidatePath(FNF_PATH);
+  return { ok: true };
+}
+
 /**
  * Admin: undo back to the registration phase. Clears teams and ALL matches
  * (Swiss + playoffs) but keeps every signup, so the organizer can re-generate
