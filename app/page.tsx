@@ -18,6 +18,7 @@ import { getTwitchLive } from "@/lib/twitch/live";
 import { getActiveSeason } from "@/lib/data/season";
 import { deriveEvents } from "@/lib/data/events";
 import { UpcomingEvents } from "@/components/landing/upcoming-events";
+import { EventCountdown } from "@/components/landing/event-countdown";
 import { getFnfTickerLines, getFnfHistory } from "@/lib/data/fnf";
 
 export default async function HomePage() {
@@ -87,6 +88,7 @@ export default async function HomePage() {
           tickerItems={fnfTicker}
           fnfChampions={fnfChampions}
         />
+        <EventCountdown />
         <UpcomingEvents events={events} />
         <Manifesto viewer={viewer} />
         {!viewer?.isAuthenticated && <SignupCallout />}
