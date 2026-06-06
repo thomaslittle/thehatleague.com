@@ -176,7 +176,7 @@ function ChampionBanner({
 }) {
   return (
     <section className="px-6 py-8 md:px-10 md:py-12">
-      <div className="relative mx-auto max-w-[1320px] overflow-hidden rounded-3xl border border-thl-orange/40 bg-gradient-to-br from-thl-orange/[0.12] via-neutral-950 to-black p-7 shadow-xl shadow-black/30 md:p-9">
+      <div className="relative mx-auto flex max-w-[1320px] flex-col items-center gap-8 overflow-hidden rounded-3xl border border-thl-orange/40 bg-gradient-to-br from-thl-orange/[0.12] via-neutral-950 to-black p-7 shadow-2xl shadow-black/40 md:flex-row md:gap-12 md:p-10">
         {/* signature dotted-grid texture */}
         <div
           aria-hidden
@@ -185,20 +185,41 @@ function ChampionBanner({
         {/* glow accents */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-24 left-1/2 size-80 -translate-x-1/2 rounded-full bg-thl-orange/20 blur-3xl"
+          className="pointer-events-none absolute -top-24 -left-20 size-80 rounded-full bg-thl-orange/25 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-24 -bottom-24 size-72 rounded-full bg-amber-500/15 blur-3xl"
         />
 
-        <div className="relative flex flex-col items-center text-center">
+        {/* FNF logo — the feature owns the wide space with the brand mark. */}
+        <div className="relative aspect-square w-40 shrink-0 md:w-56">
+          <Image
+            src="/brand/fnf.png"
+            alt="Friday Nite Fights"
+            fill
+            sizes="224px"
+            className="object-contain drop-shadow-[0_8px_40px_rgba(255,107,0,0.45)]"
+          />
+        </div>
+
+        {/* Champions showcase */}
+        <div className="relative flex-1 text-center md:text-left">
           <span className="inline-flex items-center gap-2 rounded-full border border-thl-orange/40 bg-thl-orange/10 px-3 py-1 text-[11px] font-bold tracking-[0.22em] text-thl-orange uppercase">
-            <Trophy className="size-3.5 text-amber-400" /> Friday Nite Fights Champions
+            <Trophy className="size-3.5 text-amber-400" /> Friday Nite Fights
+            Champions
           </span>
 
-          <h2 className="mt-3 text-3xl leading-[0.95] font-extrabold tracking-tight text-white md:text-5xl">
+          <h2 className="mt-3 text-4xl leading-[0.95] font-extrabold tracking-tight text-white md:text-6xl">
             {teamName}
           </h2>
+          <p className="mx-auto mt-2.5 max-w-md text-sm text-neutral-300 md:mx-0">
+            This week&apos;s 2v2 champions — auto-balanced, Swiss-tested, last
+            team standing.
+          </p>
 
           {/* Featured players */}
-          <div className="mt-7 flex flex-wrap items-start justify-center gap-7 md:gap-12">
+          <div className="mt-6 flex flex-wrap items-start justify-center gap-6 md:justify-start md:gap-10">
             {players.map((p) => {
               const card = (
                 <>
@@ -251,16 +272,17 @@ function ChampionBanner({
               );
             })}
           </div>
-
-          <Link
-            href="/friday-nite-fights"
-            className="group/cta mt-8 inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-thl-orange to-amber-500 px-6 text-sm font-bold text-black shadow-lg shadow-thl-orange/25 transition hover:-translate-y-0.5 hover:shadow-xl"
-          >
-            <Trophy className="size-4" />
-            View the bracket
-            <ArrowRight className="size-4 transition-transform group-hover/cta:translate-x-1" />
-          </Link>
         </div>
+
+        {/* CTA pinned to the right so the feature fills the full width. */}
+        <Link
+          href="/friday-nite-fights"
+          className="group/cta relative inline-flex h-12 shrink-0 items-center justify-center gap-2 self-center rounded-xl bg-gradient-to-r from-thl-orange to-amber-500 px-7 text-sm font-bold text-black shadow-lg shadow-thl-orange/25 transition hover:-translate-y-0.5 hover:shadow-xl"
+        >
+          <Trophy className="size-4" />
+          View the bracket
+          <ArrowRight className="size-4 transition-transform group-hover/cta:translate-x-1" />
+        </Link>
       </div>
     </section>
   );
