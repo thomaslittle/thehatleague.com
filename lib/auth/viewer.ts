@@ -122,7 +122,9 @@ export const getPoolAvatars = cache(
       username: cleanDiscordUsername(p.discord_username),
       avatarUrl: p.profile_avatar_url ?? p.discord_avatar_url ?? null,
       peakRank: p.peak_rank ?? null,
-      role: p.is_admin ? ("ops" as const) : p.is_captain ? ("captain" as const) : null,
+      // Captain takes priority over ops so player-facing captains (who may
+      // also be admins) read as captains in the avatar list.
+      role: p.is_captain ? ("captain" as const) : p.is_admin ? ("ops" as const) : null,
     }));
   },
 );

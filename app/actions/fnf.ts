@@ -83,16 +83,31 @@ export async function generateTeams(
   const supabase = await createSupabaseServerClient();
   const { data: regs } = await supabase
     .from("fnf_registrations")
-    .select("profile_id, rank_weight")
+    .select("profile_id")
     .eq("tournament_id", tournamentId);
 
-  const players = (regs ?? []).map((r) => ({
-    id: r.profile_id as string,
-    weight: (r.rank_weight as number) ?? -1,
-  }));
-  if (players.length < 2) {
+  const ids = (regs ?? []).map((r) => r.profile_id as string);
+  if (ids.length < 2) {
     return { error: "Need at least 2 registered players." };
   }
+
+  // Seed from the players' LIVE current 2v2 rank (fallback peak) so any rank
+  // updates since registration are reflected in the balancing.
+  const { data: profiles } = await supabase
+    .from("profiles")
+    .select("id, rank_2v2, peak_rank")
+    .in("id", ids);
+  const weightOf = new Map(
+    (profiles ?? []).map((p) => {
+      let w = rankWeight(p.rank_2v2);
+      if (w <= 0) w = rankWeight(p.peak_rank);
+      return [p.id, w];
+    }),
+  );
+  const players = ids.map((id) => ({
+    id,
+    weight: weightOf.get(id) ?? -1,
+  }));
 
   const { teams, bench } = balancedTeams(players);
   const payload = teams.map((profileIds, i) => ({

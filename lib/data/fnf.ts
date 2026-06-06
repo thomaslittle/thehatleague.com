@@ -170,13 +170,14 @@ export const getFnfState = cache(
         username: string | null;
         avatarUrl: string | null;
         rank2v2: string | null;
+        peakRank: string | null;
       }
     >();
     if (profileIds.size > 0) {
       const { data: profiles } = await supabase
         .from("profiles")
         .select(
-          "id, discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, rank_2v2",
+          "id, discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, rank_2v2, peak_rank",
         )
         .in("id", [...profileIds]);
       for (const p of profiles ?? []) {
@@ -186,19 +187,25 @@ export const getFnfState = cache(
           username: cleanDiscordUsername(p.discord_username),
           avatarUrl: p.profile_avatar_url ?? p.discord_avatar_url ?? null,
           rank2v2: p.rank_2v2,
+          peakRank: p.peak_rank,
         });
       }
     }
 
     const registrations: FnfPlayerCard[] = regs.map((r) => {
       const p = profileMap.get(r.profile_id as string);
+      // Show the player's LIVE current rank (so rank updates reflect here),
+      // falling back to the registration snapshot only if the profile is gone.
+      const liveRank = p?.rank2v2 ?? p?.peakRank ?? null;
+      let liveWeight = rankWeight(p?.rank2v2);
+      if (liveWeight <= 0) liveWeight = rankWeight(p?.peakRank);
       return {
         id: r.profile_id as string,
         name: p?.name ?? "Player",
         username: p?.username ?? null,
         avatarUrl: p?.avatarUrl ?? null,
-        rankValue: (r.rank_value as string | null) ?? p?.rank2v2 ?? null,
-        rankWeight: (r.rank_weight as number) ?? -1,
+        rankValue: liveRank ?? (r.rank_value as string | null) ?? null,
+        rankWeight: liveWeight >= 0 ? liveWeight : ((r.rank_weight as number) ?? -1),
       };
     });
     // Best players first in the pool list.
