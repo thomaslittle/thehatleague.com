@@ -16,6 +16,7 @@ import { LocalTime } from "@/components/fnf/local-time";
 import { ChampionHero } from "@/components/fnf/champion-hero";
 import { HallOfChampions, AllTimeStats } from "@/components/fnf/fnf-records";
 import { FnfHub } from "@/components/fnf/fnf-hub";
+import { EventCountdown } from "@/components/landing/event-countdown";
 import {
   getFnfHistory,
   getFnfAllTimeStats,
@@ -137,6 +138,7 @@ export default async function FridayNiteFightsPage(
             </div>
           }
         />
+        <EventCountdown only="fnf" />
         {isAdmin && (
           <div className="mx-auto mb-10 max-w-[1320px] px-6 md:mb-12 md:px-10">
             <AdminControls
@@ -214,6 +216,8 @@ export default async function FridayNiteFightsPage(
           </div>
         }
       />
+
+      {!isOver && <EventCountdown only="fnf" />}
 
       <div className="mx-auto max-w-[1320px] space-y-8 px-6 pb-20 md:px-10">
         {previewId && (

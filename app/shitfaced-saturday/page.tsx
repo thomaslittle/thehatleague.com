@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Beer, Users, Gamepad2, Clock, GlassWater, PartyPopper } from "lucide-react";
 import { PageShell } from "@/components/page/page-shell";
 import { PageHero } from "@/components/page/page-hero";
+import { EventCountdown } from "@/components/landing/event-countdown";
 import { DiscordIcon } from "@/components/icons/brand";
 import { SITE } from "@/lib/site";
 
@@ -49,6 +50,8 @@ export default function ShitfacedSaturdayPage() {
           </div>
         }
       />
+
+      <EventCountdown only="sfs" />
 
       <div className="mx-auto max-w-[1320px] space-y-12 px-6 pb-24 md:space-y-16 md:px-10">
         {/* The vibe */}

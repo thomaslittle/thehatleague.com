@@ -100,10 +100,11 @@ function nextWindow(ev: WeeklyEvent, now: number): { start: number; end: number 
   return { start, end };
 }
 
-function pickNext(now: number) {
-  const cands = EVENTS.map((ev) => ({ ev, ...nextWindow(ev, now) })).sort(
-    (a, b) => a.start - b.start,
-  );
+function pickNext(now: number, only?: string) {
+  const pool = only ? EVENTS.filter((e) => e.key === only) : EVENTS;
+  const cands = (pool.length ? pool : EVENTS)
+    .map((ev) => ({ ev, ...nextWindow(ev, now) }))
+    .sort((a, b) => a.start - b.start);
   const c = cands[0];
   return { ...c, live: now >= c.start && now < c.end };
 }
@@ -112,24 +113,29 @@ function pad(n: number) {
   return n.toString().padStart(2, "0");
 }
 
-export function EventCountdown() {
+export function EventCountdown({ only }: { only?: "fnf" | "sfs" } = {}) {
   // Tick every second, client-only (avoids a server/client time mismatch).
   // EFFECT JUSTIFICATION: a wall-clock interval is a genuine side-effect that
   // can't be derived from render; cleaned up on unmount.
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
-    setNow(Date.now());
+    // Seed on the next frame (not synchronously in the effect body) and then
+    // tick every second.
+    const raf = requestAnimationFrame(() => setNow(Date.now()));
     const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearInterval(id);
+    };
   }, []);
 
-  const next = now == null ? null : pickNext(now);
+  const next = now == null ? null : pickNext(now, only);
 
   return (
-    <section className="px-6 py-6 md:px-10">
+    <section className="mx-auto max-w-[1320px] px-6 py-6 md:px-10">
       <Link
         href={next?.ev.href ?? "/friday-nite-fights"}
-        className="group relative mx-auto flex max-w-[1320px] flex-col items-center gap-4 overflow-hidden rounded-2xl border border-thl-orange/30 bg-white/70 p-4 shadow-[0_18px_40px_-24px_rgba(247,97,3,0.5)] backdrop-blur-sm transition hover:border-thl-orange sm:flex-row sm:gap-5 sm:p-5 dark:bg-black/40"
+        className="group relative flex w-full flex-col items-center gap-4 overflow-hidden rounded-2xl border border-thl-orange/30 bg-white/70 p-4 shadow-[0_18px_40px_-24px_rgba(247,97,3,0.5)] backdrop-blur-sm transition hover:border-thl-orange sm:flex-row sm:gap-6 sm:p-5 dark:bg-black/40"
       >
         <div
           aria-hidden
@@ -137,15 +143,15 @@ export function EventCountdown() {
         />
 
         {/* Logo + name */}
-        <div className="relative flex items-center gap-3">
-          <span className="relative h-14 w-14 shrink-0 sm:h-16 sm:w-16">
+        <div className="relative flex items-center gap-4">
+          <span className="relative h-20 w-20 shrink-0 sm:h-28 sm:w-28">
             {next && (
               <Image
                 src={next.ev.logo}
                 alt={next.ev.name}
                 fill
-                sizes="64px"
-                className="object-contain drop-shadow-[0_4px_16px_rgba(247,97,3,0.35)]"
+                sizes="112px"
+                className="object-contain drop-shadow-[0_6px_20px_rgba(247,97,3,0.4)]"
               />
             )}
           </span>
