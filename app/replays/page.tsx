@@ -84,7 +84,7 @@ export default function ReplaysPage() {
             <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
               Reserved · S04 replay folders
             </div>
-            <h3 className="mt-3 font-marker text-3xl md:text-4xl">
+            <h3 className="mt-3 text-3xl font-bold tracking-[-0.02em] md:text-4xl">
               Each team&apos;s ballchasing folder lives here.
             </h3>
             <p className="mt-4 max-w-2xl text-neutral-600 dark:text-neutral-400">

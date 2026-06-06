@@ -24,11 +24,13 @@ export default async function Image() {
     const { count: pool } = await supabase
       .from("profiles")
       .select("id", { count: "exact", head: true })
-      .eq("in_player_pool", true);
+      .eq("in_player_pool", true)
+      .eq("is_mock", false);
     const { count: caps } = await supabase
       .from("profiles")
       .select("id", { count: "exact", head: true })
-      .eq("is_captain", true);
+      .eq("is_captain", true)
+      .eq("is_mock", false);
     totalInPool = pool ?? 0;
     captainCount = caps ?? 0;
   } catch {
@@ -83,7 +85,7 @@ export default async function Image() {
             </div>
           </div>
 
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          { }
           <img
             src={logoSrc}
             alt=""

@@ -5,6 +5,10 @@ import { SessionCta } from "@/components/page/session-cta";
 import { ArrowRight, TwitchIcon } from "@/components/icons/brand";
 import { getViewer } from "@/lib/auth/viewer";
 import { SITE } from "@/lib/site";
+import { getActiveSeason } from "@/lib/data/season";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { loadDraftSnapshot, loadAvailablePool } from "@/lib/data/draft";
+import { DraftBoard } from "@/components/draft/draft-board";
 
 export const metadata = {
   title: "The Draft",
@@ -38,6 +42,63 @@ const READINESS = [
 
 export default async function DraftPage() {
   const viewer = await getViewer();
+  const season = await getActiveSeason();
+
+  // When a draft is live or done, swap the "get ready" panels for the live
+  // board. Setup / upcoming keeps the readiness content below.
+  let liveBoard: React.ReactNode = null;
+  if (season) {
+    const supabase = await createSupabaseServerClient();
+    const snapshot = await loadDraftSnapshot(supabase, season.id);
+    const status = snapshot.state?.status;
+    if (status === "live" || status === "paused" || status === "complete") {
+      const pool = await loadAvailablePool(supabase, season.id);
+      liveBoard = (
+        <DraftBoard
+          seasonId={season.id}
+          initialSnapshot={snapshot}
+          initialPool={pool}
+        />
+      );
+    }
+  }
+
+  if (liveBoard) {
+    return (
+      <PageShell>
+        <PageHero
+          eyebrow={`The Draft · ${season?.name ?? "Season 04"}`}
+          title={
+            <>
+              Live draft
+              <br />
+              board.
+            </>
+          }
+          accent="On the clock."
+          subtitle={
+            <>
+              Captains are picking their squads live. The board, clock, and
+              best-available list update the moment a pick lands.
+            </>
+          }
+          actions={
+            <a
+              href={SITE.twitchUrl}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#9146ff] px-5 py-3.5 font-bold text-white transition hover:bg-[#7c2bff]"
+            >
+              <TwitchIcon className="h-5 w-5" />
+              Watch on Twitch
+            </a>
+          }
+        />
+        {liveBoard}
+      </PageShell>
+    );
+  }
+
   return (
     <PageShell>
       <PageHero
@@ -130,22 +191,73 @@ export default async function DraftPage() {
       </section>
 
       <section className="mx-auto max-w-[1320px] px-6 py-20 md:px-10 md:py-24">
-        <div className="grid gap-10 lg:grid-cols-2">
-          {/* Reserved: Player Pool board */}
-          <ReservedPanel
-            tag="Reserved · Player pool board"
-            title="Who&apos;s available"
-            body="Once registration is open, the live pool board will appear here — sortable by 2v2 rank, 3v3 rank, peak, and recent form. Captains use it during the draft."
+        <div className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
+          Before draft night
+        </div>
+        <h2 className="mt-3 text-3xl font-bold tracking-[-0.02em] md:text-4xl">Get draft-ready.</h2>
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
+          <DraftCta
+            href="/combine"
+            tag="Draft Combine"
+            title="Scout the field"
+            body="Players post their best clip, role and ranks. Captains study the board before they pick."
+            cta={viewer?.inPool ? "Submit your combine" : "Browse the combine"}
           />
-          {/* Reserved: Live draft board */}
-          <ReservedPanel
-            tag="Reserved · Live draft board"
-            title="Round-by-round picks"
-            body="On draft night, this here renders the live pick clock, captain queues, and the round-by-round board. Powered by Supabase Realtime so chat and players see picks the moment they land."
+          <DraftCta
+            href="/pool"
+            tag="Player pool"
+            title="Who's available"
+            body="Every signed-up player, sortable by 2v2 / 3v3 / peak rank. The board captains pick from."
+            cta="See the pool"
           />
+          {viewer?.isCaptain ? (
+            <DraftCta
+              href="/draft/queue"
+              tag="Captains"
+              title="Build your queue"
+              body="Pre-rank your board. If your clock runs out on draft night, auto-pick takes your top available player — you never lose a pick."
+              cta="Build your queue"
+            />
+          ) : (
+            <DraftCta
+              href="/captains"
+              tag="Captains"
+              title="Want to lead a team?"
+              body="Captains build the rosters and pick live on stream. Throw your hat in the ring."
+              cta="Captain info"
+            />
+          )}
         </div>
       </section>
     </PageShell>
+  );
+}
+
+function DraftCta({
+  href,
+  tag,
+  title,
+  body,
+  cta,
+}: {
+  href: string;
+  tag: string;
+  title: string;
+  body: string;
+  cta: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="group flex flex-col gap-3 rounded-2xl border border-neutral-200 bg-white p-6 transition hover:border-thl-orange hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-thl-orange"
+    >
+      <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">{tag}</div>
+      <div className="text-xl font-bold tracking-tight">{title}</div>
+      <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{body}</p>
+      <span className="mt-1 inline-flex items-center gap-1.5 text-sm font-semibold text-thl-orange">
+        {cta} <ArrowRight className="h-3.5 w-3.5" />
+      </span>
+    </Link>
   );
 }
 
@@ -169,35 +281,3 @@ function Stat({
   );
 }
 
-function ReservedPanel({
-  tag,
-  title,
-  body,
-}: {
-  tag: string;
-  title: string;
-  body: string;
-}) {
-  return (
-    <div className="relative overflow-hidden rounded-3xl border border-dashed border-neutral-300 bg-gradient-to-br from-white to-neutral-50 p-8 md:p-12 dark:border-neutral-800 dark:from-neutral-950 dark:to-black">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-40"
-        style={{
-          background:
-            "radial-gradient(ellipse at 100% 0%, rgba(247,97,3,0.16), transparent 60%)",
-        }}
-      />
-      <div className="relative">
-        <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
-          {tag}
-        </div>
-        <h3 className="mt-3 font-marker text-3xl md:text-4xl">{title}</h3>
-        <p className="mt-4 max-w-md text-neutral-600 dark:text-neutral-400">
-          {body}
-        </p>
-        <div className="mt-8 h-44 rounded-xl border border-dashed border-neutral-300 bg-neutral-100/40 dark:border-neutral-800 dark:bg-neutral-900/40" />
-      </div>
-    </div>
-  );
-}

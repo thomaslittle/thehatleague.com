@@ -11,11 +11,85 @@ export const SITE = {
 export const THEME_COOKIE = "thl-theme";
 export type ThemePref = "light" | "dark";
 
-export const NAV_PRIMARY: { href: string; label: string }[] = [
-  { href: "/the-draft", label: "The Draft" },
-  { href: "/friday-nite-fights", label: "Fri Nite Fights" },
-  { href: "/pool", label: "Player Pool" },
-  { href: "/schedule", label: "Schedule" },
-  { href: "/standings", label: "Standings" },
-  { href: "/clips", label: "Clips" },
+export interface NavLink {
+  href: string;
+  label: string;
+  /** External links open in a new tab and render as <a> rather than <Link>. */
+  external?: boolean;
+}
+
+/** Player Pool stays a standalone top-level link (it carries the live pool count). */
+export const NAV_POOL: NavLink = { href: "/pool", label: "Player Pool" };
+
+/**
+ * The "League" mega-menu — orange-titled columns grouping how you take part:
+ * building a roster (Draft), following the competition (Season), and
+ * watching / collecting (More). Stats and About live in their own top-level
+ * menus (see below).
+ */
+export const NAV_LEAGUE_GROUPS: { title: string; links: NavLink[] }[] = [
+  {
+    title: "Draft",
+    links: [
+      { href: "/the-draft", label: "The Draft" },
+      { href: "/combine", label: "Draft Combine" },
+      { href: "/captains", label: "Captains" },
+    ],
+  },
+  {
+    title: "Season",
+    links: [
+      { href: "/friday-nite-fights", label: "Friday Nite Fights" },
+      { href: "/schedule", label: "Schedule" },
+      { href: "/mvp", label: "MVP Vote" },
+    ],
+  },
+  {
+    title: "More",
+    links: [
+      { href: "/hub", label: "League Hub" },
+      { href: "/clips", label: "Clips" },
+      { href: "/replays", label: "Replays" },
+      { href: "/patches", label: "Patches" },
+    ],
+  },
 ];
+
+/** "Stats" — the standings/rankings surfaces, split out of League into their own menu. */
+export const NAV_STATS: NavLink[] = [
+  { href: "/standings", label: "Standings" },
+  { href: "/power-rankings", label: "Power Rankings" },
+  { href: "/leaderboards", label: "Leaderboards" },
+  { href: "/compare", label: "Compare Players" },
+];
+
+/** "League Ops" — admin-only menu mirroring the /admin section tabs. */
+export const NAV_LEAGUE_OPS: NavLink[] = [
+  { href: "/admin", label: "Overview" },
+  { href: "/admin/draft", label: "Draft control" },
+  { href: "/admin/mock", label: "Mock lab" },
+  { href: "/admin/players", label: "Manage players" },
+  { href: "/admin/captains", label: "Captains queue" },
+  { href: "/admin/league-ops", label: "Ops applications" },
+  { href: "/admin/announcements", label: "Announcements" },
+];
+
+/** "About" — mirrors the About column in the site footer. Discord is external. */
+export const NAV_ABOUT: NavLink[] = [
+  { href: "/about", label: "What is THL" },
+  { href: "/rules", label: "Ruleset" },
+  { href: "/rules#conduct", label: "Code of conduct" },
+  { href: "/captains", label: "Captains' handbook" },
+  { href: SITE.discordInvite, label: "Discord", external: true },
+];
+
+/** Every internal league destination — for the search palette quick-nav.
+ *  Deduped by href (e.g. /captains is in both the League and About menus). */
+export const NAV_ALL: NavLink[] = [
+  NAV_POOL,
+  ...NAV_LEAGUE_GROUPS.flatMap((g) => g.links),
+  ...NAV_STATS,
+  ...NAV_ABOUT.filter((l) => !l.external),
+].filter(
+  (link, i, all) => all.findIndex((other) => other.href === link.href) === i,
+);

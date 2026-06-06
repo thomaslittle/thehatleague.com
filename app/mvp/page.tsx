@@ -20,7 +20,7 @@ export const metadata = {
 export default async function MvpPage() {
   const supabase = await createSupabaseServerClient();
   const [{ data }, viewer] = await Promise.all([
-    supabase.from("profiles").select(POOL_SELECT).eq("in_player_pool", true),
+    supabase.from("profiles").select(POOL_SELECT).eq("in_player_pool", true).eq("is_mock", false),
     getViewer(),
   ]);
   const pool = (data ?? []) as PoolRow[];
@@ -109,7 +109,7 @@ export default async function MvpPage() {
 
         {shortlist.length === 0 ? (
           <div className="mt-10 rounded-3xl border border-dashed border-neutral-300 bg-white p-10 text-center dark:border-neutral-800 dark:bg-neutral-950">
-            <div className="font-marker text-2xl md:text-3xl">
+            <div className="text-2xl font-bold tracking-tight md:text-3xl">
               No one&apos;s in the pool yet.
             </div>
             <p className="mt-3 text-neutral-600 dark:text-neutral-400">
@@ -201,7 +201,7 @@ export default async function MvpPage() {
             <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
               Reserved · ballot
             </div>
-            <h3 className="mt-3 font-marker text-3xl md:text-4xl">
+            <h3 className="mt-3 text-3xl font-bold tracking-[-0.02em] md:text-4xl">
               The vote-cast form drops here.
             </h3>
             <p className="mt-4 max-w-2xl text-neutral-600 dark:text-neutral-400">

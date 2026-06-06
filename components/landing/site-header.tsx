@@ -1,14 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
-import {
-  ArrowRight,
-  DiscordIcon,
-  TwitchIcon,
-} from "@/components/icons/brand";
+import { ArrowRight, DiscordIcon } from "@/components/icons/brand";
 import { MobileNavSheet, MobileNavTrigger } from "@/components/landing/mobile-nav";
-import { PrimaryNav } from "@/components/landing/primary-nav";
+import { DesktopNav } from "@/components/landing/desktop-nav";
 import { SiteSearch } from "@/components/search/site-search";
+import { SocialNav } from "@/components/social/social-nav";
 import { SITE } from "@/lib/site";
 import type { ThemePref } from "@/lib/site";
 
@@ -27,6 +24,10 @@ export interface ViewerInfo {
    *  review. Drives the notification dot on the header avatar. 0 means
    *  no badge. */
   pendingAdminQueue?: number;
+  /** Unread direct/team messages — drives the Messages icon badge. */
+  unreadMessages?: number;
+  /** Pending incoming friend requests — drives the Friends icon badge. */
+  friendRequests?: number;
 }
 
 export function SiteHeader({
@@ -37,7 +38,6 @@ export function SiteHeader({
   headlineAnnouncement,
   navCounts,
   viewer,
-  twitchLive,
 }: {
   theme: ThemePref;
   signupHref?: string;
@@ -117,7 +117,7 @@ export function SiteHeader({
           </div>
         </Link>
 
-        <PrimaryNav navCounts={navCounts} />
+        <DesktopNav navCounts={navCounts} isAdmin={!!viewer?.isAdmin} />
 
         {/*
           Right-side action cluster. Order follows common header conventions:
@@ -126,30 +126,6 @@ export function SiteHeader({
           they sit on a clean baseline.
         */}
         <div className="flex items-center gap-1.5 md:gap-2">
-          {/* Twitch — colored pill when live, ghost text otherwise. */}
-          <a
-            href={SITE.twitchUrl}
-            target="_blank"
-            rel="noopener"
-            className={
-              twitchLive
-                ? "hidden h-9 items-center gap-2 rounded-lg bg-[#9146ff] px-3 text-sm font-bold whitespace-nowrap text-white transition hover:bg-[#7c2bff] md:inline-flex"
-                : "hidden h-9 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-neutral-700 transition hover:bg-neutral-100 hover:text-[#9146ff] md:inline-flex dark:text-neutral-300 dark:hover:bg-neutral-900 dark:hover:text-[#a970ff]"
-            }
-          >
-            <TwitchIcon className="h-4 w-4" />
-            {twitchLive ? (
-              <>
-                <span className="relative flex h-2 w-2">
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
-                </span>
-                Live now
-              </>
-            ) : (
-              "Watch"
-            )}
-          </a>
-
           {/* Discord — outlined ghost button. */}
           <a
             href={SITE.discordInvite}
@@ -167,6 +143,16 @@ export function SiteHeader({
             isAuthenticated={!!viewer?.isAuthenticated}
             isAdmin={!!viewer?.isAdmin}
           />
+
+          {/* Social — Messages + Friends with live badges (desktop). */}
+          {viewer?.isAuthenticated && (
+            <SocialNav
+              initial={{
+                unread: viewer.unreadMessages ?? 0,
+                requests: viewer.friendRequests ?? 0,
+              }}
+            />
+          )}
 
           {/* Theme toggle — desktop only. The mobile nav sheet has its
               own theme switcher inside. */}
@@ -236,7 +222,13 @@ export function SiteHeader({
         </div>
       </div>
     </header>
-      <MobileNavSheet theme={theme} signupHref={signupHref} showSignup={showSignup} />
+      <MobileNavSheet
+        theme={theme}
+        signupHref={signupHref}
+        showSignup={showSignup}
+        isAuthenticated={!!viewer?.isAuthenticated}
+        isAdmin={!!viewer?.isAdmin}
+      />
     </>
   );
 }

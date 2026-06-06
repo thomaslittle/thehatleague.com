@@ -87,7 +87,7 @@ async function PoolBoardLoader({
 }) {
   const supabase = await createSupabaseServerClient();
   const [{ data: players }, viewer] = await Promise.all([
-    supabase.from("profiles").select(POOL_SELECT).eq("in_player_pool", true),
+    supabase.from("profiles").select(POOL_SELECT).eq("in_player_pool", true).eq("is_mock", false),
     getViewer(),
   ]);
   const initialRows: PoolRow[] = (players ?? []) as PoolRow[];

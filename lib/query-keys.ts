@@ -20,4 +20,21 @@ export const queryKeys = {
   historicalStats: (season: number) =>
     ["historical-stats", season] as const,
   clips: () => ["clips"] as const,
+  social: {
+    /** Unread-message + friend-request counts for the header badges. */
+    counts: () => ["social", "counts"] as const,
+  },
+  draft: {
+    /** Match any draft query for bulk invalidation. */
+    all: () => ["draft"] as const,
+    /** Full board snapshot (state + teams + order + picks) for a season. */
+    snapshot: (seasonId: string) => ["draft", "snapshot", seasonId] as const,
+    /** Undrafted pool / best-available for a season. */
+    available: (seasonId: string) => ["draft", "available", seasonId] as const,
+    /** A single team's draft queue. */
+    queue: (seasonId: string, teamId: string) =>
+      ["draft", "queue", seasonId, teamId] as const,
+    /** Overlay settings for a season (control room ↔ overlays). */
+    overlay: (seasonId: string) => ["draft", "overlay", seasonId] as const,
+  },
 } as const;

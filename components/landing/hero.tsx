@@ -212,13 +212,13 @@ export function Hero({
                 </Link>
               )}
               <a
-                href={SITE.twitchUrl}
+                href={SITE.discordInvite}
                 target="_blank"
                 rel="noopener"
-                className="inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#9146ff] px-6 py-4 text-base font-bold whitespace-nowrap text-white shadow-[0_10px_40px_-12px_rgba(145,70,255,0.6)] transition hover:bg-[#7c2bff] active:scale-[0.98] sm:w-auto"
+                className="inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#5865F2] px-6 py-4 text-base font-bold whitespace-nowrap text-white shadow-[0_10px_40px_-12px_rgba(88,101,242,0.6)] transition hover:bg-[#4752c4] active:scale-[0.98] sm:w-auto"
               >
-                <TwitchIcon className="h-5 w-5" />
-                Watch on Twitch
+                <DiscordIcon className="h-5 w-5" />
+                Join the Discord
               </a>
             </div>
 
@@ -239,7 +239,7 @@ export function Hero({
               </div>
 
               <div className="flex w-full items-end justify-between gap-4 border-t border-dashed border-neutral-300 pt-5 md:pt-6 dark:border-neutral-800">
-                <div>
+                <div className="min-w-0">
                   <div className="text-[10px] font-bold tracking-[0.22em] text-neutral-500 uppercase dark:text-neutral-500">
                     Draft Night
                   </div>
@@ -250,10 +250,15 @@ export function Hero({
                     href={SITE.twitchUrl}
                     target="_blank"
                     rel="noopener"
-                    className="mt-1.5 inline-flex items-center gap-1.5 text-xs text-neutral-600 transition hover:text-[#9146ff] dark:text-neutral-400 dark:hover:text-[#a970ff]"
+                    className="mt-1.5 inline-flex max-w-full items-center gap-1.5 text-xs text-neutral-600 transition hover:text-[#9146ff] dark:text-neutral-400 dark:hover:text-[#a970ff]"
                   >
-                    <TwitchIcon className="h-3 w-3" />
-                    {SITE.twitchHandle}
+                    <TwitchIcon className="h-3 w-3 shrink-0" />
+                    {/* Channel name only (the icon already says Twitch); the
+                        full "twitch.tv/…" URL was wide enough to break the
+                        hero's left column on narrow mobile. */}
+                    <span className="min-w-0 truncate">
+                      {SITE.twitchHandle.replace(/^twitch\.tv\//, "")}
+                    </span>
                   </a>
                 </div>
                 <div className="flex items-center gap-2">

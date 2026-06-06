@@ -103,7 +103,7 @@ export default async function Image(props: {
             </div>
           </div>
 
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          { }
           <img
             src={logoSrc}
             alt=""

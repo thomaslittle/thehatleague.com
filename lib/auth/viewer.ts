@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { cleanDiscordUsername } from "@/lib/discord/name";
+import { loadSocialCounts } from "@/lib/data/social";
 import type { ViewerInfo } from "@/components/landing/site-header";
 
 /**
@@ -45,6 +46,8 @@ export const getViewer = cache(async (): Promise<ViewerInfo | null> => {
       (captainQueue.count ?? 0) + (leagueOpsQueue.count ?? 0);
   }
 
+  const social = await loadSocialCounts(user.id);
+
   return {
     isAuthenticated: true,
     displayName:
@@ -58,6 +61,8 @@ export const getViewer = cache(async (): Promise<ViewerInfo | null> => {
     inPool: !!profile?.in_player_pool,
     isCaptain: !!profile?.is_captain,
     pendingAdminQueue,
+    unreadMessages: social.unreadMessages,
+    friendRequests: social.friendRequests,
   };
 });
 
@@ -75,15 +80,18 @@ export interface PoolStats {
  */
 export const getPoolStats = cache(async (): Promise<PoolStats> => {
   const supabase = await createSupabaseServerClient();
+  // is_mock excluded everywhere public: demo players never inflate signup proof.
   const [{ count: poolCount }, { count: captainCount }] = await Promise.all([
     supabase
       .from("profiles")
       .select("id", { count: "exact", head: true })
-      .eq("in_player_pool", true),
+      .eq("in_player_pool", true)
+      .eq("is_mock", false),
     supabase
       .from("profiles")
       .select("id", { count: "exact", head: true })
-      .eq("is_captain", true),
+      .eq("is_captain", true)
+      .eq("is_mock", false),
   ]);
   return {
     poolCount: poolCount ?? 0,
@@ -114,6 +122,7 @@ export const getPoolAvatars = cache(
         "id, discord_username, discord_global_name, discord_avatar_url, profile_avatar_url, peak_rank, is_captain, is_admin, created_at",
       )
       .eq("in_player_pool", true)
+      .eq("is_mock", false)
       .order("created_at", { ascending: false })
       .limit(limit);
     return (data ?? []).map((p) => ({

@@ -58,7 +58,7 @@ export function BrandBackdropLayer() {
     <div
       ref={parallaxSetup}
       aria-hidden
-      className={`pointer-events-none absolute inset-x-0 top-[110px] z-0 h-[720px] overflow-hidden transition-opacity duration-200 ease-out ${
+      className={`thl-brand-backdrop pointer-events-none absolute inset-x-0 top-[110px] z-0 h-[720px] overflow-hidden transition-opacity duration-200 ease-out ${
         pathname === "/" ? "opacity-0" : "opacity-100"
       }`}
       style={{ viewTransitionName: "brand-backdrop" }}

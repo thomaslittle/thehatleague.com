@@ -1,5 +1,5 @@
-// Generated from the self-hosted Supabase DB (information_schema introspection).
-// Re-run scripts/gen-types.ts when the schema changes.
+// Generated from the self-hosted Supabase DB (scripts/gen-types.ts).
+// Tables, views, functions, and enums. Re-run when the schema changes.
 
 export type Json =
   | string
@@ -450,8 +450,8 @@ export type Database = {
           reported_at: string | null;
           next_match_id: string | null;
           next_slot_is_a: boolean | null;
-          games: Json;
           created_at: string;
+          games: Json;
         };
         Insert: {
           id?: string;
@@ -470,8 +470,8 @@ export type Database = {
           reported_at?: string | null;
           next_match_id?: string | null;
           next_slot_is_a?: boolean | null;
-          games?: Json;
           created_at?: string;
+          games?: Json;
         };
         Update: {
           id?: string;
@@ -490,8 +490,8 @@ export type Database = {
           reported_at?: string | null;
           next_match_id?: string | null;
           next_slot_is_a?: boolean | null;
-          games?: Json;
           created_at?: string;
+          games?: Json;
         };
         Relationships: [];
       };
@@ -573,15 +573,15 @@ export type Database = {
           current_round: number;
           team_size: number;
           best_of: number;
-          swiss_best_of: number;
-          swiss_games: number;
-          playoff_best_of: number;
-          final_best_of: number;
           playoff_cut: number;
           starts_at: string | null;
           created_by: string | null;
           created_at: string;
           updated_at: string;
+          swiss_best_of: number;
+          playoff_best_of: number;
+          final_best_of: number;
+          swiss_games: number;
         };
         Insert: {
           id?: string;
@@ -591,15 +591,15 @@ export type Database = {
           current_round?: number;
           team_size?: number;
           best_of?: number;
-          swiss_best_of?: number;
-          swiss_games?: number;
-          playoff_best_of?: number;
-          final_best_of?: number;
           playoff_cut?: number;
           starts_at?: string | null;
           created_by?: string | null;
           created_at?: string;
           updated_at?: string;
+          swiss_best_of?: number;
+          playoff_best_of?: number;
+          final_best_of?: number;
+          swiss_games?: number;
         };
         Update: {
           id?: string;
@@ -609,15 +609,15 @@ export type Database = {
           current_round?: number;
           team_size?: number;
           best_of?: number;
-          swiss_best_of?: number;
-          swiss_games?: number;
-          playoff_best_of?: number;
-          final_best_of?: number;
           playoff_cut?: number;
           starts_at?: string | null;
           created_by?: string | null;
           created_at?: string;
           updated_at?: string;
+          swiss_best_of?: number;
+          playoff_best_of?: number;
+          final_best_of?: number;
+          swiss_games?: number;
         };
         Relationships: [];
       };
@@ -1297,74 +1297,178 @@ export type Database = {
         Relationships: [];
       };
     };
-    Views: Record<string, never>;
+    Views: {
+      player_points_view: {
+        Row: {
+          season_id: string | null;
+          profile_id: string | null;
+          points: number | null;
+        };
+        Relationships: [];
+      };
+      player_season_stats: {
+        Row: {
+          season_id: string | null;
+          profile_id: string | null;
+          games_played: number | null;
+          goals: number | null;
+          assists: number | null;
+          saves: number | null;
+          demos: number | null;
+          score: number | null;
+        };
+        Relationships: [];
+      };
+      standings_view: {
+        Row: {
+          team_id: string | null;
+          season_id: string | null;
+          name: string | null;
+          slug: string | null;
+          conference: string | null;
+          color: string | null;
+          captain_id: string | null;
+          gp: number | null;
+          w: number | null;
+          l: number | null;
+          gf: number | null;
+          ga: number | null;
+          diff: number | null;
+        };
+        Relationships: [];
+      };
+    };
     Functions: {
-      fnf_is_admin: {
-        Args: Record<string, never>;
+      are_friends: {
+        Args: { a: string; b: string };
         Returns: boolean;
       };
-      fnf_upsert_tournament: {
-        Args: {
-          p_id: string | null;
-          p_name: string | null;
-          p_swiss_rounds: number | null;
-          p_swiss_games: number | null;
-          p_playoff_best_of: number | null;
-          p_final_best_of: number | null;
-          p_playoff_cut: number | null;
-          p_starts_at: string | null;
-        };
+      bump_conversation: {
+        Args: Record<string, never>;
         Returns: string;
       };
-      fnf_set_status: {
-        Args: { p_tournament: string; p_status: string };
+      can_access_conversation: {
+        Args: { conv: string };
+        Returns: boolean;
+      };
+      can_dm: {
+        Args: { a: string; b: string };
+        Returns: boolean;
+      };
+      draft_picks_per_team: {
+        Args: { p_season: string };
+        Returns: number;
+      };
+      draft_team_at: {
+        Args: { p_season: string; p_overall: number };
+        Returns: string;
+      };
+      fnf_create_playoffs: {
+        Args: { p_tournament: string; p_matches: Json };
         Returns: undefined;
       };
-      fnf_reset: {
-        Args: { p_tournament: string };
-        Returns: undefined;
-      };
-      fnf_remove_player: {
-        Args: { p_tournament: string; p_profile: string };
+      fnf_create_round: {
+        Args: { p_tournament: string; p_stage: string; p_round: number; p_matches: Json };
         Returns: undefined;
       };
       fnf_generate_teams: {
         Args: { p_tournament: string; p_teams: Json };
         Returns: undefined;
       };
-      fnf_set_rosters: {
-        Args: { p_tournament: string; p_rosters: Json };
-        Returns: undefined;
+      fnf_is_admin: {
+        Args: Record<string, never>;
+        Returns: boolean;
       };
-      fnf_create_round: {
-        Args: {
-          p_tournament: string;
-          p_stage: string;
-          p_round: number;
-          p_matches: Json;
-        };
-        Returns: undefined;
-      };
-      fnf_create_playoffs: {
-        Args: { p_tournament: string; p_matches: Json };
+      fnf_remove_player: {
+        Args: { p_tournament: string; p_profile: string };
         Returns: undefined;
       };
       fnf_report_match: {
         Args: { p_match: string; p_games: Json };
         Returns: Json;
       };
+      fnf_reset: {
+        Args: { p_tournament: string };
+        Returns: undefined;
+      };
+      fnf_set_rosters: {
+        Args: { p_tournament: string; p_rosters: Json };
+        Returns: undefined;
+      };
+      fnf_set_status: {
+        Args: { p_tournament: string; p_status: string };
+        Returns: undefined;
+      };
+      fnf_upsert_tournament: {
+        Args: { p_id: string; p_name: string; p_swiss_rounds: number; p_swiss_games: number; p_playoff_best_of: number; p_final_best_of: number; p_playoff_cut: number; p_starts_at: string };
+        Returns: string;
+      };
+      get_or_create_team_conversation: {
+        Args: { p_team: string };
+        Returns: string;
+      };
+      handle_new_user: {
+        Args: Record<string, never>;
+        Returns: string;
+      };
+      is_captain_of: {
+        Args: { p_team: string };
+        Returns: boolean;
+      };
+      is_league_ops: {
+        Args: Record<string, never>;
+        Returns: boolean;
+      };
+      make_draft_pick: {
+        Args: { p_season: string; p_profile: string; p_auto: boolean; p_duration: number };
+        Returns: string;
+      };
+      mark_conversation_read: {
+        Args: { conv: string };
+        Returns: undefined;
+      };
+      purge_mock_data: {
+        Args: Record<string, never>;
+        Returns: undefined;
+      };
+      seed_mock_players: {
+        Args: { p_players: Json };
+        Returns: number;
+      };
+      set_updated_at: {
+        Args: Record<string, never>;
+        Returns: string;
+      };
+      shared_team: {
+        Args: { a: string; b: string };
+        Returns: boolean;
+      };
+      start_dm: {
+        Args: { other: string };
+        Returns: string;
+      };
+      submit_asset: {
+        Args: { p_kind: string; p_source: string; p_url: string; p_storage_path: string; p_title: string; p_thumbnail_url: string; p_mime_type: string; p_size_bytes: number; p_target_type: string; p_target_id: string; p_season_id: string };
+        Returns: string;
+      };
     };
-    Enums: Record<string, never>;
+    Enums: {
+      [_ in never]: never;
+    };
     CompositeTypes: Record<string, never>;
   };
 };
 
-export type Tables<T extends keyof Database["public"]["Tables"]> =
-  Database["public"]["Tables"][T]["Row"];
-export type TablesInsert<T extends keyof Database["public"]["Tables"]> =
-  Database["public"]["Tables"][T]["Insert"];
-export type TablesUpdate<T extends keyof Database["public"]["Tables"]> =
-  Database["public"]["Tables"][T]["Update"];
+type PublicSchema = Database["public"];
+
+export type Tables<T extends keyof PublicSchema["Tables"]> =
+  PublicSchema["Tables"][T]["Row"];
+export type TablesInsert<T extends keyof PublicSchema["Tables"]> =
+  PublicSchema["Tables"][T]["Insert"];
+export type TablesUpdate<T extends keyof PublicSchema["Tables"]> =
+  PublicSchema["Tables"][T]["Update"];
+export type Enums<T extends keyof PublicSchema["Enums"]> =
+  PublicSchema["Enums"][T];
 
 export type Profile = Tables<"profiles">;
 export type HistoricalPlayerStatsRow = Tables<"historical_player_stats">;

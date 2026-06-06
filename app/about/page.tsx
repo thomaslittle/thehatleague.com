@@ -108,7 +108,7 @@ export default async function AboutPage() {
               <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
                 {v.eyebrow}
               </div>
-              <h3 className="mt-3 font-marker text-2xl">{v.title}</h3>
+              <h3 className="mt-3 text-xl font-bold tracking-tight">{v.title}</h3>
               <p className="mt-3 leading-relaxed text-neutral-600 dark:text-neutral-400">
                 {v.body}
               </p>

@@ -90,7 +90,7 @@ export default async function Image() {
             </div>
           </div>
 
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          { }
           <img
             src={logoSrc}
             alt=""
