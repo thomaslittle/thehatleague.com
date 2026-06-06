@@ -259,7 +259,7 @@ export function Hero({
                 <HeroPromoVideo />
               </div>
 
-              <div className="flex w-full items-end justify-between gap-4 border-t border-dashed border-neutral-300 pt-5 md:pt-6 dark:border-neutral-800">
+              <div className="flex w-full flex-col items-start gap-4 border-t border-dashed border-neutral-300 pt-5 sm:flex-row sm:items-end sm:justify-between md:pt-6 dark:border-neutral-800">
                 <div className="min-w-0">
                   <div className="text-[10px] font-bold tracking-[0.22em] text-neutral-500 uppercase dark:text-neutral-500">
                     Draft Night
@@ -311,12 +311,12 @@ export function Hero({
           <div className="mt-10 md:mt-12">
             <div className="flex flex-col gap-4 overflow-hidden rounded-2xl border border-thl-orange/30 bg-white/70 p-4 shadow-[0_18px_40px_-24px_rgba(247,97,3,0.5)] backdrop-blur-sm sm:flex-row sm:items-center sm:gap-5 sm:p-5 dark:bg-black/40">
               <div className="flex items-center gap-3">
-                <span className="relative h-16 w-16 shrink-0 sm:h-20 sm:w-20">
+                <span className="relative h-20 w-20 shrink-0 sm:h-24 sm:w-24">
                   <Image
                     src="/brand/fnf.png"
                     alt="Friday Nite Fights"
                     fill
-                    sizes="90px"
+                    sizes="120px"
                     className="object-contain drop-shadow-[0_4px_16px_rgba(247,97,3,0.35)]"
                   />
                 </span>
@@ -331,35 +331,50 @@ export function Hero({
               </div>
 
               <div className="flex flex-wrap items-center gap-x-5 gap-y-2 sm:ml-auto">
-                {fnfChampions.players.map((p) => (
-                  <span key={p.id} className="inline-flex items-center gap-2">
-                    <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-amber-400/80">
-                      {p.avatarUrl ? (
-                        <Image
-                          src={p.avatarUrl}
-                          alt=""
-                          fill
-                          sizes="36px"
-                          className="object-cover"
-                        />
-                      ) : (
-                        <span className="flex h-full w-full items-center justify-center bg-neutral-300 text-[11px] font-bold text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200">
-                          {p.name.slice(0, 2).toUpperCase()}
-                        </span>
-                      )}
-                    </span>
-                    <span className="leading-tight">
-                      <span className="block text-sm font-bold text-neutral-900 dark:text-white">
-                        {p.name}
+                {fnfChampions.players.map((p) => {
+                  const inner = (
+                    <>
+                      <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-amber-400/80">
+                        {p.avatarUrl ? (
+                          <Image
+                            src={p.avatarUrl}
+                            alt=""
+                            fill
+                            sizes="36px"
+                            className="object-cover"
+                          />
+                        ) : (
+                          <span className="flex h-full w-full items-center justify-center bg-neutral-300 text-[11px] font-bold text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200">
+                            {p.name.slice(0, 2).toUpperCase()}
+                          </span>
+                        )}
                       </span>
-                      {p.rank && (
-                        <span className="block text-[11px] font-semibold text-neutral-500 dark:text-neutral-400">
-                          {p.rank}
+                      <span className="leading-tight">
+                        <span className="block text-sm font-bold text-neutral-900 group-hover/p:text-thl-orange dark:text-white">
+                          {p.name}
                         </span>
-                      )}
+                        {p.rank && (
+                          <span className="block text-[11px] font-semibold text-neutral-500 dark:text-neutral-400">
+                            {p.rank}
+                          </span>
+                        )}
+                      </span>
+                    </>
+                  );
+                  return p.username ? (
+                    <Link
+                      key={p.id}
+                      href={`/players/${encodeURIComponent(p.username)}`}
+                      className="group/p inline-flex items-center gap-2 rounded-lg transition hover:opacity-90"
+                    >
+                      {inner}
+                    </Link>
+                  ) : (
+                    <span key={p.id} className="inline-flex items-center gap-2">
+                      {inner}
                     </span>
-                  </span>
-                ))}
+                  );
+                })}
 
                 {/* divider between the winners and the action */}
                 <span

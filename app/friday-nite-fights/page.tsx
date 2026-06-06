@@ -138,7 +138,7 @@ export default async function FridayNiteFightsPage(
           }
         />
         {isAdmin && (
-          <div className="mx-auto max-w-[1320px] px-6 md:px-10">
+          <div className="mx-auto mb-10 max-w-[1320px] px-6 md:mb-12 md:px-10">
             <AdminControls
               tournamentId={tournament.id}
               status={tournament.status}
@@ -310,6 +310,7 @@ export default async function FridayNiteFightsPage(
                     matches={matches}
                     viewerTeamIds={viewerTeamIds}
                     isAdmin={isAdmin}
+                    locked={isOver}
                   />
                 </div>
                 <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
@@ -319,6 +320,7 @@ export default async function FridayNiteFightsPage(
                       matches={matches}
                       viewerTeamIds={viewerTeamIds}
                       isAdmin={isAdmin}
+                      locked={isOver}
                     />
                   </div>
                   <div className="order-1 lg:order-2 lg:sticky lg:top-24">
@@ -343,6 +345,7 @@ export default async function FridayNiteFightsPage(
                         matches={matches}
                         viewerTeamIds={viewerTeamIds}
                         isAdmin={isAdmin}
+                        locked={isOver}
                       />
                       <h2 className="mt-8 mb-3 text-lg font-bold">
                         Swiss rounds
@@ -351,6 +354,7 @@ export default async function FridayNiteFightsPage(
                         matches={matches}
                         viewerTeamIds={viewerTeamIds}
                         isAdmin={isAdmin}
+                        locked={isOver}
                       />
                     </>
                   ) : (
@@ -360,6 +364,7 @@ export default async function FridayNiteFightsPage(
                         matches={matches}
                         viewerTeamIds={viewerTeamIds}
                         isAdmin={isAdmin}
+                        locked={isOver}
                       />
                     </>
                   )}

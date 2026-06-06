@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Pencil } from "lucide-react";
+import { Pencil, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { reportMatch } from "@/app/actions/fnf";
 import type { FnfMatchCard } from "@/lib/data/fnf";
@@ -18,10 +18,13 @@ type GameInput = { a: string; b: string };
 export function MatchCard({
   match,
   canReport,
+  locked = false,
 }: {
   match: FnfMatchCard;
   /** Viewer is on one of the teams, or is an admin. */
   canReport: boolean;
+  /** Tournament is finished — results are frozen, so editing is disabled. */
+  locked?: boolean;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -214,14 +217,33 @@ export function MatchCard({
               </div>
             </div>
           ) : reported ? (
-            canReport ? (
-              <Button size="sm" variant="ghost" onClick={startEdit}>
+            locked ? (
+              <Button
+                size="sm"
+                variant="outline"
+                disabled
+                className="cursor-not-allowed border-neutral-200 text-neutral-400 opacity-70 dark:border-neutral-800 dark:text-neutral-500"
+              >
+                <Lock className="size-3" /> Result final
+              </Button>
+            ) : canReport ? (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={startEdit}
+                className="border-thl-orange/40 font-semibold text-thl-orange hover:border-thl-orange hover:bg-thl-orange/10"
+              >
                 <Pencil className="size-3" /> Edit result
               </Button>
             ) : null
           ) : canReport ? (
-            <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-              Report score
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setOpen(true)}
+              className="border-thl-orange/50 font-semibold text-thl-orange hover:border-thl-orange hover:bg-thl-orange/10"
+            >
+              <Pencil className="size-3" /> Report score
             </Button>
           ) : (
             <p className="text-xs text-neutral-400">Awaiting result…</p>

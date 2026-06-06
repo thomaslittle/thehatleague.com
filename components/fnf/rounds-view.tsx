@@ -6,10 +6,13 @@ export function RoundsView({
   matches,
   viewerTeamIds,
   isAdmin,
+  locked = false,
 }: {
   matches: FnfMatchCard[];
   viewerTeamIds: string[];
   isAdmin: boolean;
+  /** Tournament finished — freeze result editing. */
+  locked?: boolean;
 }) {
   const swiss = matches.filter((m) => m.stage === "swiss");
   if (swiss.length === 0) return null;
@@ -47,6 +50,7 @@ export function RoundsView({
                 <MatchCard
                   key={m.id}
                   match={m}
+                  locked={locked}
                   canReport={
                     isAdmin ||
                     (!!m.teamAId && viewerSet.has(m.teamAId)) ||

@@ -16,10 +16,13 @@ export function BracketView({
   matches,
   viewerTeamIds,
   isAdmin,
+  locked = false,
 }: {
   matches: FnfMatchCard[];
   viewerTeamIds: string[];
   isAdmin: boolean;
+  /** Tournament finished — freeze result editing. */
+  locked?: boolean;
 }) {
   const playoffs = matches.filter((m) => m.stage === "playoffs");
   if (playoffs.length === 0) return null;
@@ -85,6 +88,7 @@ export function BracketView({
                   >
                     <MatchCard
                       match={m}
+                      locked={locked}
                       canReport={
                         isAdmin ||
                         (!!m.teamAId && viewerSet.has(m.teamAId)) ||

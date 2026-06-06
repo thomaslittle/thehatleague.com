@@ -149,6 +149,29 @@ export default function ShitfacedSaturdayPage() {
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-neutral-500 md:text-base dark:text-neutral-400">
             Light, simple, and made to get bent. Here&apos;s how a night runs:
           </p>
+
+          {/* The one everyone fears — comedic standout. */}
+          <div className="relative mt-6 overflow-hidden rounded-2xl border-2 border-dashed border-amber-400/60 bg-gradient-to-br from-amber-400/15 to-thl-orange/10 p-6 text-center">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-40 [background-image:radial-gradient(circle_at_1px_1px,rgba(247,97,3,0.18)_1px,transparent_0)] [background-size:20px_20px]"
+            />
+            <div className="relative flex items-center justify-center gap-2 text-amber-500">
+              <Beer className="size-5" />
+              <span className="text-[10px] font-bold tracking-[0.28em] uppercase">
+                The one everyone fears
+              </span>
+              <Beer className="size-5 -scale-x-100" />
+            </div>
+            <p className="relative mt-2 font-marker text-3xl leading-tight text-thl-orange md:text-4xl">
+              Own goal? Finish your drink.
+            </p>
+            <p className="relative mt-1.5 text-sm text-neutral-600 dark:text-neutral-400">
+              The whole thing. No sips, no stalling, no &ldquo;it
+              deflected.&rdquo; We all saw it. 🫡
+            </p>
+          </div>
+
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <RuleCard
               icon={GlassWater}

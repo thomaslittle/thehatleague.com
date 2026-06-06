@@ -100,7 +100,9 @@ export function HallOfChampions({
 /** All-time per-player FNF leaderboard. */
 export function AllTimeStats({ stats }: { stats: FnfAllTimeStat[] }) {
   if (stats.length === 0) return null;
-  const top = stats.slice(0, 15);
+  // Show the whole field (capped generously) — a short tournament has only a
+  // dozen-plus fighters, and cutting at 15 was dropping real entrants.
+  const top = stats.slice(0, 50);
   return (
     <section>
       <h2 className="mb-4 text-lg font-bold tracking-tight">All-time leaders</h2>
