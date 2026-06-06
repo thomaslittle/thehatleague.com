@@ -4,12 +4,17 @@ import Image from "next/image";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { reportMatch } from "@/app/actions/fnf";
 import type { FnfMatchCard } from "@/lib/data/fnf";
 import { cn } from "@/lib/cn";
 
-/** A single matchup with inline score reporting for participants/admins. */
+type GameInput = { a: string; b: string };
+
+/** A single matchup. Reporters enter each game's score (a Swiss series is a
+ *  fixed N games; a playoff series is best-of-N). Admins can edit a reported
+ *  result. */
 export function MatchCard({
   match,
   canReport,
@@ -20,8 +25,6 @@ export function MatchCard({
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [a, setA] = useState("");
-  const [b, setB] = useState("");
   const [pending, startTransition] = useTransition();
 
   const isBye = !match.teamBId;
@@ -33,26 +36,51 @@ export function MatchCard({
     reported && match.scoreA != null && match.scoreA === match.scoreB;
   const tbd = (n: string | null, label: string) => n ?? label;
 
+  const numGames = Math.max(1, match.bestOf);
+  const [games, setGames] = useState<GameInput[]>(() =>
+    Array.from({ length: numGames }, () => ({ a: "", b: "" })),
+  );
+
+  const startEdit = () => {
+    const prefilled: GameInput[] = Array.from({ length: numGames }, (_, i) => {
+      const g = match.games[i];
+      return g ? { a: String(g[0]), b: String(g[1]) } : { a: "", b: "" };
+    });
+    setGames(prefilled);
+    setOpen(true);
+  };
+
+  const setGame = (i: number, side: "a" | "b", v: string) =>
+    setGames((prev) =>
+      prev.map((g, idx) => (idx === i ? { ...g, [side]: v } : g)),
+    );
+
   const submit = () => {
-    const sa = Number(a);
-    const sb = Number(b);
-    if (!Number.isFinite(sa) || !Number.isFinite(sb)) {
-      toast.error("Enter both game scores.");
+    const filled: [number, number][] = [];
+    for (const g of games) {
+      if (g.a === "" && g.b === "") continue;
+      const a = Number(g.a);
+      const b = Number(g.b);
+      if (!Number.isFinite(a) || !Number.isFinite(b) || a < 0 || b < 0) {
+        toast.error("Enter a valid score for each game.");
+        return;
+      }
+      filled.push([a, b]);
+    }
+    if (filled.length === 0) {
+      toast.error("Enter at least one game's score.");
       return;
     }
-    // Swiss is a fixed-game series and may end 1-1; playoffs need a winner.
-    if (!isSwiss && sa === sb) {
-      toast.error("Playoff matches need a winner.");
+    if (isSwiss && filled.length < numGames) {
+      toast.error(`Enter both games (all ${numGames}).`);
       return;
     }
     startTransition(async () => {
-      const res = await reportMatch(match.id, sa, sb);
+      const res = await reportMatch(match.id, filled);
       if (res.error) toast.error(res.error);
       else {
         toast.success("Score reported.");
         setOpen(false);
-        setA("");
-        setB("");
         router.refresh();
       }
     });
@@ -110,41 +138,68 @@ export function MatchCard({
         />
       </div>
 
-      {!reported && !isBye && match.teamAId && match.teamBId && (
+      {/* Per-game breakdown once reported */}
+      {reported && !isBye && match.games.length > 0 && (
+        <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-neutral-100 pt-2 text-[11px] text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
+          {match.games.map((g, i) => (
+            <span key={i} className="tabular-nums">
+              <span className="text-neutral-400">G{i + 1}</span> {g[0]}–{g[1]}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Reporting / editing */}
+      {!isBye && match.teamAId && match.teamBId && (
         <div className="mt-2.5">
           {open ? (
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                inputMode="numeric"
-                value={a}
-                onChange={(e) => setA(e.target.value)}
-                placeholder={match.teamAName ?? "A"}
-                className="h-8 w-14 rounded-md border border-neutral-300 bg-white px-2 text-center text-sm tabular-nums dark:border-neutral-700 dark:bg-neutral-950"
-                aria-label={`${match.teamAName} score`}
-              />
-              <span className="text-neutral-400">–</span>
-              <input
-                type="number"
-                inputMode="numeric"
-                value={b}
-                onChange={(e) => setB(e.target.value)}
-                placeholder={match.teamBName ?? "B"}
-                className="h-8 w-14 rounded-md border border-neutral-300 bg-white px-2 text-center text-sm tabular-nums dark:border-neutral-700 dark:bg-neutral-950"
-                aria-label={`${match.teamBName} score`}
-              />
-              <Button size="sm" onClick={submit} disabled={pending}>
-                {pending ? "…" : "Submit"}
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setOpen(false)}
-                disabled={pending}
-              >
-                Cancel
-              </Button>
+            <div className="space-y-1.5">
+              {games.map((g, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="w-6 shrink-0 text-[10px] font-bold text-neutral-400">
+                    G{i + 1}
+                  </span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    value={g.a}
+                    onChange={(e) => setGame(i, "a", e.target.value)}
+                    aria-label={`Game ${i + 1} ${match.teamAName} score`}
+                    className="h-8 w-12 rounded-md border border-neutral-300 bg-white px-2 text-center text-sm tabular-nums dark:border-neutral-700 dark:bg-neutral-950"
+                  />
+                  <span className="text-neutral-400">–</span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    value={g.b}
+                    onChange={(e) => setGame(i, "b", e.target.value)}
+                    aria-label={`Game ${i + 1} ${match.teamBName} score`}
+                    className="h-8 w-12 rounded-md border border-neutral-300 bg-white px-2 text-center text-sm tabular-nums dark:border-neutral-700 dark:bg-neutral-950"
+                  />
+                </div>
+              ))}
+              <div className="flex items-center gap-2 pt-0.5">
+                <Button size="sm" onClick={submit} disabled={pending}>
+                  {pending ? "…" : "Save result"}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setOpen(false)}
+                  disabled={pending}
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
+          ) : reported ? (
+            canReport ? (
+              <Button size="sm" variant="ghost" onClick={startEdit}>
+                <Pencil className="size-3" /> Edit result
+              </Button>
+            ) : null
           ) : canReport ? (
             <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
               Report score

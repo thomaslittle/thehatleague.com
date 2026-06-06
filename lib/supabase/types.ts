@@ -450,6 +450,7 @@ export type Database = {
           reported_at: string | null;
           next_match_id: string | null;
           next_slot_is_a: boolean | null;
+          games: Json;
           created_at: string;
         };
         Insert: {
@@ -469,6 +470,7 @@ export type Database = {
           reported_at?: string | null;
           next_match_id?: string | null;
           next_slot_is_a?: boolean | null;
+          games?: Json;
           created_at?: string;
         };
         Update: {
@@ -488,6 +490,7 @@ export type Database = {
           reported_at?: string | null;
           next_match_id?: string | null;
           next_slot_is_a?: boolean | null;
+          games?: Json;
           created_at?: string;
         };
         Relationships: [];
@@ -1347,7 +1350,7 @@ export type Database = {
         Returns: undefined;
       };
       fnf_report_match: {
-        Args: { p_match: string; p_score_a: number; p_score_b: number };
+        Args: { p_match: string; p_games: Json };
         Returns: Json;
       };
     };

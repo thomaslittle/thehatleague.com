@@ -66,6 +66,7 @@ export type FnfMatchCard = {
   winnerTeamId: string | null;
   status: "pending" | "reported";
   bestOf: number;
+  games: [number, number][];
 };
 
 export type FnfState = {
@@ -151,7 +152,7 @@ export const getFnfState = cache(
       supabase
         .from("fnf_matches")
         .select(
-          "id, stage, round, slot, team_a_id, team_b_id, score_a, score_b, winner_team_id, status, best_of",
+          "id, stage, round, slot, team_a_id, team_b_id, score_a, score_b, winner_team_id, status, best_of, games",
         )
         .eq("tournament_id", tid)
         .order("round", { ascending: true })
@@ -273,6 +274,9 @@ export const getFnfState = cache(
         winnerTeamId: (m.winner_team_id as string | null) ?? null,
         status: m.status as "pending" | "reported",
         bestOf: m.best_of as number,
+        games: Array.isArray(m.games)
+          ? (m.games as [number, number][])
+          : [],
       };
     });
 

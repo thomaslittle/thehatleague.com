@@ -261,14 +261,12 @@ export async function startSwiss(
  */
 export async function reportMatch(
   matchId: string,
-  scoreA: number,
-  scoreB: number,
+  games: [number, number][],
 ): Promise<FnfActionState> {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.rpc("fnf_report_match", {
     p_match: matchId,
-    p_score_a: scoreA,
-    p_score_b: scoreB,
+    p_games: games,
   });
   if (error) return { error: error.message };
 

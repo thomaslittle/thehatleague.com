@@ -42,6 +42,15 @@ function check(label: string, cond: boolean, detail = "") {
   console.log(`    ${cond ? "✓" : "✗"} ${label}${detail ? ` — ${detail}` : ""}`);
 }
 
+// Turn a desired (games-won-by-a, games-won-by-b) into per-game scores the
+// new fnf_report_match RPC expects: wa games of 1-0, then wb games of 0-1.
+function gamesJson(wa: number, wb: number): string {
+  const g: [number, number][] = [];
+  for (let i = 0; i < wa; i += 1) g.push([1, 0]);
+  for (let i = 0; i < wb; i += 1) g.push([0, 1]);
+  return JSON.stringify(g);
+}
+
 type QueryFn = (sql: string, params?: unknown[]) => Promise<{ rows: unknown[] }>;
 type AsUser = (id: string) => Promise<unknown>;
 
@@ -160,7 +169,7 @@ async function playSwiss(
     const pend = (await matchesOf(q, tid)).filter((m) => m.round === tr.current_round && m.stage === "swiss" && m.team_b_id && m.status !== "reported");
     for (const m of pend) {
       const [sa, sb] = result(m, tr.current_round);
-      const res = await q("select fnf_report_match($1,$2,$3) as r", [m.id, sa, sb]);
+      const res = await q("select fnf_report_match($1,$2::jsonb) as r", [m.id, gamesJson(sa, sb)]);
       if ((((res.rows[0] as { r: { round_complete: boolean } }).r).round_complete)) {
         const t2 = (await q("select current_round, swiss_rounds from fnf_tournaments where id=$1", [tid])).rows[0] as { current_round: number; swiss_rounds: number };
         if (t2.current_round >= t2.swiss_rounds) await q("select fnf_set_status($1,'complete')", [tid]);
@@ -212,7 +221,7 @@ async function scenarioEven(q: QueryFn, asUser: AsUser, adminId: string, created
 
   // guard: playoff tie rejected
   const aPo = po.find((m) => m.team_a_id && m.team_b_id)!;
-  check("playoff tie rejected", await rejects(q, "select fnf_report_match($1,1,1)", [aPo.id]));
+  check("playoff tie rejected", await rejects(q, "select fnf_report_match($1,$2::jsonb)", [aPo.id, gamesJson(1, 1)]));
 
   // play playoffs
   for (let r = 1; r <= finalRound; r += 1)
@@ -220,7 +229,7 @@ async function scenarioEven(q: QueryFn, asUser: AsUser, adminId: string, created
       if (!m.team_a_id || !m.team_b_id || m.status === "reported") continue;
       const win = Math.ceil(m.best_of / 2);
       const lo = seedOf.get(m.team_a_id)! < seedOf.get(m.team_b_id)!;
-      await q("select fnf_report_match($1,$2,$3)", [m.id, lo ? win : 0, lo ? 0 : win]);
+      await q("select fnf_report_match($1,$2::jsonb)", [m.id, gamesJson(lo ? win : 0, lo ? 0 : win)]);
     }
   const champ = (await matchesOf(q, tid)).find((m) => m.stage === "playoffs" && m.round === finalRound);
   check("champion crowned", !!champ?.winner_team_id, champ?.winner_team_id ? `Team ${seedOf.get(champ.winner_team_id)}` : "none");
@@ -263,15 +272,15 @@ async function scenarioByesAndDraws(q: QueryFn, asUser: AsUser, adminId: string,
 
   // guard: a bye match can't be reported.
   const bye = byeRows[0];
-  check("bye match cannot be reported", await rejects(q, "select fnf_report_match($1,2,0)", [bye.id]));
+  check("bye match cannot be reported", await rejects(q, "select fnf_report_match($1,$2::jsonb)", [bye.id, gamesJson(2, 0)]));
 
   // guard: a non-admin can't re-report an already-reported match.
   const reported = swissMs.find((m) => m.team_b_id && m.status === "reported")!;
   const member = (await q("select profile_id from fnf_team_members where team_id=$1 limit 1", [reported.team_a_id])).rows[0] as { profile_id: string };
   await asUser(member.profile_id);
-  check("non-admin cannot change a reported match", await rejects(q, "select fnf_report_match($1,2,0)", [reported.id]));
+  check("a participant can fix their own reported score", !(await rejects(q, "select fnf_report_match($1,$2::jsonb)", [reported.id, gamesJson(2, 0)])));
   await asUser(adminId);
-  check("admin CAN correct a reported match", !(await rejects(q, "select fnf_report_match($1,2,0)", [reported.id])));
+  check("admin can also correct a reported match", !(await rejects(q, "select fnf_report_match($1,$2::jsonb)", [reported.id, gamesJson(2, 0)])));
 
   // playoffs from top 8 of 9
   const seeds = afterAll.slice(0, 8).map((s) => s.teamId);
@@ -287,7 +296,7 @@ async function scenarioByesAndDraws(q: QueryFn, asUser: AsUser, adminId: string,
       if (!m.team_a_id || !m.team_b_id || m.status === "reported") continue;
       const win = Math.ceil(m.best_of / 2);
       const lo = seedOf.get(m.team_a_id)! < seedOf.get(m.team_b_id)!;
-      await q("select fnf_report_match($1,$2,$3)", [m.id, lo ? win : 0, lo ? 0 : win]);
+      await q("select fnf_report_match($1,$2::jsonb)", [m.id, gamesJson(lo ? win : 0, lo ? 0 : win)]);
     }
   const champ = (await matchesOf(q, tid)).find((m) => m.stage === "playoffs" && m.round === finalRound);
   check("champion crowned", !!champ?.winner_team_id);
@@ -304,7 +313,7 @@ async function scenarioReset(q: QueryFn, adminId: string, created: string[]) {
   await q("select fnf_create_round($1,'swiss',1,$2::jsonb)", [tid,
     JSON.stringify(r1.map((p, i) => ({ slot: i, team_a_id: p.teamA, team_b_id: p.teamB ?? "", best_of: 2 })))]);
   const firstReal = (await matchesOf(q, tid)).find((m) => m.team_b_id)!;
-  await q("select fnf_report_match($1,2,0)", [firstReal.id]);
+  await q("select fnf_report_match($1,$2::jsonb)", [firstReal.id, gamesJson(2, 0)]);
   check("mid-Swiss state exists", (await statusOf(q, tid)) === "swiss");
 
   // Reset.
