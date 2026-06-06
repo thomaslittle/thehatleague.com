@@ -24,11 +24,11 @@ export const NAV_POOL: NavLink = { href: "/pool", label: "Player Pool" };
 /**
  * "Weeklies" — the recurring casual events that run every week, kept separate
  * from the season/league machinery: Friday Nite Fights (the 2v2 Swiss) and
- * SH*T-Faced Saturday (the friendly Saturday drink-and-play).
+ * SH*T Faced Saturday (the friendly Saturday drink-and-play).
  */
 export const NAV_WEEKLIES: NavLink[] = [
   { href: "/friday-nite-fights", label: "Friday Nite Fights" },
-  { href: "/shitfaced-saturday", label: "SH*T-Faced Saturday" },
+  { href: "/shitfaced-saturday", label: "SH*T Faced Saturday" },
 ];
 
 /**

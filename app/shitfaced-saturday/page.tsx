@@ -6,7 +6,7 @@ import { DiscordIcon } from "@/components/icons/brand";
 import { SITE } from "@/lib/site";
 
 export const metadata = {
-  title: "SH*T-Faced Saturday",
+  title: "SH*T Faced Saturday",
   description:
     "The Hat League's friendly Saturday hang — crack a cold one and queue up with the crew. No brackets, no pressure, just buds, beers, and Rocket League.",
 };
@@ -16,7 +16,7 @@ export default function ShitfacedSaturdayPage() {
     <PageShell>
       <PageHero
         eyebrow="The Hat League · Every Saturday"
-        title="SH*T-Faced"
+        title="SH*T Faced"
         accent="Saturday"
         subtitle={
           <>
@@ -40,7 +40,7 @@ export default function ShitfacedSaturdayPage() {
           <div className="relative mx-auto aspect-square w-full max-w-[320px]">
             <Image
               src="/brand/SFS.png"
-              alt="SH*T-Faced Saturday"
+              alt="SH*T Faced Saturday"
               fill
               priority
               sizes="320px"
@@ -110,14 +110,14 @@ export default function ShitfacedSaturdayPage() {
               <div className="mt-5 inline-flex flex-wrap items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-semibold text-neutral-300">
                 <Clock className="size-4 text-thl-orange" />
                 Saturdays · ~9pm ET ·{" "}
-                <span className="text-thl-orange">#shitfaced-saturday</span>
+                <span className="text-thl-orange">SFS (BYOB) voice</span>
               </div>
             </div>
 
             <ol className="grid gap-3 sm:grid-cols-3 lg:max-w-xl">
               {[
                 { n: 1, t: "Hop in the Discord", b: "Drop into the server before kickoff." },
-                { n: 2, t: "Jump in voice", b: "Find the #shitfaced-saturday channel and say hey." },
+                { n: 2, t: "Join SFS (BYOB)", b: "Hop into the SFS (BYOB) voice channel and say hey." },
                 { n: 3, t: "Pour & play", b: "We build the lobbies — you bring the drink." },
               ].map((s) => (
                 <li
@@ -137,7 +137,7 @@ export default function ShitfacedSaturdayPage() {
           </div>
         </section>
 
-        {/* The drinking rules (placeholder until the official ruleset lands) */}
+        {/* The drinking rules */}
         <section>
           <div className="text-[10px] font-bold tracking-[0.28em] text-thl-orange uppercase">
             House rules
@@ -146,25 +146,24 @@ export default function ShitfacedSaturdayPage() {
             The drinking{" "}
             <span className="font-marker font-normal text-thl-orange">rules.</span>
           </h2>
-          <div className="mt-6 overflow-hidden rounded-3xl border border-amber-400/30 bg-gradient-to-br from-amber-400/[0.07] via-white to-white p-7 md:p-9 dark:from-amber-400/[0.08] dark:via-neutral-950 dark:to-neutral-950">
-            <div className="flex items-start gap-4">
-              <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-amber-400/15 text-amber-500">
-                <PartyPopper className="size-6" />
-              </span>
-              <div>
-                <p className="text-base font-semibold text-neutral-800 dark:text-neutral-100">
-                  The official ruleset is being finalized — it&apos;ll live right
-                  here.
-                </p>
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
-                  For now, the gist: certain plays earn certain sips. Pace
-                  yourself, keep a water nearby, and look out for your buds.
-                  Check the Discord each week for that night&apos;s twist.
-                </p>
-              </div>
-            </div>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-neutral-500 md:text-base dark:text-neutral-400">
+            Light, simple, and made to get bent. Here&apos;s how a night runs:
+          </p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <RuleCard
+              icon={GlassWater}
+              tag="The golden rule"
+              title="Don't say drink, drank, or drunk"
+              body="The three forbidden words are off-limits all night. Let one slip out and you owe the lobby a sip."
+            />
+            <RuleCard
+              icon={PartyPopper}
+              tag="Players' choice"
+              title="Make your own rule"
+              body="Anyone can call for a new house rule — pitch it to the lobby, and if it sticks, it's law till last call."
+            />
           </div>
-          <p className="mt-3 flex items-center gap-1.5 text-xs text-neutral-500">
+          <p className="mt-4 flex items-center gap-1.5 text-xs text-neutral-500">
             <GlassWater className="size-3.5" />
             21+. Please drink responsibly — hydrate, know your limit, and never
             drive.
@@ -193,6 +192,35 @@ function VibeCard({
         {title}
       </h3>
       <p className="mt-1.5 text-sm leading-relaxed text-neutral-500">{body}</p>
+    </div>
+  );
+}
+
+function RuleCard({
+  icon: Icon,
+  tag,
+  title,
+  body,
+}: {
+  icon: typeof Beer;
+  tag: string;
+  title: string;
+  body: string;
+}) {
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-amber-400/30 bg-gradient-to-br from-amber-400/[0.06] via-white to-white p-5 dark:from-amber-400/[0.08] dark:via-neutral-950 dark:to-neutral-950">
+      <div className="flex items-center gap-2">
+        <span className="grid size-9 place-items-center rounded-lg bg-amber-400/15 text-amber-500">
+          <Icon className="size-5" />
+        </span>
+        <span className="text-[10px] font-bold tracking-[0.2em] text-amber-500 uppercase">
+          {tag}
+        </span>
+      </div>
+      <h3 className="mt-3 text-lg font-bold tracking-tight">{title}</h3>
+      <p className="mt-1.5 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
+        {body}
+      </p>
     </div>
   );
 }

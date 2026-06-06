@@ -172,7 +172,7 @@ export function Hero({
                 }}
                 className="pointer-events-none absolute top-[-20px] left-[-29px] z-10 w-[77px] drop-shadow-[0_10px_14px_rgba(0,0,0,0.55)] sm:top-[-24px] sm:left-[-36px] sm:w-[96px] lg:top-[-32px] lg:left-[-47px] lg:w-[125px]"
               />
-              <h1 className="text-[64px] leading-[0.92] font-bold tracking-[-0.045em] text-neutral-900 sm:text-[80px] lg:text-[104px] dark:text-white">
+              <h1 className="text-[clamp(2.5rem,12vw,4rem)] leading-[0.92] font-bold tracking-[-0.045em] text-neutral-900 sm:text-[80px] lg:text-[104px] dark:text-white">
                 Hat&nbsp;up.
                 <br />
                 Pick your
@@ -311,12 +311,12 @@ export function Hero({
           <div className="mt-10 md:mt-12">
             <div className="flex flex-col gap-4 overflow-hidden rounded-2xl border border-thl-orange/30 bg-white/70 p-4 shadow-[0_18px_40px_-24px_rgba(247,97,3,0.5)] backdrop-blur-sm sm:flex-row sm:items-center sm:gap-5 sm:p-5 dark:bg-black/40">
               <div className="flex items-center gap-3">
-                <span className="relative h-12 w-12 shrink-0 sm:h-14 sm:w-14">
+                <span className="relative h-16 w-16 shrink-0 sm:h-20 sm:w-20">
                   <Image
                     src="/brand/fnf.png"
                     alt="Friday Nite Fights"
                     fill
-                    sizes="56px"
+                    sizes="90px"
                     className="object-contain drop-shadow-[0_4px_16px_rgba(247,97,3,0.35)]"
                   />
                 </span>
