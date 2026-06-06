@@ -11,6 +11,7 @@ import { RoundsView } from "@/components/fnf/rounds-view";
 import { BracketView } from "@/components/fnf/bracket-view";
 import { StandingsTable } from "@/components/fnf/standings-table";
 import { PlayerChip } from "@/components/fnf/player-chip";
+import { LocalTime } from "@/components/fnf/local-time";
 import type { FnfStatus } from "@/lib/data/fnf";
 
 export const metadata = {
@@ -115,12 +116,7 @@ export default async function FridayNiteFightsPage() {
           </span>
           {tournament.startsAt && tournament.status === "registration" && (
             <span className="text-xs text-neutral-500">
-              Starts{" "}
-              {new Date(tournament.startsAt).toLocaleString(undefined, {
-                weekday: "short",
-                hour: "numeric",
-                minute: "2-digit",
-              })}
+              Starts <LocalTime iso={tournament.startsAt} />
             </span>
           )}
         </div>
@@ -131,7 +127,12 @@ export default async function FridayNiteFightsPage() {
             status={tournament.status}
             registeredCount={registrations.length}
             teamCount={teams.length}
+            name={tournament.name}
+            swissRounds={tournament.swissRounds}
+            swissBestOf={tournament.swissBestOf}
+            playoffBestOf={tournament.playoffBestOf}
             playoffCut={tournament.playoffCut}
+            startsAt={tournament.startsAt}
           />
         )}
 

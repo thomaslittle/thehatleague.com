@@ -76,6 +76,34 @@ export async function leaveFnf(tournamentId: string): Promise<FnfActionState> {
   return { ok: true };
 }
 
+/** Admin: update tournament settings (rounds, cut, best-of per stage, start, name). */
+export async function updateFnfSettings(
+  tournamentId: string,
+  settings: {
+    name?: string;
+    swissRounds?: number;
+    swissBestOf?: number;
+    playoffBestOf?: number;
+    playoffCut?: number;
+    startsAt?: string | null;
+  },
+): Promise<FnfActionState> {
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.rpc("fnf_upsert_tournament", {
+    p_id: tournamentId,
+    p_name: settings.name ?? null,
+    p_swiss_rounds: settings.swissRounds ?? null,
+    p_swiss_best_of: settings.swissBestOf ?? null,
+    p_playoff_best_of: settings.playoffBestOf ?? null,
+    p_playoff_cut: settings.playoffCut ?? null,
+    p_starts_at: settings.startsAt ?? null,
+  });
+  if (error) return { error: error.message };
+
+  revalidatePath(FNF_PATH);
+  return { ok: true };
+}
+
 /** Admin: auto-generate rank-balanced 2v2 teams from the registrations. */
 export async function generateTeams(
   tournamentId: string,
@@ -173,7 +201,7 @@ export async function startSwiss(
     slot: i,
     team_a_id: p.teamA,
     team_b_id: p.teamB ?? "",
-    best_of: state.tournament.bestOf,
+    best_of: state.tournament.swissBestOf,
   }));
 
   const supabase = await createSupabaseServerClient();
@@ -260,7 +288,7 @@ async function advanceSwiss(tournamentId: string): Promise<void> {
     slot: i,
     team_a_id: p.teamA,
     team_b_id: p.teamB ?? "",
-    best_of: tournament.bestOf,
+    best_of: tournament.swissBestOf,
   }));
 
   const supabase = await createSupabaseServerClient();
@@ -292,7 +320,7 @@ export async function generatePlayoffs(
     team_b_id: m.teamBId ?? "",
     next_match_id: m.nextMatchId ?? "",
     next_slot_is_a: m.nextSlotIsA,
-    best_of: state.tournament.bestOf,
+    best_of: state.tournament.playoffBestOf,
   }));
 
   const supabase = await createSupabaseServerClient();

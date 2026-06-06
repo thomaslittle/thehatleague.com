@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Swords } from "lucide-react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { LocalTime } from "@/components/fnf/local-time";
 
 /**
  * Landing-page promo for Friday Nite Fights — the first thing players see
@@ -35,14 +36,7 @@ export async function FnfBanner() {
         : "Results";
   const cta = open ? "Enter tonight" : live ? "Watch it live" : "View bracket";
 
-  const startsCopy =
-    open && tournament.starts_at
-      ? new Date(tournament.starts_at).toLocaleString(undefined, {
-          weekday: "long",
-          hour: "numeric",
-          minute: "2-digit",
-        })
-      : null;
+  const showStart = open && tournament.starts_at;
 
   return (
     <section className="px-6 py-8 md:px-10 md:py-12">
@@ -87,7 +81,14 @@ export async function FnfBanner() {
             Connect Discord and we auto-build rank-balanced 2v2 teams. Battle
             through {tournament.swiss_rounds} Swiss rounds — top{" "}
             {tournament.playoff_cut} make the playoffs.
-            {startsCopy ? ` Starts ${startsCopy}.` : ""}
+            {showStart ? (
+              <>
+                {" "}
+                Starts <LocalTime iso={tournament.starts_at!} />.
+              </>
+            ) : (
+              ""
+            )}
           </p>
           <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row md:items-center md:justify-start">
             <span className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-thl-orange to-amber-500 px-7 text-base font-bold text-white shadow-lg shadow-thl-orange/30 transition-all group-hover:-translate-y-0.5 group-hover:shadow-xl group-hover:shadow-thl-orange/40">

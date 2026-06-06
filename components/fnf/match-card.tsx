@@ -72,9 +72,13 @@ export function MatchCard({
           VS
         </span>
         <span className="h-px flex-1 bg-neutral-100 dark:bg-neutral-800" />
-        {isBye && (
+        {isBye ? (
           <span className="text-[10px] font-bold text-thl-orange uppercase">
             Bye
+          </span>
+        ) : (
+          <span className="text-[10px] font-bold text-neutral-400 tabular-nums">
+            Bo{match.bestOf}
           </span>
         )}
       </div>

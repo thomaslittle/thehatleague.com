@@ -25,7 +25,8 @@ export type FnfTournament = {
   swissRounds: number;
   currentRound: number;
   teamSize: number;
-  bestOf: number;
+  swissBestOf: number;
+  playoffBestOf: number;
   playoffCut: number;
   startsAt: string | null;
 };
@@ -91,7 +92,8 @@ function mapTournament(row: Record<string, unknown>): FnfTournament {
     swissRounds: row.swiss_rounds as number,
     currentRound: row.current_round as number,
     teamSize: row.team_size as number,
-    bestOf: row.best_of as number,
+    swissBestOf: row.swiss_best_of as number,
+    playoffBestOf: row.playoff_best_of as number,
     playoffCut: row.playoff_cut as number,
     startsAt: (row.starts_at as string | null) ?? null,
   };
