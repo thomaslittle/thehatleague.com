@@ -383,3 +383,123 @@ export const getPlayerFnfResults = cache(
     return results;
   },
 );
+
+/** Champion + runner-up team ids from the final, once decided. */
+function extractFinal(
+  state: FnfState,
+): { championTeamId: string; runnerUpTeamId: string | null } | null {
+  const playoffs = state.matches.filter((m) => m.stage === "playoffs");
+  if (playoffs.length === 0) return null;
+  const maxRound = Math.max(...playoffs.map((m) => m.round));
+  const finalMatch = playoffs.find((m) => m.round === maxRound);
+  if (!finalMatch?.winnerTeamId) return null;
+  const champ = finalMatch.winnerTeamId;
+  const runner =
+    finalMatch.teamAId === champ ? finalMatch.teamBId : finalMatch.teamAId;
+  return { championTeamId: champ, runnerUpTeamId: runner };
+}
+
+export type FnfChampionEntry = {
+  tournamentId: string;
+  tournamentName: string;
+  date: string | null;
+  champions: FnfTeamCard | null;
+  runnerUp: FnfTeamCard | null;
+};
+
+/** Every FNF tournament that has been won, newest first (the hall of champions). */
+export const getFnfHistory = cache(async (): Promise<FnfChampionEntry[]> => {
+  const supabase = await createSupabaseServerClient();
+  const { data: tlist } = await supabase
+    .from("fnf_tournaments")
+    .select("id")
+    .order("created_at", { ascending: false });
+
+  const out: FnfChampionEntry[] = [];
+  for (const t of tlist ?? []) {
+    const state = await getFnfState(t.id as string);
+    if (!state) continue;
+    const final = extractFinal(state);
+    if (!final) continue;
+    out.push({
+      tournamentId: state.tournament.id,
+      tournamentName: state.tournament.name,
+      date: state.tournament.startsAt,
+      champions:
+        state.teams.find((x) => x.id === final.championTeamId) ?? null,
+      runnerUp:
+        state.teams.find((x) => x.id === final.runnerUpTeamId) ?? null,
+    });
+  }
+  return out;
+});
+
+export type FnfAllTimeStat = {
+  id: string;
+  name: string;
+  username: string | null;
+  avatarUrl: string | null;
+  titles: number;
+  tournaments: number;
+  wins: number;
+  draws: number;
+  losses: number;
+  points: number;
+};
+
+/** All-time per-player FNF leaderboard — titles, record, points across every
+ *  tournament played. */
+export const getFnfAllTimeStats = cache(async (): Promise<FnfAllTimeStat[]> => {
+  const supabase = await createSupabaseServerClient();
+  const { data: tlist } = await supabase
+    .from("fnf_tournaments")
+    .select("id")
+    .order("created_at", { ascending: false });
+
+  const map = new Map<string, FnfAllTimeStat>();
+  for (const t of tlist ?? []) {
+    const state = await getFnfState(t.id as string);
+    if (!state) continue;
+    const final = extractFinal(state);
+    const standingByTeam = new Map(
+      state.standings.map((s) => [s.teamId, s]),
+    );
+    for (const team of state.teams) {
+      const standing = standingByTeam.get(team.id);
+      const isChamp = final?.championTeamId === team.id;
+      for (const m of team.members) {
+        const e =
+          map.get(m.id) ??
+          ({
+            id: m.id,
+            name: m.name,
+            username: m.username,
+            avatarUrl: m.avatarUrl,
+            titles: 0,
+            tournaments: 0,
+            wins: 0,
+            draws: 0,
+            losses: 0,
+            points: 0,
+          } satisfies FnfAllTimeStat);
+        e.tournaments += 1;
+        if (standing) {
+          e.wins += standing.wins;
+          e.draws += standing.draws;
+          e.losses += standing.losses;
+          e.points += standing.points;
+        }
+        if (isChamp) e.titles += 1;
+        map.set(m.id, e);
+      }
+    }
+  }
+
+  return [...map.values()].sort(
+    (a, b) =>
+      b.titles - a.titles ||
+      b.wins - a.wins ||
+      b.points - a.points ||
+      a.name.localeCompare(b.name),
+  );
+});

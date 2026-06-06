@@ -12,7 +12,10 @@ import { BracketView } from "@/components/fnf/bracket-view";
 import { StandingsTable } from "@/components/fnf/standings-table";
 import { EnteredList } from "@/components/fnf/entered-list";
 import { LocalTime } from "@/components/fnf/local-time";
-import type { FnfStatus } from "@/lib/data/fnf";
+import { ChampionHero } from "@/components/fnf/champion-hero";
+import { HallOfChampions, AllTimeStats } from "@/components/fnf/fnf-records";
+import { getFnfHistory, getFnfAllTimeStats } from "@/lib/data/fnf";
+import type { FnfStatus, FnfTeamCard } from "@/lib/data/fnf";
 
 export const metadata = {
   title: "Friday Nite Fights",
@@ -71,6 +74,27 @@ export default async function FridayNiteFightsPage(
     ? teams.filter((t) => t.members.some((m) => m.id === user.id)).map((t) => t.id)
     : [];
 
+  // Champion = winner of the final, once it's decided → transform the page.
+  const playoffMatches = matches.filter((m) => m.stage === "playoffs");
+  let championTeam: FnfTeamCard | null = null;
+  let runnerUpTeam: FnfTeamCard | null = null;
+  if (playoffMatches.length > 0) {
+    const maxR = Math.max(...playoffMatches.map((m) => m.round));
+    const finalM = playoffMatches.find((m) => m.round === maxR);
+    if (finalM?.winnerTeamId) {
+      championTeam = teams.find((t) => t.id === finalM.winnerTeamId) ?? null;
+      const ruId =
+        finalM.teamAId === finalM.winnerTeamId
+          ? finalM.teamBId
+          : finalM.teamAId;
+      runnerUpTeam = teams.find((t) => t.id === ruId) ?? null;
+    }
+  }
+  const [history, allTime] = await Promise.all([
+    getFnfHistory(),
+    getFnfAllTimeStats(),
+  ]);
+
   const statusLine =
     tournament.status === "swiss"
       ? `Round ${tournament.currentRound} of ${tournament.swissRounds} · Swiss in progress`
@@ -113,6 +137,9 @@ export default async function FridayNiteFightsPage(
       />
 
       <div className="mx-auto max-w-[1320px] space-y-8 px-6 pb-20 md:px-10">
+        {championTeam && (
+          <ChampionHero team={championTeam} runnerUp={runnerUpTeam} />
+        )}
         <div className="flex flex-wrap items-center gap-3">
           <span className="inline-flex items-center gap-2 rounded-full border border-thl-orange/30 bg-thl-orange/[0.06] px-3 py-1 text-xs font-bold tracking-wide text-thl-orange uppercase">
             <span className="size-1.5 animate-pulse rounded-full bg-thl-orange" />
@@ -225,6 +252,13 @@ export default async function FridayNiteFightsPage(
               </div>
             </section>
           )}
+
+        {history.length > 0 && (
+          <section className="grid grid-cols-1 gap-8 border-t border-neutral-200 pt-10 lg:grid-cols-2 dark:border-neutral-800">
+            <HallOfChampions history={history} />
+            <AllTimeStats stats={allTime} />
+          </section>
+        )}
       </div>
     </PageShell>
   );
