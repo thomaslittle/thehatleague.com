@@ -305,21 +305,24 @@ export function Hero({
           </div>
         </div>
 
-        {/* Reigning Friday Nite Fights champions — featured as a slim,
-            clickable band inside the hero. */}
+        {/* Reigning Friday Nite Fights champions — featured as a slim branded
+            band inside the hero, fronted by the FNF logo. */}
         {fnfChampions && (
           <div className="mt-10 md:mt-12">
-            <Link
-              href={`/friday-nite-fights?id=${fnfChampions.tournamentId}`}
-              className="group flex flex-col gap-4 overflow-hidden rounded-2xl border border-thl-orange/30 bg-white/70 p-4 shadow-[0_18px_40px_-24px_rgba(247,97,3,0.5)] backdrop-blur-sm transition hover:border-thl-orange sm:flex-row sm:items-center sm:gap-5 sm:p-5 dark:bg-black/40"
-            >
+            <div className="flex flex-col gap-4 overflow-hidden rounded-2xl border border-thl-orange/30 bg-white/70 p-4 shadow-[0_18px_40px_-24px_rgba(247,97,3,0.5)] backdrop-blur-sm sm:flex-row sm:items-center sm:gap-5 sm:p-5 dark:bg-black/40">
               <div className="flex items-center gap-3">
-                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-thl-orange/15 text-thl-orange">
-                  <Trophy className="h-5 w-5" />
+                <span className="relative h-12 w-12 shrink-0 sm:h-14 sm:w-14">
+                  <Image
+                    src="/brand/fnf.png"
+                    alt="Friday Nite Fights"
+                    fill
+                    sizes="56px"
+                    className="object-contain drop-shadow-[0_4px_16px_rgba(247,97,3,0.35)]"
+                  />
                 </span>
                 <div className="min-w-0">
                   <div className="text-[10px] font-bold tracking-[0.2em] text-thl-orange uppercase">
-                    Reigning FNF champions
+                    Reigning champions
                   </div>
                   <div className="truncate text-lg font-extrabold tracking-tight text-neutral-900 dark:text-white">
                     {fnfChampions.teamName}
@@ -357,12 +360,23 @@ export function Hero({
                     </span>
                   </span>
                 ))}
-                <span className="inline-flex items-center gap-1 text-sm font-bold text-thl-orange">
+
+                {/* divider between the winners and the action */}
+                <span
+                  aria-hidden
+                  className="hidden h-10 w-px bg-neutral-300/70 sm:block dark:bg-white/15"
+                />
+
+                <Link
+                  href={`/friday-nite-fights?id=${fnfChampions.tournamentId}`}
+                  className="group/cta inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-thl-orange px-5 text-sm font-bold text-black shadow-sm transition hover:-translate-y-0.5 hover:bg-thl-orange-deep"
+                >
+                  <Trophy className="h-4 w-4" />
                   View bracket
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover/cta:translate-x-0.5" />
+                </Link>
               </div>
-            </Link>
+            </div>
           </div>
         )}
 
