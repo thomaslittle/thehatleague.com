@@ -2,15 +2,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { RankBadge } from "@/components/ranks/rank-badge";
+import { RemovePlayerControl } from "@/components/fnf/remove-player-control";
 import type { FnfPlayerCard } from "@/lib/data/fnf";
 import { cn } from "@/lib/cn";
 
 /** Polished grid of entered players (rank-sorted). Each card links to the
- *  player's profile when we know their handle. */
+ *  player's profile when we know their handle. Admins get a remove button. */
 export function EnteredList({
   registrations,
+  isAdmin = false,
+  tournamentId,
 }: {
   registrations: FnfPlayerCard[];
+  isAdmin?: boolean;
+  tournamentId?: string;
 }) {
   return (
     <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
@@ -57,16 +62,26 @@ export function EnteredList({
           </div>
         );
 
-        return p.username ? (
-          <Link
-            key={p.id}
-            href={`/players/${encodeURIComponent(p.username)}`}
-            className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-thl-orange/40 focus-visible:rounded-xl"
-          >
-            {card}
-          </Link>
-        ) : (
-          <div key={p.id}>{card}</div>
+        return (
+          <div key={p.id} className="relative">
+            {p.username ? (
+              <Link
+                href={`/players/${encodeURIComponent(p.username)}`}
+                className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-thl-orange/40"
+              >
+                {card}
+              </Link>
+            ) : (
+              <div>{card}</div>
+            )}
+            {isAdmin && tournamentId && (
+              <RemovePlayerControl
+                tournamentId={tournamentId}
+                profileId={p.id}
+                name={p.name}
+              />
+            )}
+          </div>
         );
       })}
     </div>

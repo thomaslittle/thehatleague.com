@@ -156,7 +156,11 @@ export default async function FridayNiteFightsPage(
                 Be the first to enter — hit the button above.
               </p>
             ) : (
-              <EnteredList registrations={registrations} />
+              <EnteredList
+                registrations={registrations}
+                isAdmin={isAdmin}
+                tournamentId={tournament.id}
+              />
             )}
           </section>
         )}

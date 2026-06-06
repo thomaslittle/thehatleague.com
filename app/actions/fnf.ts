@@ -57,6 +57,22 @@ export async function registerForFnf(
   return { ok: true };
 }
 
+/** Admin: remove another player from the tournament. */
+export async function removePlayer(
+  tournamentId: string,
+  profileId: string,
+): Promise<FnfActionState> {
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.rpc("fnf_remove_player", {
+    p_tournament: tournamentId,
+    p_profile: profileId,
+  });
+  if (error) return { error: error.message };
+
+  revalidatePath(FNF_PATH);
+  return { ok: true };
+}
+
 /** Withdraw the current user's registration. */
 export async function leaveFnf(tournamentId: string): Promise<FnfActionState> {
   const supabase = await createSupabaseServerClient();

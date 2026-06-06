@@ -1321,6 +1321,10 @@ export type Database = {
         Args: { p_tournament: string };
         Returns: undefined;
       };
+      fnf_remove_player: {
+        Args: { p_tournament: string; p_profile: string };
+        Returns: undefined;
+      };
       fnf_generate_teams: {
         Args: { p_tournament: string; p_teams: Json };
         Returns: undefined;
