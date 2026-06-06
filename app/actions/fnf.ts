@@ -299,6 +299,11 @@ export async function reportMatch(
 
   if (res.round_complete && res.stage === "swiss") {
     await advanceSwiss(res.tournament_id);
+  } else if (res.stage === "playoffs") {
+    // Flip the tournament to "complete" the moment the final is decided, so
+    // every status-driven surface (dashboard, banner, status pill) agrees with
+    // the crowned-champion view instead of reading "live" forever.
+    await maybeCompletePlayoffs(res.tournament_id);
   }
 
   // Roll the result into the league rewards economy (points + patches).
@@ -337,6 +342,23 @@ async function awardFnfResults(
   } catch {
     // Awards are a soft side-effect; swallow any failure.
   }
+}
+
+/** Mark the tournament complete once the playoff final has a winner. */
+async function maybeCompletePlayoffs(tournamentId: string): Promise<void> {
+  const state = await getFnfState(tournamentId);
+  if (!state || state.tournament.status === "complete") return;
+  const playoffs = state.matches.filter((m) => m.stage === "playoffs");
+  if (playoffs.length === 0) return;
+  const maxRound = Math.max(...playoffs.map((m) => m.round));
+  const final = playoffs.find((m) => m.round === maxRound);
+  if (!final?.winnerTeamId) return;
+
+  const supabase = await createSupabaseServerClient();
+  await supabase.rpc("fnf_set_status", {
+    p_tournament: tournamentId,
+    p_status: "complete",
+  });
 }
 
 /** After a Swiss round finishes: pair the next round, or finish the stage. */

@@ -21,6 +21,7 @@ import { RankBadge } from "@/components/ranks/rank-badge";
 import { LeagueOpsApplication } from "@/components/league-ops/league-ops-application";
 import { getTwitchLive } from "@/lib/twitch/live";
 import { DashboardTeamCard } from "@/components/dashboard/team-card";
+import { DashboardFnfCard } from "@/components/dashboard/dashboard-fnf-card";
 import {
   SettingsSavedToast,
   type SettingsToastKind,
@@ -378,6 +379,8 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
               </ul>
             </section>
           )}
+
+          <DashboardFnfCard userId={user.id} />
 
           <DashboardTeamCard userId={user.id} />
 
