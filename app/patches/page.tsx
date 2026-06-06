@@ -17,8 +17,39 @@ const TIER_RING: Record<string, string> = {
   legendary: "border-thl-orange/60",
 };
 
+/** Render order + display labels for the patch categories. Anything not listed
+ *  falls through to a "More" group so new categories never disappear. */
+const CATEGORY_ORDER: { key: string; label: string }[] = [
+  { key: "fnf", label: "Friday Nite Fights" },
+  { key: "performance", label: "Match performance" },
+  { key: "season", label: "Season honors" },
+  { key: "milestone", label: "Milestones" },
+  { key: "special", label: "Special" },
+];
+
 export default async function PatchesPage() {
   const patches = await loadBadgeCatalog();
+
+  // Group by category, preserving the catalog's tier sort within each group.
+  const byCategory = new Map<string, BadgeCatalogRow[]>();
+  for (const p of patches) {
+    const list = byCategory.get(p.category) ?? [];
+    list.push(p);
+    byCategory.set(p.category, list);
+  }
+  const known = new Set(CATEGORY_ORDER.map((c) => c.key));
+  const groups = [
+    ...CATEGORY_ORDER.map((c) => ({
+      label: c.label,
+      items: byCategory.get(c.key) ?? [],
+    })),
+    {
+      label: "More",
+      items: [...byCategory.entries()]
+        .filter(([k]) => !known.has(k))
+        .flatMap(([, v]) => v),
+    },
+  ].filter((g) => g.items.length > 0);
 
   return (
     <PageShell>
@@ -29,17 +60,29 @@ export default async function PatchesPage() {
         subtitle={
           <>
             Patches unlock as the season unfolds — first wins, hat tricks, brick
-            walls, season milestones. Earn them, wear them on your profile.
+            walls, Friday Nite Fights titles, season milestones. Earn them, wear
+            them on your profile.
           </>
         }
       />
-      <section className="mx-auto max-w-[1320px] px-6 pb-24 md:px-10">
+      <section className="mx-auto max-w-[1320px] space-y-12 px-6 pb-24 md:px-10">
         <RealtimeRefresh tables={["player_badges"]} channel="patches" />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {patches.map((p) => (
-            <PatchCard key={p.id} patch={p} />
-          ))}
-        </div>
+        {groups.map((g) => (
+          <div key={g.label}>
+            <h2 className="mb-4 flex items-center gap-3 text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
+              {g.label}
+              <span className="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
+              <span className="text-[10px] text-neutral-400">
+                {g.items.length}
+              </span>
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {g.items.map((p) => (
+                <PatchCard key={p.id} patch={p} />
+              ))}
+            </div>
+          </div>
+        ))}
       </section>
     </PageShell>
   );
