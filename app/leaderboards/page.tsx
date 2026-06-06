@@ -6,6 +6,9 @@ import { RealtimeRefresh } from "@/components/realtime/realtime-refresh";
 import Link from "next/link";
 import { getActiveSeason } from "@/lib/data/season";
 import { loadSeasonLeaders, loadPointsLeaders } from "@/lib/data/stats";
+import { getFnfAllTimeStats } from "@/lib/data/fnf";
+import { AllTimeStats } from "@/components/fnf/fnf-records";
+import { ArrowUpRight } from "lucide-react";
 
 export const metadata = {
   title: "Leaderboards",
@@ -15,9 +18,13 @@ export const metadata = {
 
 export default async function LeaderboardsPage() {
   const season = await getActiveSeason();
-  const [liveRows, pointLeaders] = season
-    ? await Promise.all([loadSeasonLeaders(season.id), loadPointsLeaders(season.id, 10)])
-    : [[], []];
+  const [liveRows, pointLeaders, fnfAllTime] = season
+    ? await Promise.all([
+        loadSeasonLeaders(season.id),
+        loadPointsLeaders(season.id, 10),
+        getFnfAllTimeStats(),
+      ])
+    : [[], [], await getFnfAllTimeStats()];
   const hasLive = liveRows.length > 0;
   const conferences = season?.conferences ?? [];
 
@@ -83,6 +90,25 @@ export default async function LeaderboardsPage() {
               </ol>
             </div>
           )}
+        </section>
+      )}
+
+      {fnfAllTime.length > 0 && (
+        <section className="mx-auto max-w-[1320px] px-6 pb-12 md:px-10">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
+              Friday Nite Fights · All-time
+            </div>
+            <Link
+              href="/friday-nite-fights"
+              className="inline-flex items-center gap-1 text-xs font-bold text-neutral-500 transition hover:text-thl-orange"
+            >
+              The fight night <ArrowUpRight className="size-3.5" />
+            </Link>
+          </div>
+          <div className="rounded-3xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950 md:p-6">
+            <AllTimeStats stats={fnfAllTime} />
+          </div>
         </section>
       )}
 
