@@ -81,6 +81,7 @@ export const NAV_LEAGUE_OPS: NavLink[] = [
   { href: "/admin/captains", label: "Captains queue" },
   { href: "/admin/league-ops", label: "Ops applications" },
   { href: "/admin/announcements", label: "Announcements" },
+  { href: "/admin/release-notes", label: "Release notes" },
 ];
 
 /** "About" — mirrors the About column in the site footer. Discord is external. */
