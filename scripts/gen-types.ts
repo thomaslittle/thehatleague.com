@@ -54,6 +54,43 @@ async function main() {
     colsByTable.set(c2.table_name, list);
   }
 
+  // ---- foreign keys (for embedded-select typing / Relationships) ----
+  const { rows: fks } = await q(
+    `select con.conname as fk_name, cl.relname as table_name,
+            (select array_agg(att.attname::text order by k.ord)
+               from unnest(con.conkey) with ordinality as k(attnum, ord)
+               join pg_attribute att on att.attrelid=con.conrelid and att.attnum=k.attnum)::text[] as columns,
+            refcl.relname as ref_table,
+            (select array_agg(refatt.attname::text order by rk.ord)
+               from unnest(con.confkey) with ordinality as rk(attnum, ord)
+               join pg_attribute refatt on refatt.attrelid=con.confrelid and refatt.attnum=rk.attnum)::text[] as ref_columns
+       from pg_constraint con
+       join pg_class cl on cl.oid=con.conrelid
+       join pg_namespace n on n.oid=cl.relnamespace and n.nspname='public'
+       join pg_class refcl on refcl.oid=con.confrelid
+       where con.contype='f' order by cl.relname, con.conname`,
+  );
+  const relsByTable = new Map<string, string[]>();
+  for (const fk of fks) {
+    const cols2 = (fk.columns as string[]).map((c2) => `"${c2}"`).join(", ");
+    const refCols = (fk.ref_columns as string[]).map((c2) => `"${c2}"`).join(", ");
+    const entry =
+      `          {\n` +
+      `            foreignKeyName: "${fk.fk_name}";\n` +
+      `            columns: [${cols2}];\n` +
+      `            isOneToOne: false;\n` +
+      `            referencedRelation: "${fk.ref_table}";\n` +
+      `            referencedColumns: [${refCols}];\n` +
+      `          }`;
+    const list = relsByTable.get(fk.table_name) ?? [];
+    list.push(entry);
+    relsByTable.set(fk.table_name, list);
+  }
+  const relBlock = (table: string) => {
+    const list = relsByTable.get(table);
+    return list && list.length > 0 ? `[\n${list.join(",\n")},\n        ]` : "[]";
+  };
+
   const tableBlocks: string[] = [];
   const viewBlocks: string[] = [];
   for (const r of rels) {
@@ -73,11 +110,11 @@ async function main() {
     }
     if (r.table_type === "VIEW") {
       viewBlocks.push(
-        `      ${r.table_name}: {\n        Row: {\n${row.join("\n")}\n        };\n        Relationships: [];\n      };`,
+        `      ${r.table_name}: {\n        Row: {\n${row.join("\n")}\n        };\n        Relationships: ${relBlock(r.table_name)};\n      };`,
       );
     } else {
       tableBlocks.push(
-        `      ${r.table_name}: {\n        Row: {\n${row.join("\n")}\n        };\n        Insert: {\n${ins.join("\n")}\n        };\n        Update: {\n${upd.join("\n")}\n        };\n        Relationships: [];\n      };`,
+        `      ${r.table_name}: {\n        Row: {\n${row.join("\n")}\n        };\n        Insert: {\n${ins.join("\n")}\n        };\n        Update: {\n${upd.join("\n")}\n        };\n        Relationships: ${relBlock(r.table_name)};\n      };`,
       );
     }
   }
@@ -119,7 +156,9 @@ async function main() {
     for (let i = 0; i < oids.length; i += 1) {
       const nm = names[i] ?? `arg${i + 1}`;
       const tn = tsType(oidToType.get(Number(oids[i])) ?? "text");
-      args.push(`${nm}: ${tn === "undefined" ? "string" : tn}`);
+      // Args are optional + nullable: pg doesn't expose default/nullability per
+      // arg, and our RPCs use coalesce(...) so callers pass null/omit freely.
+      args.push(`${nm}?: ${tn === "undefined" ? "string" : tn} | null`);
     }
     const argType =
       args.length === 0 ? "Record<string, never>" : `{ ${args.join("; ")} }`;
@@ -177,6 +216,7 @@ export type Enums<T extends keyof PublicSchema["Enums"]> =
 export type Profile = Tables<"profiles">;
 export type HistoricalPlayerStatsRow = Tables<"historical_player_stats">;
 export type Announcement = Tables<"announcements">;
+export type Season = Tables<"seasons">;
 `;
 
   writeFileSync("lib/supabase/types.ts", out);

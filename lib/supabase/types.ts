@@ -52,7 +52,15 @@ export type Database = {
           updated_at?: string;
           kind?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "announcements_posted_by_fkey";
+            columns: ["posted_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       assets: {
         Row: {
@@ -109,7 +117,22 @@ export type Database = {
           votes?: number;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "assets_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "assets_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       badges: {
         Row: {
@@ -190,7 +213,29 @@ export type Database = {
           votes?: number;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "clips_match_id_fkey";
+            columns: ["match_id"];
+            isOneToOne: false;
+            referencedRelation: "matches";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "clips_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "clips_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       combine_profiles: {
         Row: {
@@ -232,7 +277,22 @@ export type Database = {
           updated_at?: string;
           clip_urls?: string[];
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "combine_profiles_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "combine_profiles_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       conversation_participants: {
         Row: {
@@ -250,7 +310,22 @@ export type Database = {
           profile_id?: string;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "conversation_participants_conversation_id_fkey";
+            columns: ["conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "conversations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "conversation_participants_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       conversation_reads: {
         Row: {
@@ -268,7 +343,22 @@ export type Database = {
           profile_id?: string;
           last_read_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "conversation_reads_conversation_id_fkey";
+            columns: ["conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "conversations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "conversation_reads_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       conversations: {
         Row: {
@@ -292,7 +382,15 @@ export type Database = {
           last_message_at?: string | null;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "conversations_team_id_fkey";
+            columns: ["team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       draft_order: {
         Row: {
@@ -316,7 +414,22 @@ export type Database = {
           team_id?: string;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "draft_order_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "draft_order_team_id_fkey";
+            columns: ["team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       draft_picks: {
         Row: {
@@ -358,7 +471,36 @@ export type Database = {
           pick_duration_ms?: number | null;
           picked_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "draft_picks_picked_by_fkey";
+            columns: ["picked_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "draft_picks_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "draft_picks_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "draft_picks_team_id_fkey";
+            columns: ["team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       draft_queues: {
         Row: {
@@ -385,7 +527,29 @@ export type Database = {
           rank?: number;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "draft_queues_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "draft_queues_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "draft_queues_team_id_fkey";
+            columns: ["team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       draft_state: {
         Row: {
@@ -430,7 +594,29 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "draft_state_last_pick_id_fkey";
+            columns: ["last_pick_id"];
+            isOneToOne: false;
+            referencedRelation: "draft_picks";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "draft_state_on_clock_team_id_fkey";
+            columns: ["on_clock_team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "draft_state_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       fnf_matches: {
         Row: {
@@ -493,7 +679,50 @@ export type Database = {
           created_at?: string;
           games?: Json;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "fnf_matches_next_match_id_fkey";
+            columns: ["next_match_id"];
+            isOneToOne: false;
+            referencedRelation: "fnf_matches";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fnf_matches_reported_by_fkey";
+            columns: ["reported_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fnf_matches_team_a_id_fkey";
+            columns: ["team_a_id"];
+            isOneToOne: false;
+            referencedRelation: "fnf_teams";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fnf_matches_team_b_id_fkey";
+            columns: ["team_b_id"];
+            isOneToOne: false;
+            referencedRelation: "fnf_teams";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fnf_matches_tournament_id_fkey";
+            columns: ["tournament_id"];
+            isOneToOne: false;
+            referencedRelation: "fnf_tournaments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fnf_matches_winner_team_id_fkey";
+            columns: ["winner_team_id"];
+            isOneToOne: false;
+            referencedRelation: "fnf_teams";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       fnf_registrations: {
         Row: {
@@ -520,7 +749,22 @@ export type Database = {
           checked_in?: boolean;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "fnf_registrations_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fnf_registrations_tournament_id_fkey";
+            columns: ["tournament_id"];
+            isOneToOne: false;
+            referencedRelation: "fnf_tournaments";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       fnf_team_members: {
         Row: {
@@ -538,7 +782,29 @@ export type Database = {
           profile_id?: string;
           tournament_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "fnf_team_members_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fnf_team_members_team_id_fkey";
+            columns: ["team_id"];
+            isOneToOne: false;
+            referencedRelation: "fnf_teams";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fnf_team_members_tournament_id_fkey";
+            columns: ["tournament_id"];
+            isOneToOne: false;
+            referencedRelation: "fnf_tournaments";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       fnf_teams: {
         Row: {
@@ -562,7 +828,15 @@ export type Database = {
           name?: string;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "fnf_teams_tournament_id_fkey";
+            columns: ["tournament_id"];
+            isOneToOne: false;
+            referencedRelation: "fnf_tournaments";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       fnf_tournaments: {
         Row: {
@@ -619,7 +893,15 @@ export type Database = {
           final_best_of?: number;
           swiss_games?: number;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "fnf_tournaments_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       friendships: {
         Row: {
@@ -646,7 +928,22 @@ export type Database = {
           created_at?: string;
           responded_at?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "friendships_addressee_id_fkey";
+            columns: ["addressee_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "friendships_requester_id_fkey";
+            columns: ["requester_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       historical_player_stats: {
         Row: {
@@ -718,7 +1015,15 @@ export type Database = {
           replay_url?: string | null;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "match_games_match_id_fkey";
+            columns: ["match_id"];
+            isOneToOne: false;
+            referencedRelation: "matches";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       match_predictions: {
         Row: {
@@ -748,7 +1053,29 @@ export type Database = {
           predicted_away_score?: number | null;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "match_predictions_match_id_fkey";
+            columns: ["match_id"];
+            isOneToOne: false;
+            referencedRelation: "matches";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "match_predictions_predicted_winner_team_id_fkey";
+            columns: ["predicted_winner_team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "match_predictions_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       matches: {
         Row: {
@@ -808,7 +1135,36 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "matches_away_team_id_fkey";
+            columns: ["away_team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "matches_home_team_id_fkey";
+            columns: ["home_team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "matches_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "matches_winner_team_id_fkey";
+            columns: ["winner_team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       messages: {
         Row: {
@@ -832,7 +1188,22 @@ export type Database = {
           body?: string;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey";
+            columns: ["conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "conversations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey";
+            columns: ["sender_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       mvp_votes: {
         Row: {
@@ -856,7 +1227,29 @@ export type Database = {
           profile_id?: string;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "mvp_votes_match_id_fkey";
+            columns: ["match_id"];
+            isOneToOne: false;
+            referencedRelation: "matches";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "mvp_votes_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "mvp_votes_voter_id_fkey";
+            columns: ["voter_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       overlay_settings: {
         Row: {
@@ -913,7 +1306,15 @@ export type Database = {
           reveal_sound?: boolean;
           show_on_deck?: boolean;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "overlay_settings_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       player_badges: {
         Row: {
@@ -940,7 +1341,29 @@ export type Database = {
           context?: Json;
           awarded_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "player_badges_badge_id_fkey";
+            columns: ["badge_id"];
+            isOneToOne: false;
+            referencedRelation: "badges";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "player_badges_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "player_badges_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       player_stats: {
         Row: {
@@ -979,7 +1402,29 @@ export type Database = {
           score?: number;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "player_stats_match_id_fkey";
+            columns: ["match_id"];
+            isOneToOne: false;
+            referencedRelation: "matches";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "player_stats_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "player_stats_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       point_events: {
         Row: {
@@ -1015,7 +1460,22 @@ export type Database = {
           note?: string | null;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "point_events_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "point_events_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       power_rankings: {
         Row: {
@@ -1048,7 +1508,22 @@ export type Database = {
           blurb?: string | null;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "power_rankings_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "power_rankings_team_id_fkey";
+            columns: ["team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       profile_rank_history: {
         Row: {
@@ -1075,7 +1550,15 @@ export type Database = {
           peak_rank?: string | null;
           captured_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "profile_rank_history_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       profiles: {
         Row: {
@@ -1162,7 +1645,15 @@ export type Database = {
           admin_pitch?: string | null;
           is_admin_applicant?: boolean;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey";
+            columns: ["id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       seasons: {
         Row: {
@@ -1249,7 +1740,29 @@ export type Database = {
           drafted_at?: string | null;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "team_members_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "team_members_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "team_members_team_id_fkey";
+            columns: ["team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       teams: {
         Row: {
@@ -1294,7 +1807,22 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "teams_captain_id_fkey";
+            columns: ["captain_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "teams_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: {
@@ -1340,7 +1868,7 @@ export type Database = {
     };
     Functions: {
       are_friends: {
-        Args: { a: string; b: string };
+        Args: { a?: string | null; b?: string | null };
         Returns: boolean;
       };
       bump_conversation: {
@@ -1348,31 +1876,31 @@ export type Database = {
         Returns: string;
       };
       can_access_conversation: {
-        Args: { conv: string };
+        Args: { conv?: string | null };
         Returns: boolean;
       };
       can_dm: {
-        Args: { a: string; b: string };
+        Args: { a?: string | null; b?: string | null };
         Returns: boolean;
       };
       draft_picks_per_team: {
-        Args: { p_season: string };
+        Args: { p_season?: string | null };
         Returns: number;
       };
       draft_team_at: {
-        Args: { p_season: string; p_overall: number };
+        Args: { p_season?: string | null; p_overall?: number | null };
         Returns: string;
       };
       fnf_create_playoffs: {
-        Args: { p_tournament: string; p_matches: Json };
+        Args: { p_tournament?: string | null; p_matches?: Json | null };
         Returns: undefined;
       };
       fnf_create_round: {
-        Args: { p_tournament: string; p_stage: string; p_round: number; p_matches: Json };
+        Args: { p_tournament?: string | null; p_stage?: string | null; p_round?: number | null; p_matches?: Json | null };
         Returns: undefined;
       };
       fnf_generate_teams: {
-        Args: { p_tournament: string; p_teams: Json };
+        Args: { p_tournament?: string | null; p_teams?: Json | null };
         Returns: undefined;
       };
       fnf_is_admin: {
@@ -1380,31 +1908,31 @@ export type Database = {
         Returns: boolean;
       };
       fnf_remove_player: {
-        Args: { p_tournament: string; p_profile: string };
+        Args: { p_tournament?: string | null; p_profile?: string | null };
         Returns: undefined;
       };
       fnf_report_match: {
-        Args: { p_match: string; p_games: Json };
+        Args: { p_match?: string | null; p_games?: Json | null };
         Returns: Json;
       };
       fnf_reset: {
-        Args: { p_tournament: string };
+        Args: { p_tournament?: string | null };
         Returns: undefined;
       };
       fnf_set_rosters: {
-        Args: { p_tournament: string; p_rosters: Json };
+        Args: { p_tournament?: string | null; p_rosters?: Json | null };
         Returns: undefined;
       };
       fnf_set_status: {
-        Args: { p_tournament: string; p_status: string };
+        Args: { p_tournament?: string | null; p_status?: string | null };
         Returns: undefined;
       };
       fnf_upsert_tournament: {
-        Args: { p_id: string; p_name: string; p_swiss_rounds: number; p_swiss_games: number; p_playoff_best_of: number; p_final_best_of: number; p_playoff_cut: number; p_starts_at: string };
+        Args: { p_id?: string | null; p_name?: string | null; p_swiss_rounds?: number | null; p_swiss_games?: number | null; p_playoff_best_of?: number | null; p_final_best_of?: number | null; p_playoff_cut?: number | null; p_starts_at?: string | null };
         Returns: string;
       };
       get_or_create_team_conversation: {
-        Args: { p_team: string };
+        Args: { p_team?: string | null };
         Returns: string;
       };
       handle_new_user: {
@@ -1412,7 +1940,7 @@ export type Database = {
         Returns: string;
       };
       is_captain_of: {
-        Args: { p_team: string };
+        Args: { p_team?: string | null };
         Returns: boolean;
       };
       is_league_ops: {
@@ -1420,11 +1948,11 @@ export type Database = {
         Returns: boolean;
       };
       make_draft_pick: {
-        Args: { p_season: string; p_profile: string; p_auto: boolean; p_duration: number };
+        Args: { p_season?: string | null; p_profile?: string | null; p_auto?: boolean | null; p_duration?: number | null };
         Returns: string;
       };
       mark_conversation_read: {
-        Args: { conv: string };
+        Args: { conv?: string | null };
         Returns: undefined;
       };
       purge_mock_data: {
@@ -1432,7 +1960,7 @@ export type Database = {
         Returns: undefined;
       };
       seed_mock_players: {
-        Args: { p_players: Json };
+        Args: { p_players?: Json | null };
         Returns: number;
       };
       set_updated_at: {
@@ -1440,15 +1968,15 @@ export type Database = {
         Returns: string;
       };
       shared_team: {
-        Args: { a: string; b: string };
+        Args: { a?: string | null; b?: string | null };
         Returns: boolean;
       };
       start_dm: {
-        Args: { other: string };
+        Args: { other?: string | null };
         Returns: string;
       };
       submit_asset: {
-        Args: { p_kind: string; p_source: string; p_url: string; p_storage_path: string; p_title: string; p_thumbnail_url: string; p_mime_type: string; p_size_bytes: number; p_target_type: string; p_target_id: string; p_season_id: string };
+        Args: { p_kind?: string | null; p_source?: string | null; p_url?: string | null; p_storage_path?: string | null; p_title?: string | null; p_thumbnail_url?: string | null; p_mime_type?: string | null; p_size_bytes?: number | null; p_target_type?: string | null; p_target_id?: string | null; p_season_id?: string | null };
         Returns: string;
       };
     };
@@ -1473,3 +2001,4 @@ export type Enums<T extends keyof PublicSchema["Enums"]> =
 export type Profile = Tables<"profiles">;
 export type HistoricalPlayerStatsRow = Tables<"historical_player_stats">;
 export type Announcement = Tables<"announcements">;
+export type Season = Tables<"seasons">;
