@@ -106,7 +106,7 @@ export interface PoolAvatar {
  * avatar-stack social proof. Cached per request.
  */
 export const getPoolAvatars = cache(
-  async (limit = 40): Promise<PoolAvatar[]> => {
+  async (limit = 80): Promise<PoolAvatar[]> => {
     const supabase = await createSupabaseServerClient();
     const { data } = await supabase
       .from("profiles")

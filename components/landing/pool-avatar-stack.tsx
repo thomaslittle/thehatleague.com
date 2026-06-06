@@ -48,7 +48,7 @@ const ROLE_META = {
 export function PoolAvatarStack({
   avatars,
   count,
-  max = 18,
+  max = 80,
   className,
 }: {
   avatars: PoolAvatar[];
@@ -61,7 +61,7 @@ export function PoolAvatarStack({
 
   return (
     <div
-      className={`group/stack inline-flex max-w-full items-center -space-x-2.5 py-1 ${className ?? ""}`}
+      className={`group/stack flex w-full items-center gap-1.5 py-1 ${className ?? ""}`}
     >
       {/* Logo + count badge (far left, on top) — links to the full pool. */}
       <Link
@@ -83,8 +83,9 @@ export function PoolAvatarStack({
         </span>
       </Link>
 
-      {/* Pool member avatars, overlapping rightward — each links to its
-          player profile. */}
+      {/* Pool member avatars — a tight overlapping cluster on small screens,
+          then spread out to span the full hero width from lg up. */}
+      <div className="flex min-w-0 flex-1 items-center justify-start -space-x-2.5 lg:justify-between lg:space-x-0">
       {shown.map((a, i) => {
         const initials = a.name.slice(0, 2).toUpperCase();
         const role = a.role ? ROLE_META[a.role] : null;
@@ -92,13 +93,14 @@ export function PoolAvatarStack({
           ? `/players/${encodeURIComponent(a.username)}`
           : "/pool";
         // Reveal more faces as the viewport widens so the row never overflows
-        // (or clips a half-avatar) on narrow screens.
+        // (or clips a half-avatar) on narrow screens; from lg up everyone shows
+        // and the row spreads edge-to-edge.
         const display =
-          i < 6
+          i < 8
             ? "inline-flex"
-            : i < 10
+            : i < 14
               ? "hidden sm:inline-flex"
-              : i < 14
+              : i < 22
                 ? "hidden md:inline-flex"
                 : "hidden lg:inline-flex";
         return (
@@ -106,7 +108,7 @@ export function PoolAvatarStack({
             key={a.id}
             href={href}
             aria-label={role ? `${a.name} — ${role.label}` : a.name}
-            style={{ zIndex: 20 - i }}
+            style={{ zIndex: shown.length - i }}
             className={`group/av relative ${display} h-9 w-9 shrink-0 items-center justify-center rounded-full transition hover:z-40 ${
               role
                 ? `ring-[3px] ${role.ring}`
@@ -172,6 +174,7 @@ export function PoolAvatarStack({
           </Link>
         );
       })}
+      </div>
     </div>
   );
 }
