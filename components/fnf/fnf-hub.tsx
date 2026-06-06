@@ -35,7 +35,7 @@ export function FnfHub({
 
       <StatStrip stats={stats} />
 
-      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <AllTimeStats stats={allTime} />
         <HallOfChampions history={history} />
       </div>
