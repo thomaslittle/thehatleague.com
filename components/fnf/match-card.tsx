@@ -153,36 +153,55 @@ export function MatchCard({
       {!isBye && match.teamAId && match.teamBId && (
         <div className="mt-2.5">
           {open ? (
-            <div className="space-y-1.5">
+            <div className="space-y-2.5 rounded-lg border border-neutral-200 bg-neutral-50/70 p-3 dark:border-neutral-800 dark:bg-neutral-900/50">
+              {/* Column headers so it's obvious which input is which team */}
+              <div className="grid grid-cols-[2.75rem_1fr_1fr] items-center gap-2">
+                <span />
+                <span className="truncate text-center text-[11px] font-bold tracking-wide text-neutral-700 dark:text-neutral-200">
+                  {match.teamAName}
+                </span>
+                <span className="truncate text-center text-[11px] font-bold tracking-wide text-neutral-700 dark:text-neutral-200">
+                  {match.teamBName}
+                </span>
+              </div>
               {games.map((g, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <span className="w-6 shrink-0 text-[10px] font-bold text-neutral-400">
-                    G{i + 1}
+                <div
+                  key={i}
+                  className="grid grid-cols-[2.75rem_1fr_1fr] items-center gap-2"
+                >
+                  <span className="text-[10px] font-bold tracking-wide text-neutral-400 uppercase">
+                    Game {i + 1}
                   </span>
                   <input
                     type="number"
                     inputMode="numeric"
                     min={0}
+                    placeholder="0"
                     value={g.a}
                     onChange={(e) => setGame(i, "a", e.target.value)}
-                    aria-label={`Game ${i + 1} ${match.teamAName} score`}
-                    className="h-8 w-12 rounded-md border border-neutral-300 bg-white px-2 text-center text-sm tabular-nums dark:border-neutral-700 dark:bg-neutral-950"
+                    aria-label={`Game ${i + 1} — ${match.teamAName} score`}
+                    className="h-9 w-full rounded-md border border-neutral-300 bg-white text-center text-base font-bold tabular-nums outline-none focus:border-thl-orange focus:ring-2 focus:ring-thl-orange/30 dark:border-neutral-700 dark:bg-neutral-950"
                   />
-                  <span className="text-neutral-400">–</span>
                   <input
                     type="number"
                     inputMode="numeric"
                     min={0}
+                    placeholder="0"
                     value={g.b}
                     onChange={(e) => setGame(i, "b", e.target.value)}
-                    aria-label={`Game ${i + 1} ${match.teamBName} score`}
-                    className="h-8 w-12 rounded-md border border-neutral-300 bg-white px-2 text-center text-sm tabular-nums dark:border-neutral-700 dark:bg-neutral-950"
+                    aria-label={`Game ${i + 1} — ${match.teamBName} score`}
+                    className="h-9 w-full rounded-md border border-neutral-300 bg-white text-center text-base font-bold tabular-nums outline-none focus:border-thl-orange focus:ring-2 focus:ring-thl-orange/30 dark:border-neutral-700 dark:bg-neutral-950"
                   />
                 </div>
               ))}
-              <div className="flex items-center gap-2 pt-0.5">
-                <Button size="sm" onClick={submit} disabled={pending}>
-                  {pending ? "…" : "Save result"}
+              <div className="flex items-center gap-2 pt-1">
+                <Button
+                  size="sm"
+                  onClick={submit}
+                  disabled={pending}
+                  className="bg-gradient-to-r from-thl-orange to-amber-500 text-white"
+                >
+                  {pending ? "Saving…" : "Save result"}
                 </Button>
                 <Button
                   size="sm"
