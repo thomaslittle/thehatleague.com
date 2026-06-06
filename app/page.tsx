@@ -2,6 +2,7 @@ import { readThemePref } from "@/lib/theme";
 import { SiteHeader } from "@/components/landing/site-header";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { Hero } from "@/components/landing/hero";
+import { FnfBanner } from "@/components/landing/fnf-banner";
 import { Manifesto } from "@/components/landing/manifesto";
 import { SignupCallout } from "@/components/landing/signup-callout";
 import { Standings } from "@/components/landing/standings";
@@ -53,6 +54,7 @@ export default async function HomePage() {
           captainCount={stats.captainCount}
           poolAvatars={poolAvatars}
         />
+        <FnfBanner />
         <Manifesto viewer={viewer} />
         {!viewer?.isAuthenticated && <SignupCallout />}
         <RecentSignups initialRows={(recent.data ?? []) as PoolRow[]} />

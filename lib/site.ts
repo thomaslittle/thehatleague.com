@@ -13,6 +13,7 @@ export type ThemePref = "light" | "dark";
 
 export const NAV_PRIMARY: { href: string; label: string }[] = [
   { href: "/the-draft", label: "The Draft" },
+  { href: "/friday-nite-fights", label: "Fri Nite Fights" },
   { href: "/pool", label: "Player Pool" },
   { href: "/schedule", label: "Schedule" },
   { href: "/standings", label: "Standings" },

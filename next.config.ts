@@ -37,6 +37,8 @@ const nextConfig: NextConfig = {
       // YouTube thumbnails for the hype-reel cards.
       { protocol: "https", hostname: "i.ytimg.com" },
       { protocol: "https", hostname: "img.youtube.com" },
+      // Self-hosted Supabase Storage (uploaded profile avatars/banners, assets).
+      { protocol: "https", hostname: "data.thehatleague.com" },
     ],
   },
   async headers() {
