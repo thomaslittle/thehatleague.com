@@ -18,7 +18,7 @@ export default async function AdminLayout({
   return (
     <PageShell>
       <div
-        className="border-b border-neutral-200/70 bg-neutral-50/70 backdrop-blur-sm dark:border-neutral-900/70 dark:bg-neutral-950/60"
+        className="relative z-30 border-b border-neutral-200/70 bg-neutral-50/70 backdrop-blur-sm dark:border-neutral-900/70 dark:bg-neutral-950/60"
         style={{ viewTransitionName: "admin-tabs" }}
       >
         <div className="mx-auto max-w-[1320px] px-6 py-4 md:px-10">

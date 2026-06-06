@@ -47,18 +47,38 @@ export const RELEASE_NOTES: ReleaseNote[] = [
         ],
       },
       {
-        heading: "The Draft",
+        heading: "The Draft — live draft engine",
         items: [
-          "Redesigned draft control room with an on-cue pick flow and live player trades.",
-          "A draft queue so captains can line up their targets.",
+          "A public live draft board: who's on the clock with a running countdown, the recent-picks feed, a best-available top 10, and the full board filling in by round and team — with an auto pick-reveal as each name lands.",
+          "Admin control room — setup: one-click create-a-team-per-captain (captains seeded onto their own roster), then configure roster size (2–8), pick clock (15–300s), and how the order is seeded (rank lowest-first for balance, rank highest-first, random, or manual).",
+          "Seed and hand-reorder the draft order, with a live picks-per-team preview before you go live.",
+          "Admin control room — live: a big on-the-clock card and countdown, start / pause / resume the clock, nudge it ±15s, force an auto-pick for an AFK captain, undo the last pick, and override who's on the clock at any time.",
+          "Make picks by type-to-search (keyboard navigable) with a confirm step; picks are race-safe at the database level so a player can never be double-drafted.",
+          "Per-team roster cards show 'needs X' vs 'full' live, and league ops can move a drafted player between teams to handle trades or corrections (captains stay put).",
+          "Snake or linear order (configurable), pick-duration tracking, and an automatic flip to 'complete' once every roster is full.",
+          "Captain draft queue (/draft/queue): pre-rank the entire available pool before draft night — search, drag to reorder or use arrows, and save. Drafted players drop off the pool live.",
+          "Auto-pick fairness: if a captain's clock expires, the system takes the top still-available player from their saved queue, falling back to the best available overall by rank (peak → 3v3 → 2v2 → signup order) — deterministic and fair.",
+        ],
+      },
+      {
+        heading: "The Combine — pre-draft scouting",
+        items: [
+          "Players in the pool build a scouting profile: up to 8 showcase clips (YouTube, Twitch, Streamable, or direct links) that embed and play right on the site, plus a preferred and secondary role (Striker / Playmaker / Defender / Flex), availability, and notes.",
+          "Returning players get a tidy 'on the board' summary card with one-click edit; first-timers get the full form.",
+          "Completing the combine earns league points and the Combine Ready patch (once per season).",
+          "Captains' scouting board: every prospect as a card — avatar, peak/3v3/2v2 ranks, role tags, availability, inline-playable clips, and a Tracker link — with role filters and sort by rank or name.",
+          "'Add to my queue' straight from a combine card drops the prospect onto the captain's draft queue.",
+          "The combine feeds the draft end-to-end: the queue powers auto-pick, the broadcast 'spotlight' overlay pulls a prospect's role and availability, and entries leave the board the moment they're drafted.",
         ],
       },
       {
         heading: "OBS overlay studio (for the broadcast)",
         items: [
-          "Branded, browser-source overlays: draft board, on-the-clock, up-next, best-available, last-pick, team roster, prospect spotlight, and ticker.",
-          "Plus matchup, standings, power players, lower-third, patch-unlock, and a full-scene overlay.",
-          "An admin overlay studio to preview and drive everything live during the stream.",
+          "Generate a season-pinned overlay token and copy ready-made 1920×1080 transparent browser-source URLs straight into OBS.",
+          "The hero 'On the clock' overlay you keep on screen all night: team, captain, and live countdown, auto-playing the pick reveal (with optional sound) and holding it for a configurable 3–30 seconds.",
+          "Independent always-on draft overlays: ticker (recent picks + your own pushed messages), best-available top 10, top-prospect spotlight, up-next order (snake-aware), the on-clock team's roster, the full draft board, and a lower-third banner.",
+          "Plus broadcast overlays beyond the draft: matchup, standings, power players, and a patch-unlock celebration.",
+          "Drive it all live from the studio: toggle the timer / up-next / ticker / reveal sound, set the reveal hold, and push lower-third and ticker text that updates every source instantly.",
         ],
       },
       {
@@ -74,7 +94,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
         heading: "Clips & highlights",
         items: [
           "Submit clips and file uploads attached to a match, an individual game, a team, or a player.",
-          "On-site video playback, and multi-clip combine submissions.",
+          "On-site video playback for embeddable links (YouTube, Twitch, Streamable).",
           "Highlight galleries surface on team and player pages.",
         ],
       },
