@@ -22,6 +22,16 @@ export interface NavLink {
 export const NAV_POOL: NavLink = { href: "/pool", label: "Player Pool" };
 
 /**
+ * "Weeklies" — the recurring casual events that run every week, kept separate
+ * from the season/league machinery: Friday Nite Fights (the 2v2 Swiss) and
+ * SH*T-Faced Saturday (the friendly Saturday drink-and-play).
+ */
+export const NAV_WEEKLIES: NavLink[] = [
+  { href: "/friday-nite-fights", label: "Friday Nite Fights" },
+  { href: "/shitfaced-saturday", label: "SH*T-Faced Saturday" },
+];
+
+/**
  * The "League" mega-menu — orange-titled columns grouping how you take part:
  * building a roster (Draft), following the competition (Season), and
  * watching / collecting (More). Stats and About live in their own top-level
@@ -39,7 +49,6 @@ export const NAV_LEAGUE_GROUPS: { title: string; links: NavLink[] }[] = [
   {
     title: "Season",
     links: [
-      { href: "/friday-nite-fights", label: "Friday Nite Fights" },
       { href: "/schedule", label: "Schedule" },
       { href: "/mvp", label: "MVP Vote" },
     ],
@@ -87,6 +96,7 @@ export const NAV_ABOUT: NavLink[] = [
  *  Deduped by href (e.g. /captains is in both the League and About menus). */
 export const NAV_ALL: NavLink[] = [
   NAV_POOL,
+  ...NAV_WEEKLIES,
   ...NAV_LEAGUE_GROUPS.flatMap((g) => g.links),
   ...NAV_STATS,
   ...NAV_ABOUT.filter((l) => !l.external),

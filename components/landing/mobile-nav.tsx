@@ -11,6 +11,7 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { ShieldCheck } from "lucide-react";
 import {
   NAV_POOL,
+  NAV_WEEKLIES,
   NAV_LEAGUE_GROUPS,
   NAV_STATS,
   NAV_ABOUT,
@@ -78,6 +79,7 @@ export function MobileNavSheet({
   }, [open, setOpen]);
 
   const groups = [
+    { title: "Weeklies", links: NAV_WEEKLIES },
     ...NAV_LEAGUE_GROUPS,
     { title: "Stats", links: NAV_STATS },
     { title: "About", links: NAV_ABOUT },

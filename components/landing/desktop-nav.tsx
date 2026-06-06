@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 import {
   NAV_POOL,
+  NAV_WEEKLIES,
   NAV_LEAGUE_GROUPS,
   NAV_STATS,
   NAV_ABOUT,
@@ -51,6 +52,7 @@ export function DesktopNav({
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href.split("#")[0]}/`);
   const leagueActive = NAV_LEAGUE_GROUPS.some((g) => g.links.some((l) => isActive(l.href)));
+  const weekliesActive = NAV_WEEKLIES.some((l) => isActive(l.href));
   const statsActive = NAV_STATS.some((l) => isActive(l.href));
   const aboutActive = NAV_ABOUT.some((l) => !l.external && isActive(l.href));
   const opsActive = NAV_LEAGUE_OPS.some((l) => isActive(l.href));
@@ -106,6 +108,20 @@ export function DesktopNav({
                   </div>
                 ))}
               </div>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+
+          <NavigationMenuItem>
+            <NavigationMenuTrigger className={triggerClass(weekliesActive)}>
+              Weeklies
+              {weekliesActive && <ActiveUnderline />}
+            </NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="grid w-[220px] gap-0.5 p-3">
+                {NAV_WEEKLIES.map((l) => (
+                  <NavMenuLink key={l.href} link={l} active={isActive(l.href)} />
+                ))}
+              </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
 
