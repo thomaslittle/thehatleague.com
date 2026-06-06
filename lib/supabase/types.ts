@@ -571,7 +571,9 @@ export type Database = {
           team_size: number;
           best_of: number;
           swiss_best_of: number;
+          swiss_games: number;
           playoff_best_of: number;
+          final_best_of: number;
           playoff_cut: number;
           starts_at: string | null;
           created_by: string | null;
@@ -587,7 +589,9 @@ export type Database = {
           team_size?: number;
           best_of?: number;
           swiss_best_of?: number;
+          swiss_games?: number;
           playoff_best_of?: number;
+          final_best_of?: number;
           playoff_cut?: number;
           starts_at?: string | null;
           created_by?: string | null;
@@ -603,7 +607,9 @@ export type Database = {
           team_size?: number;
           best_of?: number;
           swiss_best_of?: number;
+          swiss_games?: number;
           playoff_best_of?: number;
+          final_best_of?: number;
           playoff_cut?: number;
           starts_at?: string | null;
           created_by?: string | null;
@@ -1299,8 +1305,9 @@ export type Database = {
           p_id: string | null;
           p_name: string | null;
           p_swiss_rounds: number | null;
-          p_swiss_best_of: number | null;
+          p_swiss_games: number | null;
           p_playoff_best_of: number | null;
+          p_final_best_of: number | null;
           p_playoff_cut: number | null;
           p_starts_at: string | null;
         };
@@ -1308,6 +1315,10 @@ export type Database = {
       };
       fnf_set_status: {
         Args: { p_tournament: string; p_status: string };
+        Returns: undefined;
+      };
+      fnf_reset: {
+        Args: { p_tournament: string };
         Returns: undefined;
       };
       fnf_generate_teams: {

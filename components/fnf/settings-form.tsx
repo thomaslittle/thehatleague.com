@@ -22,8 +22,9 @@ export function SettingsForm({
   tournamentId,
   name,
   swissRounds,
-  swissBestOf,
+  swissGames,
   playoffBestOf,
+  finalBestOf,
   playoffCut,
   startsAt,
   onClose,
@@ -31,8 +32,9 @@ export function SettingsForm({
   tournamentId: string;
   name: string;
   swissRounds: number;
-  swissBestOf: number;
+  swissGames: number;
   playoffBestOf: number;
+  finalBestOf: number;
   playoffCut: number;
   startsAt: string | null;
   onClose: () => void;
@@ -42,8 +44,9 @@ export function SettingsForm({
   const [form, setForm] = useState({
     name,
     swissRounds: String(swissRounds),
-    swissBestOf: String(swissBestOf),
+    swissGames: String(swissGames),
     playoffBestOf: String(playoffBestOf),
+    finalBestOf: String(finalBestOf),
     playoffCut: String(playoffCut),
     startsAt: toLocalInput(startsAt),
   });
@@ -56,8 +59,9 @@ export function SettingsForm({
       const res = await updateFnfSettings(tournamentId, {
         name: form.name.trim() || undefined,
         swissRounds: Number(form.swissRounds) || undefined,
-        swissBestOf: Number(form.swissBestOf) || undefined,
+        swissGames: Number(form.swissGames) || undefined,
         playoffBestOf: Number(form.playoffBestOf) || undefined,
+        finalBestOf: Number(form.finalBestOf) || undefined,
         playoffCut: Number(form.playoffCut) || undefined,
         startsAt: form.startsAt
           ? new Date(form.startsAt).toISOString()
@@ -72,107 +76,106 @@ export function SettingsForm({
     });
 
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
-      <div className="mb-5">
-        <div className="text-xs font-bold tracking-[0.18em] text-thl-orange uppercase">
-          League ops
+    <div className="space-y-6">
+      <p className="text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
+        Swiss matches are a fixed game series scored <strong>3-1-0</strong>{" "}
+        (2-0 = 3 pts, 1-1 = 1 pt each). Playoffs are best-of.
+      </p>
+
+      <Field label="Tournament name" htmlFor="fnf-name">
+        <Input id="fnf-name" value={form.name} onChange={set("name")} />
+      </Field>
+
+      <section className="space-y-3">
+        <SectionLabel>Swiss</SectionLabel>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Rounds" htmlFor="fnf-rounds">
+            <Input
+              id="fnf-rounds"
+              type="number"
+              min={1}
+              value={form.swissRounds}
+              onChange={set("swissRounds")}
+            />
+          </Field>
+          <Field label="Games / series" htmlFor="fnf-swiss-games">
+            <Input
+              id="fnf-swiss-games"
+              type="number"
+              min={1}
+              value={form.swissGames}
+              onChange={set("swissGames")}
+            />
+          </Field>
         </div>
-        <h2 className="mt-2 text-xl font-bold tracking-tight">
-          Tournament settings
-        </h2>
-        <p className="mt-1.5 text-sm text-neutral-600 dark:text-neutral-400">
-          Format controls for this week&apos;s bracket. Changes apply going
-          forward.
-        </p>
-      </div>
+      </section>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Field
-          label="Name"
-          htmlFor="fnf-name"
-          className="sm:col-span-2"
-        >
-          <Input id="fnf-name" value={form.name} onChange={set("name")} />
-        </Field>
+      <section className="space-y-3">
+        <SectionLabel>Playoffs</SectionLabel>
+        <div className="grid grid-cols-3 gap-4">
+          <Field label="Cut" htmlFor="fnf-cut">
+            <Input
+              id="fnf-cut"
+              type="number"
+              min={2}
+              value={form.playoffCut}
+              onChange={set("playoffCut")}
+            />
+          </Field>
+          <Field label="Best of" htmlFor="fnf-po-bo">
+            <Input
+              id="fnf-po-bo"
+              type="number"
+              min={1}
+              value={form.playoffBestOf}
+              onChange={set("playoffBestOf")}
+            />
+          </Field>
+          <Field label="Finals" htmlFor="fnf-final-bo">
+            <Input
+              id="fnf-final-bo"
+              type="number"
+              min={1}
+              value={form.finalBestOf}
+              onChange={set("finalBestOf")}
+            />
+          </Field>
+        </div>
+      </section>
 
-        <Field
-          label="Swiss rounds"
-          htmlFor="fnf-rounds"
-          hint="Rounds before the playoff cut."
-        >
-          <Input
-            id="fnf-rounds"
-            type="number"
-            min={1}
-            value={form.swissRounds}
-            onChange={set("swissRounds")}
-          />
-        </Field>
+      <Field
+        label="Starts at"
+        htmlFor="fnf-start"
+        hint="Set in your local time — every player sees it in theirs."
+      >
+        <Input
+          id="fnf-start"
+          type="datetime-local"
+          value={form.startsAt}
+          onChange={set("startsAt")}
+        />
+      </Field>
 
-        <Field
-          label="Playoff cut"
-          htmlFor="fnf-cut"
-          hint="Top teams that make playoffs."
-        >
-          <Input
-            id="fnf-cut"
-            type="number"
-            min={2}
-            value={form.playoffCut}
-            onChange={set("playoffCut")}
-          />
-        </Field>
-
-        <Field
-          label="Swiss best of"
-          htmlFor="fnf-swiss-bo"
-          hint="Games per Swiss series."
-        >
-          <Input
-            id="fnf-swiss-bo"
-            type="number"
-            min={1}
-            value={form.swissBestOf}
-            onChange={set("swissBestOf")}
-          />
-        </Field>
-
-        <Field
-          label="Playoff best of"
-          htmlFor="fnf-po-bo"
-          hint="Games per playoff series."
-        >
-          <Input
-            id="fnf-po-bo"
-            type="number"
-            min={1}
-            value={form.playoffBestOf}
-            onChange={set("playoffBestOf")}
-          />
-        </Field>
-
-        <Field
-          label="Starts at"
-          htmlFor="fnf-start"
-          hint="Set in your local time — each player sees it in theirs."
-        >
-          <Input
-            id="fnf-start"
-            type="datetime-local"
-            value={form.startsAt}
-            onChange={set("startsAt")}
-          />
-        </Field>
-      </div>
-
-      <div className="mt-6 flex gap-3">
-        <Button onClick={save} disabled={pending}>
-          {pending ? "Saving…" : "Save settings"}
-        </Button>
+      <div className="flex justify-end gap-2 border-t border-neutral-200 pt-5 dark:border-neutral-800">
         <Button variant="ghost" onClick={onClose} disabled={pending}>
           Cancel
         </Button>
+        <Button
+          onClick={save}
+          disabled={pending}
+          className="bg-gradient-to-r from-thl-orange to-amber-500 text-white shadow-sm transition hover:shadow-md hover:brightness-105"
+        >
+          {pending ? "Saving…" : "Save settings"}
+        </Button>
       </div>
+    </div>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="text-[11px] font-bold tracking-[0.18em] text-thl-orange uppercase">
+      {children}
     </div>
   );
 }

@@ -10,7 +10,7 @@ import { TeamEditor } from "@/components/fnf/team-editor";
 import { RoundsView } from "@/components/fnf/rounds-view";
 import { BracketView } from "@/components/fnf/bracket-view";
 import { StandingsTable } from "@/components/fnf/standings-table";
-import { PlayerChip } from "@/components/fnf/player-chip";
+import { EnteredList } from "@/components/fnf/entered-list";
 import { LocalTime } from "@/components/fnf/local-time";
 import type { FnfStatus } from "@/lib/data/fnf";
 
@@ -28,8 +28,15 @@ const STATUS_COPY: Record<FnfStatus, string> = {
   complete: "Swiss complete",
 };
 
-export default async function FridayNiteFightsPage() {
-  const state = await getFnfState();
+export default async function FridayNiteFightsPage(
+  props: PageProps<"/friday-nite-fights">,
+) {
+  // Optional ?id=<tournament> to view a specific (e.g. past) tournament. The
+  // default with no id shows the active (most recent) one, so this never
+  // changes what regular visitors see.
+  const sp = await props.searchParams;
+  const previewId = typeof sp.id === "string" ? sp.id : undefined;
+  const state = await getFnfState(previewId);
 
   const supabase = await createSupabaseServerClient();
   const {
@@ -129,8 +136,9 @@ export default async function FridayNiteFightsPage() {
             teamCount={teams.length}
             name={tournament.name}
             swissRounds={tournament.swissRounds}
-            swissBestOf={tournament.swissBestOf}
+            swissGames={tournament.swissGames}
             playoffBestOf={tournament.playoffBestOf}
+            finalBestOf={tournament.finalBestOf}
             playoffCut={tournament.playoffCut}
             startsAt={tournament.startsAt}
           />
@@ -148,11 +156,7 @@ export default async function FridayNiteFightsPage() {
                 Be the first to enter — hit the button above.
               </p>
             ) : (
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {registrations.map((p) => (
-                  <PlayerChip key={p.id} player={p} />
-                ))}
-              </div>
+              <EnteredList registrations={registrations} />
             )}
           </section>
         )}

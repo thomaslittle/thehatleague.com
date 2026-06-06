@@ -23,7 +23,9 @@ export type FnfStanding = {
   seed: number;
   name: string;
   played: number;
+  points: number;
   wins: number;
+  draws: number;
   losses: number;
   byes: number;
   gameWins: number;
@@ -32,6 +34,10 @@ export type FnfStanding = {
   buchholz: number;
   opponents: string[];
 };
+
+// Swiss 3-1-0 scoring: a series win (e.g. 2-0) is worth 3, a 1-1 draw 1 each.
+const WIN_POINTS = 3;
+const DRAW_POINTS = 1;
 
 /**
  * Build rank-balanced 2v2 teams. Players are sorted by rank weight (best
@@ -72,7 +78,9 @@ export function computeStandings(
       seed: t.seed,
       name: t.name,
       played: 0,
+      points: 0,
       wins: 0,
+      draws: 0,
       losses: 0,
       byes: 0,
       gameWins: 0,
@@ -88,9 +96,10 @@ export function computeStandings(
     const a = m.teamAId ? table.get(m.teamAId) : undefined;
     if (!a) continue;
     if (!m.teamBId) {
-      // Bye — counts as a win, no game stats / opponent.
+      // Bye — a free series win: 3 points, no game stats / opponent.
       a.wins += 1;
       a.byes += 1;
+      a.points += WIN_POINTS;
       continue;
     }
     const b = table.get(m.teamBId);
@@ -105,22 +114,30 @@ export function computeStandings(
     b.gameLosses += sa;
     a.opponents.push(b.teamId);
     b.opponents.push(a.teamId);
-    if (m.winnerTeamId === a.teamId) {
+    if (sa === sb) {
+      // 1-1 draw: a point each, no win/loss.
+      a.draws += 1;
+      b.draws += 1;
+      a.points += DRAW_POINTS;
+      b.points += DRAW_POINTS;
+    } else if (sa > sb) {
       a.wins += 1;
       b.losses += 1;
-    } else if (m.winnerTeamId === b.teamId) {
+      a.points += WIN_POINTS;
+    } else {
       b.wins += 1;
       a.losses += 1;
+      b.points += WIN_POINTS;
     }
   }
 
   for (const s of table.values()) {
     s.gameDiff = s.gameWins - s.gameLosses;
   }
-  // Buchholz = sum of opponents' win totals (strength of schedule tiebreak).
+  // Buchholz = sum of opponents' points (strength of schedule tiebreak).
   for (const s of table.values()) {
     s.buchholz = s.opponents.reduce(
-      (sum, oppId) => sum + (table.get(oppId)?.wins ?? 0),
+      (sum, oppId) => sum + (table.get(oppId)?.points ?? 0),
       0,
     );
   }
@@ -128,13 +145,14 @@ export function computeStandings(
   return [...table.values()];
 }
 
-/** Order standings best-first for display and pairing. */
+/** Order standings best-first for display and pairing — by points, then game
+ *  differential, then strength of schedule, then seed. */
 export function orderStandings(standings: FnfStanding[]): FnfStanding[] {
   return [...standings].sort(
     (a, b) =>
-      b.wins - a.wins ||
-      b.buchholz - a.buchholz ||
+      b.points - a.points ||
       b.gameDiff - a.gameDiff ||
+      b.buchholz - a.buchholz ||
       a.seed - b.seed,
   );
 }

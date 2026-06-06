@@ -24,16 +24,24 @@ export function MatchCard({
   const [pending, startTransition] = useTransition();
 
   const isBye = !match.teamBId;
+  const isSwiss = match.stage === "swiss";
   const reported = match.status === "reported";
   const winA = reported && match.winnerTeamId === match.teamAId;
   const winB = reported && match.winnerTeamId === match.teamBId;
+  const isDraw =
+    reported && match.scoreA != null && match.scoreA === match.scoreB;
   const tbd = (n: string | null, label: string) => n ?? label;
 
   const submit = () => {
     const sa = Number(a);
     const sb = Number(b);
-    if (!Number.isFinite(sa) || !Number.isFinite(sb) || sa === sb) {
-      toast.error("Enter two different scores.");
+    if (!Number.isFinite(sa) || !Number.isFinite(sb)) {
+      toast.error("Enter both game scores.");
+      return;
+    }
+    // Swiss is a fixed-game series and may end 1-1; playoffs need a winner.
+    if (!isSwiss && sa === sb) {
+      toast.error("Playoff matches need a winner.");
       return;
     }
     startTransition(async () => {
@@ -64,6 +72,7 @@ export function MatchCard({
           seed={match.teamASeed}
           score={match.scoreA}
           win={winA}
+          dim={reported && !winA && !isDraw && !isBye}
           reported={reported}
         />
       </div>
@@ -72,13 +81,18 @@ export function MatchCard({
           VS
         </span>
         <span className="h-px flex-1 bg-neutral-100 dark:bg-neutral-800" />
+        {isDraw && (
+          <span className="text-[10px] font-bold text-amber-600 uppercase dark:text-amber-400">
+            Draw
+          </span>
+        )}
         {isBye ? (
           <span className="text-[10px] font-bold text-thl-orange uppercase">
             Bye
           </span>
         ) : (
           <span className="text-[10px] font-bold text-neutral-400 tabular-nums">
-            Bo{match.bestOf}
+            {isSwiss ? `${match.bestOf} games` : `Bo${match.bestOf}`}
           </span>
         )}
       </div>
@@ -88,6 +102,7 @@ export function MatchCard({
           seed={match.teamBSeed}
           score={match.scoreB}
           win={winB}
+          dim={reported && !winB && !isDraw}
           reported={reported}
         />
       </div>
@@ -145,17 +160,27 @@ function Row({
   seed,
   score,
   win,
+  dim = false,
   reported,
 }: {
   name: string;
   seed: number | null;
   score: number | null;
   win: boolean;
+  dim?: boolean;
   reported: boolean;
 }) {
   return (
-    <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
+    <div
+      className={cn(
+        "flex min-w-0 flex-1 items-center justify-between gap-2 transition-opacity",
+        dim && "opacity-50",
+      )}
+    >
       <span className="flex min-w-0 items-center gap-1.5">
+        {win && (
+          <span className="size-1.5 shrink-0 rounded-full bg-thl-orange" />
+        )}
         {seed != null && (
           <span className="text-[10px] font-bold text-neutral-400">
             #{seed}

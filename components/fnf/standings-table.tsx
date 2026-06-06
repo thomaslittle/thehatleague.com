@@ -19,10 +19,11 @@ export function StandingsTable({
           <tr>
             <th className="px-3 py-2.5 font-bold">#</th>
             <th className="px-3 py-2.5 font-bold">Team</th>
+            <th className="px-2 py-2.5 text-center font-bold">Pts</th>
             <th className="px-2 py-2.5 text-center font-bold">W</th>
+            <th className="px-2 py-2.5 text-center font-bold">D</th>
             <th className="px-2 py-2.5 text-center font-bold">L</th>
             <th className="px-2 py-2.5 text-center font-bold">Diff</th>
-            <th className="px-2 py-2.5 text-center font-bold">SoS</th>
           </tr>
         </thead>
         <tbody>
@@ -45,17 +46,20 @@ export function StandingsTable({
                 <td className="px-3 py-2 font-semibold">
                   {meta?.name ?? "—"}
                 </td>
+                <td className="px-2 py-2 text-center text-base font-extrabold tabular-nums text-thl-orange">
+                  {s.points}
+                </td>
                 <td className="px-2 py-2 text-center font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
                   {s.wins}
+                </td>
+                <td className="px-2 py-2 text-center tabular-nums text-neutral-500">
+                  {s.draws}
                 </td>
                 <td className="px-2 py-2 text-center tabular-nums text-neutral-500">
                   {s.losses}
                 </td>
                 <td className="px-2 py-2 text-center tabular-nums">
                   {s.gameDiff > 0 ? `+${s.gameDiff}` : s.gameDiff}
-                </td>
-                <td className="px-2 py-2 text-center tabular-nums text-neutral-500">
-                  {s.buchholz}
                 </td>
               </tr>
             );

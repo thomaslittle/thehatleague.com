@@ -82,8 +82,9 @@ export async function updateFnfSettings(
   settings: {
     name?: string;
     swissRounds?: number;
-    swissBestOf?: number;
+    swissGames?: number;
     playoffBestOf?: number;
+    finalBestOf?: number;
     playoffCut?: number;
     startsAt?: string | null;
   },
@@ -93,10 +94,29 @@ export async function updateFnfSettings(
     p_id: tournamentId,
     p_name: settings.name ?? null,
     p_swiss_rounds: settings.swissRounds ?? null,
-    p_swiss_best_of: settings.swissBestOf ?? null,
+    p_swiss_games: settings.swissGames ?? null,
     p_playoff_best_of: settings.playoffBestOf ?? null,
+    p_final_best_of: settings.finalBestOf ?? null,
     p_playoff_cut: settings.playoffCut ?? null,
     p_starts_at: settings.startsAt ?? null,
+  });
+  if (error) return { error: error.message };
+
+  revalidatePath(FNF_PATH);
+  return { ok: true };
+}
+
+/**
+ * Admin: undo back to the registration phase. Clears teams and ALL matches
+ * (Swiss + playoffs) but keeps every signup, so the organizer can re-generate
+ * from scratch if anything looks wrong. Works from any phase.
+ */
+export async function resetTournament(
+  tournamentId: string,
+): Promise<FnfActionState> {
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.rpc("fnf_reset", {
+    p_tournament: tournamentId,
   });
   if (error) return { error: error.message };
 
@@ -201,7 +221,7 @@ export async function startSwiss(
     slot: i,
     team_a_id: p.teamA,
     team_b_id: p.teamB ?? "",
-    best_of: state.tournament.swissBestOf,
+    best_of: state.tournament.swissGames,
   }));
 
   const supabase = await createSupabaseServerClient();
@@ -288,7 +308,7 @@ async function advanceSwiss(tournamentId: string): Promise<void> {
     slot: i,
     team_a_id: p.teamA,
     team_b_id: p.teamB ?? "",
-    best_of: tournament.swissBestOf,
+    best_of: tournament.swissGames,
   }));
 
   const supabase = await createSupabaseServerClient();
@@ -312,6 +332,8 @@ export async function generatePlayoffs(
 
   const seeds = state.standings.slice(0, cut).map((s) => s.teamId);
   const bracket = buildBracket(seeds, () => crypto.randomUUID());
+  // The final is the last round in the bracket — it can run a longer series.
+  const finalRound = bracket.reduce((max, m) => Math.max(max, m.round), 0);
   const payload = bracket.map((m) => ({
     id: m.id,
     round: m.round,
@@ -320,7 +342,10 @@ export async function generatePlayoffs(
     team_b_id: m.teamBId ?? "",
     next_match_id: m.nextMatchId ?? "",
     next_slot_is_a: m.nextSlotIsA,
-    best_of: state.tournament.playoffBestOf,
+    best_of:
+      m.round === finalRound
+        ? state.tournament.finalBestOf
+        : state.tournament.playoffBestOf,
   }));
 
   const supabase = await createSupabaseServerClient();
