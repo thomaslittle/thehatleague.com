@@ -190,11 +190,7 @@ export function SiteHeader({
           )}
           {viewer?.isAuthenticated && (
             <Link
-              href={
-                viewer.isAdmin && (viewer.pendingAdminQueue ?? 0) > 0
-                  ? "/admin"
-                  : "/dashboard"
-              }
+              href="/dashboard"
               className="group relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full ring-2 ring-transparent ring-offset-0 transition hover:ring-thl-orange focus-visible:ring-thl-orange dark:hover:ring-thl-orange"
               aria-label={
                 (viewer.pendingAdminQueue ?? 0) > 0
@@ -203,7 +199,7 @@ export function SiteHeader({
               }
               title={
                 (viewer.pendingAdminQueue ?? 0) > 0
-                  ? `${viewer.pendingAdminQueue} pending application${viewer.pendingAdminQueue === 1 ? "" : "s"} · open league ops`
+                  ? `${viewer.pendingAdminQueue} pending application${viewer.pendingAdminQueue === 1 ? "" : "s"} · open dashboard`
                   : (viewer.displayName ?? "Dashboard")
               }
             >
