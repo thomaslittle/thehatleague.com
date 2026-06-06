@@ -70,9 +70,6 @@ export default async function FridayNiteFightsPage(
   const viewerTeamIds = user
     ? teams.filter((t) => t.members.some((m) => m.id === user.id)).map((t) => t.id)
     : [];
-  const teamNames = new Map(
-    teams.map((t) => [t.id, { name: t.name, seed: t.seed }]),
-  );
 
   const statusLine =
     tournament.status === "swiss"
@@ -216,7 +213,7 @@ export default async function FridayNiteFightsPage(
                 <h2 className="mb-3 text-lg font-bold">Standings</h2>
                 <StandingsTable
                   standings={standings}
-                  teamNames={teamNames}
+                  teams={teams}
                   playoffCut={tournament.playoffCut}
                 />
                 {tournament.status === "complete" && (
