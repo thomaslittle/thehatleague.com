@@ -311,12 +311,12 @@ export function Hero({
           <div className="mt-10 md:mt-12">
             <div className="flex flex-col gap-4 overflow-hidden rounded-2xl border border-thl-orange/30 bg-white/70 p-4 shadow-[0_18px_40px_-24px_rgba(247,97,3,0.5)] backdrop-blur-sm sm:flex-row sm:items-center sm:gap-5 sm:p-5 dark:bg-black/40">
               <div className="flex items-center gap-3">
-                <span className="relative h-20 w-20 shrink-0 sm:h-24 sm:w-24">
+                <span className="relative size-28 shrink-0 sm:size-[150px]">
                   <Image
                     src="/brand/fnf.png"
                     alt="Friday Nite Fights"
                     fill
-                    sizes="120px"
+                    sizes="150px"
                     className="object-contain drop-shadow-[0_4px_16px_rgba(247,97,3,0.35)]"
                   />
                 </span>

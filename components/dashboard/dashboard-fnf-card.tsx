@@ -45,12 +45,12 @@ export async function DashboardFnfCard({ userId }: { userId: string }) {
       />
       <div className="relative flex flex-col gap-6 p-6 md:flex-row md:items-center md:justify-between md:p-8">
         <div className="flex items-center gap-4">
-          <div className="relative size-14 shrink-0">
+          <div className="relative size-28 shrink-0 sm:size-36">
             <Image
               src="/brand/fnf.png"
               alt=""
               fill
-              sizes="56px"
+              sizes="144px"
               className="object-contain drop-shadow-[0_4px_20px_rgba(247,97,3,0.4)]"
             />
           </div>

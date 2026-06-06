@@ -144,13 +144,13 @@ export function EventCountdown({ only }: { only?: "fnf" | "sfs" } = {}) {
 
         {/* Logo + name */}
         <div className="relative flex items-center gap-4">
-          <span className="relative h-20 w-20 shrink-0 sm:h-28 sm:w-28">
+          <span className="relative size-28 shrink-0 sm:size-[150px]">
             {next && (
               <Image
                 src={next.ev.logo}
                 alt={next.ev.name}
                 fill
-                sizes="112px"
+                sizes="150px"
                 className="object-contain drop-shadow-[0_6px_20px_rgba(247,97,3,0.4)]"
               />
             )}
