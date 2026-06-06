@@ -45,109 +45,114 @@ export function FnfHub({
   );
 }
 
-/** The showpiece: the most recent FNF winners, with a CTA into their bracket. */
+/** The showpiece: the most recent FNF winners — a compact, brand-orange band
+ *  with the champions shown as a tight row and a CTA into their bracket. */
 function ReigningChampions({ entry }: { entry: FnfChampionEntry }) {
   const team = entry.champions!;
   const bracketHref = `/friday-nite-fights?id=${entry.tournamentId}`;
+  const date = entry.date
+    ? new Date(entry.date).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : null;
+
   return (
-    <section className="relative overflow-hidden rounded-[28px] border border-amber-400/40 bg-gradient-to-br from-amber-500/15 via-neutral-950 to-black p-7 shadow-2xl shadow-amber-500/10 md:p-12">
-      {/* texture + glow */}
+    <section className="relative overflow-hidden rounded-2xl border border-thl-orange/30 bg-gradient-to-br from-neutral-950 via-neutral-900 to-black p-6 shadow-xl shadow-black/30 md:p-8">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-50 [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.06)_1px,transparent_0)] [background-size:22px_22px]"
+        className="pointer-events-none absolute inset-0 opacity-50 [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.05)_1px,transparent_0)] [background-size:22px_22px]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-28 left-1/2 size-[28rem] -translate-x-1/2 rounded-full bg-amber-400/20 blur-3xl"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-24 -right-20 size-72 rounded-full bg-thl-orange/20 blur-3xl"
+        className="pointer-events-none absolute -top-24 -right-16 size-64 rounded-full bg-thl-orange/15 blur-3xl"
       />
 
-      <div className="relative flex flex-col items-center text-center">
-        <span className="inline-flex items-center gap-2 rounded-full border border-amber-400/40 bg-amber-400/10 px-3 py-1 text-[11px] font-bold tracking-[0.22em] text-amber-300 uppercase">
-          <Trophy className="size-3.5" /> Reigning champions
-        </span>
+      <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        {/* Left: title + champions */}
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.24em] text-thl-orange uppercase">
+              <Trophy className="size-3.5 text-amber-400" /> Reigning champions
+            </span>
+            {date && (
+              <span className="text-[11px] font-semibold text-neutral-500">
+                {date}
+              </span>
+            )}
+          </div>
 
-        <h2 className="mt-5 text-4xl leading-[0.95] font-extrabold tracking-tight text-white md:text-6xl">
-          {team.name}
-        </h2>
-        {entry.date && (
-          <p className="mt-2 text-xs font-semibold tracking-wide text-amber-200/80 uppercase">
-            {new Date(entry.date).toLocaleDateString("en-US", {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            })}
-          </p>
-        )}
+          <h2 className="mt-1.5 text-2xl font-extrabold tracking-tight text-white md:text-3xl">
+            {team.name}
+          </h2>
 
-        <div className="mt-9 flex flex-wrap items-start justify-center gap-8 md:gap-16">
-          {team.members.map((p) => {
-            const inner = (
-              <>
-                <div className="relative">
-                  <span className="absolute -inset-1 rounded-full bg-gradient-to-br from-amber-300 to-thl-orange opacity-80 blur-[2px]" />
-                  <div className="relative size-24 overflow-hidden rounded-full ring-2 ring-amber-300/90 md:size-28">
+          <div className="mt-4 flex flex-wrap gap-2.5">
+            {team.members.map((p) => {
+              const inner = (
+                <>
+                  <span className="relative size-9 shrink-0 overflow-hidden rounded-full ring-2 ring-amber-400/80">
                     {p.avatarUrl ? (
                       <Image
                         src={p.avatarUrl}
                         alt={p.name}
                         fill
-                        sizes="112px"
-                        className="object-cover transition-transform duration-300 group-hover/champ:scale-105"
+                        sizes="36px"
+                        className="object-cover"
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-neutral-800 text-xl font-bold text-neutral-300">
+                      <span className="flex h-full w-full items-center justify-center bg-neutral-800 text-[11px] font-bold text-neutral-300">
                         {p.name.slice(0, 2).toUpperCase()}
-                      </div>
+                      </span>
                     )}
-                  </div>
-                  <span className="absolute -bottom-1 left-1/2 inline-flex -translate-x-1/2 items-center justify-center rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-black uppercase shadow">
-                    Champ
                   </span>
-                </div>
-                <div className="mt-4 text-lg font-bold text-white">{p.name}</div>
-                {p.rankValue && (
-                  <div className="mt-1 flex justify-center">
-                    <RankBadge
-                      value={p.rankValue}
-                      size={18}
-                      abbreviate
-                      textClassName="text-xs font-semibold text-amber-200"
-                    />
-                  </div>
-                )}
-              </>
-            );
-            return p.username ? (
-              <Link
-                key={p.id}
-                href={`/players/${encodeURIComponent(p.username)}`}
-                className="group/champ flex flex-col items-center"
-              >
-                {inner}
-              </Link>
-            ) : (
-              <div key={p.id} className="flex flex-col items-center">
-                {inner}
-              </div>
-            );
-          })}
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-bold text-white">
+                      {p.name}
+                    </span>
+                    {p.rankValue && (
+                      <RankBadge
+                        value={p.rankValue}
+                        size={13}
+                        abbreviate
+                        textClassName="text-[11px] font-semibold text-neutral-400"
+                      />
+                    )}
+                  </span>
+                </>
+              );
+              return p.username ? (
+                <Link
+                  key={p.id}
+                  href={`/players/${encodeURIComponent(p.username)}`}
+                  className="group/champ inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] py-1.5 pr-4 pl-1.5 transition hover:border-thl-orange/50 hover:bg-white/[0.07]"
+                >
+                  {inner}
+                </Link>
+              ) : (
+                <span
+                  key={p.id}
+                  className="inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] py-1.5 pr-4 pl-1.5"
+                >
+                  {inner}
+                </span>
+              );
+            })}
+          </div>
+
+          {entry.runnerUp && (
+            <p className="mt-3 text-xs text-neutral-500">
+              <span className="font-semibold text-neutral-400">Runner-up:</span>{" "}
+              {entry.runnerUp.name} —{" "}
+              {entry.runnerUp.members.map((m) => m.name).join(" & ")}
+            </p>
+          )}
         </div>
 
-        {entry.runnerUp && (
-          <p className="mt-8 text-sm text-neutral-400">
-            <span className="font-semibold text-neutral-300">Runner-up:</span>{" "}
-            {entry.runnerUp.name} —{" "}
-            {entry.runnerUp.members.map((m) => m.name).join(" & ")}
-          </p>
-        )}
-
+        {/* Right: CTA */}
         <Link
           href={bracketHref}
-          className="group/cta mt-10 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-thl-orange px-7 text-sm font-bold text-black shadow-lg shadow-amber-500/20 transition hover:shadow-xl"
+          className="group/cta inline-flex h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-gradient-to-r from-thl-orange to-amber-500 px-6 text-sm font-bold text-black shadow-lg shadow-thl-orange/25 transition hover:-translate-y-0.5 hover:shadow-xl lg:self-auto"
         >
           <Trophy className="size-4" />
           Relive the bracket
