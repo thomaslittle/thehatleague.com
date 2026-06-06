@@ -504,6 +504,38 @@ export const getFnfAllTimeStats = cache(async (): Promise<FnfAllTimeStat[]> => {
   );
 });
 
+/** Short headline lines for the landing-page live-feed ticker — current
+ *  champions, the all-time leader, and the running tally. Empty when no FNF
+ *  has ever been played (so the ticker just falls back to its season lines). */
+export const getFnfTickerLines = cache(async (): Promise<string[]> => {
+  const [history, stats, allTime] = await Promise.all([
+    getFnfHistory(),
+    getFnfStats(),
+    getFnfAllTimeStats(),
+  ]);
+  const lines: string[] = [];
+
+  const latest = history[0];
+  if (latest?.champions) {
+    const who = latest.champions.members.map((m) => m.name).join(" & ");
+    lines.push(`🏆 FNF champs · ${latest.champions.name} (${who})`);
+  }
+
+  const leader = allTime.find((s) => s.titles > 0);
+  if (leader && leader.titles > 1) {
+    lines.push(`${leader.name} leads FNF with ${leader.titles} titles`);
+  }
+
+  if (stats.tournaments > 0) {
+    lines.push(
+      `Friday Nite Fights · ${stats.fighters} fighters · ${stats.games} games played`,
+    );
+  }
+
+  lines.push("Friday Nite Fights · 2v2 Swiss · Every Friday");
+  return lines;
+});
+
 export type FnfHubStats = {
   tournaments: number;
   fighters: number;

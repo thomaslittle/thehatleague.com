@@ -1867,6 +1867,10 @@ export type Database = {
       };
     };
     Functions: {
+      _fnf_grant_badge: {
+        Args: { p_slug?: string | null; p_season?: string | null; p_profiles?: string[] | null; p_tournament?: string | null };
+        Returns: undefined;
+      };
       are_friends: {
         Args: { a?: string | null; b?: string | null };
         Returns: boolean;
@@ -1890,6 +1894,10 @@ export type Database = {
       draft_team_at: {
         Args: { p_season?: string | null; p_overall?: number | null };
         Returns: string;
+      };
+      fnf_award_tournament: {
+        Args: { p_tournament?: string | null; p_season?: string | null };
+        Returns: undefined;
       };
       fnf_create_playoffs: {
         Args: { p_tournament?: string | null; p_matches?: Json | null };

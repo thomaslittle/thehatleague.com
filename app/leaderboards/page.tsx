@@ -42,21 +42,25 @@ export default async function LeaderboardsPage() {
         }
       />
 
-      {hasLive && season && (
+      {(hasLive || pointLeaders.length > 0) && season && (
         <section className="mx-auto max-w-[1320px] px-6 pb-12 md:px-10">
           <RealtimeRefresh tables={["player_stats", "point_events"]} channel="leaderboards" />
-          <div className="mb-4 text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
-            {season.name} · Live leaders
-          </div>
-          <LiveLeaders rows={liveRows} conferences={conferences} />
+          {hasLive && (
+            <>
+              <div className="mb-4 text-xs font-bold tracking-[0.28em] text-thl-orange uppercase">
+                {season.name} · Live leaders
+              </div>
+              <LiveLeaders rows={liveRows} conferences={conferences} />
+            </>
+          )}
 
           {pointLeaders.length > 0 && (
-            <div className="mt-6 rounded-3xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950 md:p-6">
+            <div className={`${hasLive ? "mt-6" : ""} rounded-3xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950 md:p-6`}>
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-bold tracking-tight">Power players</h3>
                   <p className="text-[10px] font-bold tracking-[0.18em] text-neutral-500 uppercase">
-                    League points · clips, wins, MVPs &amp; more
+                    League points · Friday Nite Fights, clips, wins, MVPs &amp; more
                   </p>
                 </div>
               </div>

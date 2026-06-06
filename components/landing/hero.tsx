@@ -11,7 +11,7 @@ import type { PoolAvatar } from "@/lib/auth/viewer";
 import { SITE } from "@/lib/site";
 import type { ViewerInfo } from "@/components/landing/site-header";
 
-const TICKER = [
+const TICKER_BASE = [
   "Draft date announced soon",
   "S3 Sombrero champ · Almost Legal (DrSpaceman88)",
   "S3 Fedora champ · Das Boost (Dark0bra)",
@@ -25,12 +25,17 @@ export function Hero({
   poolCount = 0,
   captainCount = 0,
   poolAvatars = [],
+  tickerItems = [],
 }: {
   viewer?: ViewerInfo | null;
   poolCount?: number;
   captainCount?: number;
   poolAvatars?: PoolAvatar[];
+  /** FNF/league headlines surfaced first in the live feed; falls back to the
+   *  evergreen season lines below. */
+  tickerItems?: string[];
 } = {}) {
+  const ticker = [...tickerItems, ...TICKER_BASE];
   const isAuthed = !!viewer?.isAuthenticated;
   const inPool = !!viewer?.inPool;
   const firstName = viewer?.displayName?.split(/[\s_]/)[0] ?? null;
@@ -315,7 +320,7 @@ export function Hero({
         </div>
         <div className="relative min-w-0 flex-1 overflow-hidden">
           <div className="thl-ticker flex w-max gap-6 py-3 pl-4 text-xs font-bold whitespace-nowrap md:gap-10 md:py-3.5 md:pl-6 md:text-sm">
-            {[...TICKER, ...TICKER].map((item, i) => (
+            {[...ticker, ...ticker].map((item, i) => (
               <span key={i} className="inline-flex items-center gap-6 whitespace-nowrap md:gap-10">
                 <span className="whitespace-nowrap">{item}</span>
                 <span className="opacity-60">◆</span>

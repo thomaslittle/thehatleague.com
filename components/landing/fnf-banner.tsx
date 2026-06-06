@@ -105,6 +105,10 @@ export async function FnfBanner() {
       >
         <div
           aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-50 [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.05)_1px,transparent_0)] [background-size:22px_22px]"
+        />
+        <div
+          aria-hidden
           className="pointer-events-none absolute -top-24 -left-24 size-72 rounded-full bg-thl-orange/30 blur-3xl transition-opacity duration-500 group-hover:opacity-90 md:size-96"
         />
         <div
@@ -173,6 +177,11 @@ function ChampionBanner({
   return (
     <section className="px-6 py-8 md:px-10 md:py-12">
       <div className="relative mx-auto max-w-[1320px] overflow-hidden rounded-3xl border border-amber-400/40 bg-gradient-to-br from-amber-500/15 via-neutral-950 to-black p-8 shadow-2xl shadow-amber-500/10 md:p-12">
+        {/* signature dotted-grid texture */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-50 [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.06)_1px,transparent_0)] [background-size:22px_22px]"
+        />
         {/* glow accents */}
         <div
           aria-hidden

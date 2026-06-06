@@ -15,7 +15,14 @@ import { EnteredList } from "@/components/fnf/entered-list";
 import { LocalTime } from "@/components/fnf/local-time";
 import { ChampionHero } from "@/components/fnf/champion-hero";
 import { HallOfChampions, AllTimeStats } from "@/components/fnf/fnf-records";
-import { getFnfHistory, getFnfAllTimeStats } from "@/lib/data/fnf";
+import { FnfHub } from "@/components/fnf/fnf-hub";
+import {
+  getFnfHistory,
+  getFnfAllTimeStats,
+  getFnfStats,
+} from "@/lib/data/fnf";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import type { FnfStatus, FnfTeamCard } from "@/lib/data/fnf";
 
 export const metadata = {
@@ -97,6 +104,67 @@ export default async function FridayNiteFightsPage(
   ]);
   const isOver = !!championTeam;
 
+  // Between tournaments — the most recent one is finished and we're not
+  // previewing a specific bracket. Show the hub (reigning champions, leaders,
+  // hall of champions, stats) with the bracket one click away, instead of
+  // dropping visitors straight into the old bracket.
+  if (!previewId && isOver) {
+    const stats = await getFnfStats();
+    return (
+      <PageShell>
+        <FnfRealtime />
+        <PageHero
+          eyebrow="The Hat League · Weekly 2v2"
+          title="Friday Nite"
+          accent="Fights"
+          subtitle={
+            <>
+              Between fights. Meet the reigning champions, climb the all-time
+              leaderboard, and lock in for next Friday — auto-balanced 2v2 Swiss,
+              every week.
+            </>
+          }
+          aside={
+            <div className="relative mx-auto aspect-square w-full max-w-[320px]">
+              <Image
+                src="/brand/fnf.png"
+                alt="Friday Nite Fights"
+                fill
+                priority
+                sizes="320px"
+                className="object-contain drop-shadow-[0_8px_30px_rgba(255,107,0,0.25)]"
+              />
+            </div>
+          }
+        />
+        {isAdmin && (
+          <div className="mx-auto max-w-[1320px] px-6 md:px-10">
+            <AdminControls
+              tournamentId={tournament.id}
+              status={tournament.status}
+              registeredCount={registrations.length}
+              teamCount={teams.length}
+              name={tournament.name}
+              swissRounds={tournament.swissRounds}
+              swissGames={tournament.swissGames}
+              playoffBestOf={tournament.playoffBestOf}
+              finalBestOf={tournament.finalBestOf}
+              playoffCut={tournament.playoffCut}
+              startsAt={tournament.startsAt}
+              isOver={isOver}
+            />
+          </div>
+        )}
+        <FnfHub
+          reigning={history[0] ?? null}
+          history={history}
+          allTime={allTime}
+          stats={stats}
+        />
+      </PageShell>
+    );
+  }
+
   const statusLine =
     tournament.status === "swiss"
       ? `Round ${tournament.currentRound} of ${tournament.swissRounds} · Swiss in progress`
@@ -148,6 +216,14 @@ export default async function FridayNiteFightsPage(
       />
 
       <div className="mx-auto max-w-[1320px] space-y-8 px-6 pb-20 md:px-10">
+        {previewId && (
+          <Link
+            href="/friday-nite-fights"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-neutral-500 transition hover:text-thl-orange"
+          >
+            <ArrowLeft className="size-4" /> Back to Friday Nite Fights
+          </Link>
+        )}
         {championTeam && (
           <ChampionHero team={championTeam} runnerUp={runnerUpTeam} />
         )}

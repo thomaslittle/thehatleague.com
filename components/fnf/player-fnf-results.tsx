@@ -19,12 +19,15 @@ export function PlayerFnfResults({
 }) {
   if (results.length === 0) return null;
 
+  const titles = results.filter((r) => r.isChampion).length;
+  const playoffRuns = results.filter((r) => r.madePlayoffs).length;
+
   return (
     <section className="mt-12">
       <div className="text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
         Tournaments
       </div>
-      <h2 className="mt-2 mb-5 flex items-center gap-2.5 text-2xl leading-tight font-bold tracking-tight md:text-3xl">
+      <h2 className="mt-2 mb-2 flex items-center gap-2.5 text-2xl leading-tight font-bold tracking-tight md:text-3xl">
         <Image
           src="/brand/fnf.png"
           alt=""
@@ -35,6 +38,26 @@ export function PlayerFnfResults({
         />
         Friday Nite Fights
       </h2>
+      <div className="mb-5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-neutral-500">
+        <span className="font-semibold text-neutral-700 dark:text-neutral-300">
+          {results.length} {results.length === 1 ? "entry" : "entries"}
+        </span>
+        {titles > 0 && (
+          <>
+            <span aria-hidden>·</span>
+            <span className="inline-flex items-center gap-1 font-semibold text-amber-500">
+              <Trophy className="size-3.5" />
+              {titles} {titles === 1 ? "title" : "titles"}
+            </span>
+          </>
+        )}
+        {playoffRuns > 0 && (
+          <>
+            <span aria-hidden>·</span>
+            <span>{playoffRuns} playoff {playoffRuns === 1 ? "run" : "runs"}</span>
+          </>
+        )}
+      </div>
       <div className="space-y-3">
         {results.map((r) => (
           <div
@@ -49,7 +72,7 @@ export function PlayerFnfResults({
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <Link
-                  href="/friday-nite-fights"
+                  href={`/friday-nite-fights?id=${r.tournamentId}`}
                   className="font-bold hover:text-thl-orange"
                 >
                   {r.tournamentName}

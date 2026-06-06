@@ -301,8 +301,42 @@ export async function reportMatch(
     await advanceSwiss(res.tournament_id);
   }
 
+  // Roll the result into the league rewards economy (points + patches).
+  // Best-effort and idempotent: a failure here must never block reporting.
+  await awardFnfResults(supabase, res.tournament_id);
+
   revalidatePath(FNF_PATH);
+  revalidatePath("/leaderboards");
   return { ok: true };
+}
+
+/**
+ * Award FNF points + patches for the tournament's current state via the
+ * self-gated SECURITY DEFINER `fnf_award_tournament` RPC. Idempotent, so it is
+ * safe to call after every report; the function fills in champion/finalist
+ * awards once the final is decided. Attributes to the real active season (never
+ * a mock one) so the points surface on the season leaderboards.
+ */
+async function awardFnfResults(
+  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+  tournamentId: string,
+): Promise<void> {
+  try {
+    const { data: season } = await supabase
+      .from("seasons")
+      .select("id")
+      .eq("is_active", true)
+      .not("slug", "like", "mock-%")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    await supabase.rpc("fnf_award_tournament", {
+      p_tournament: tournamentId,
+      p_season: season?.id ?? undefined,
+    });
+  } catch {
+    // Awards are a soft side-effect; swallow any failure.
+  }
 }
 
 /** After a Swiss round finishes: pair the next round, or finish the stage. */

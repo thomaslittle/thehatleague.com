@@ -19,25 +19,35 @@ import { getTwitchLive } from "@/lib/twitch/live";
 import { getActiveSeason } from "@/lib/data/season";
 import { deriveEvents } from "@/lib/data/events";
 import { UpcomingEvents } from "@/components/landing/upcoming-events";
+import { getFnfTickerLines } from "@/lib/data/fnf";
 
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();
-  const [theme, recent, announcements, stats, viewer, twitch, poolAvatars] =
-    await Promise.all([
-      readThemePref(),
-      supabase
-        .from("profiles")
-        .select(POOL_SELECT)
-        .eq("in_player_pool", true)
-        .eq("is_mock", false)
-        .order("created_at", { ascending: false })
-        .limit(6),
-      getRecentAnnouncements(1),
-      getPoolStats(),
-      getViewer(),
-      getTwitchLive(),
-      getPoolAvatars(),
-    ]);
+  const [
+    theme,
+    recent,
+    announcements,
+    stats,
+    viewer,
+    twitch,
+    poolAvatars,
+    fnfTicker,
+  ] = await Promise.all([
+    readThemePref(),
+    supabase
+      .from("profiles")
+      .select(POOL_SELECT)
+      .eq("in_player_pool", true)
+      .eq("is_mock", false)
+      .order("created_at", { ascending: false })
+      .limit(6),
+    getRecentAnnouncements(1),
+    getPoolStats(),
+    getViewer(),
+    getTwitchLive(),
+    getPoolAvatars(),
+    getFnfTickerLines(),
+  ]);
   const headline = announcements[0]
     ? { slug: announcements[0].slug, title: announcements[0].title }
     : null;
@@ -45,7 +55,7 @@ export default async function HomePage() {
   const events = deriveEvents(season);
 
   return (
-    <div className="min-h-screen bg-white text-neutral-900 antialiased dark:bg-black dark:text-white">
+    <div className="min-h-screen overflow-x-clip bg-white text-neutral-900 antialiased dark:bg-black dark:text-white">
       <SiteHeader
         theme={theme}
         headlineAnnouncement={headline}
@@ -59,6 +69,7 @@ export default async function HomePage() {
           poolCount={stats.poolCount}
           captainCount={stats.captainCount}
           poolAvatars={poolAvatars}
+          tickerItems={fnfTicker}
         />
         <FnfBanner />
         <UpcomingEvents events={events} />

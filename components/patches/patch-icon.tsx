@@ -8,6 +8,9 @@ import {
   Star,
   Crosshair,
   Trophy,
+  Swords,
+  Flame,
+  Medal,
   type LucideIcon,
 } from "lucide-react";
 
@@ -26,6 +29,9 @@ const ICONS: Record<string, LucideIcon> = {
   star: Star,
   crosshair: Crosshair,
   trophy: Trophy,
+  swords: Swords,
+  flame: Flame,
+  medal: Medal,
 };
 
 export function PatchIcon({
