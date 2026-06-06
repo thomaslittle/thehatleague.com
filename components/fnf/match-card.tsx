@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -70,6 +71,7 @@ export function MatchCard({
         <Row
           name={tbd(match.teamAName, "TBD")}
           seed={match.teamASeed}
+          members={match.teamAMembers}
           score={match.scoreA}
           win={winA}
           dim={reported && !winA && !isDraw && !isBye}
@@ -100,6 +102,7 @@ export function MatchCard({
         <Row
           name={isBye ? "—" : tbd(match.teamBName, "TBD")}
           seed={match.teamBSeed}
+          members={isBye ? [] : match.teamBMembers}
           score={match.scoreB}
           win={winB}
           dim={reported && !winB && !isDraw}
@@ -158,6 +161,7 @@ export function MatchCard({
 function Row({
   name,
   seed,
+  members,
   score,
   win,
   dim = false,
@@ -165,6 +169,7 @@ function Row({
 }: {
   name: string;
   seed: number | null;
+  members: { name: string; avatarUrl: string | null }[];
   score: number | null;
   win: boolean;
   dim?: boolean;
@@ -173,28 +178,52 @@ function Row({
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-1 items-center justify-between gap-2 transition-opacity",
+        "flex min-w-0 flex-1 items-start justify-between gap-2 transition-opacity",
         dim && "opacity-50",
       )}
     >
-      <span className="flex min-w-0 items-center gap-1.5">
-        {win && (
-          <span className="size-1.5 shrink-0 rounded-full bg-thl-orange" />
-        )}
-        {seed != null && (
-          <span className="text-[10px] font-bold text-neutral-400">
-            #{seed}
+      <div className="flex min-w-0 flex-col gap-0.5">
+        <span className="flex min-w-0 items-center gap-1.5">
+          {win && (
+            <span className="size-1.5 shrink-0 rounded-full bg-thl-orange" />
+          )}
+          {seed != null && (
+            <span className="text-[10px] font-bold text-neutral-400">
+              #{seed}
+            </span>
+          )}
+          <span
+            className={cn(
+              "truncate text-sm font-semibold",
+              win && "text-thl-orange",
+            )}
+          >
+            {name}
+          </span>
+        </span>
+        {members.length > 0 && (
+          <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5 pl-0.5">
+            {members.map((m, i) => (
+              <span
+                key={i}
+                className="inline-flex items-center gap-1 text-[11px] text-neutral-500 dark:text-neutral-400"
+              >
+                {m.avatarUrl ? (
+                  <Image
+                    src={m.avatarUrl}
+                    alt=""
+                    width={14}
+                    height={14}
+                    className="size-3.5 shrink-0 rounded-full object-cover"
+                    aria-hidden
+                  />
+                ) : null}
+                <span className="truncate">{m.name}</span>
+              </span>
+            ))}
           </span>
         )}
-        <span
-          className={cn(
-            "truncate text-sm font-semibold",
-            win && "text-thl-orange",
-          )}
-        >
-          {name}
-        </span>
-      </span>
+      </div>
       {reported && score != null && (
         <span
           className={cn(

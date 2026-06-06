@@ -59,6 +59,8 @@ export type FnfMatchCard = {
   teamBName: string | null;
   teamASeed: number | null;
   teamBSeed: number | null;
+  teamAMembers: { name: string; avatarUrl: string | null }[];
+  teamBMembers: { name: string; avatarUrl: string | null }[];
   scoreA: number | null;
   scoreB: number | null;
   winnerTeamId: string | null;
@@ -256,6 +258,16 @@ export const getFnfState = cache(
         teamBName: b?.name ?? null,
         teamASeed: a?.seed ?? null,
         teamBSeed: b?.seed ?? null,
+        teamAMembers:
+          a?.members.map((mem) => ({
+            name: mem.name,
+            avatarUrl: mem.avatarUrl,
+          })) ?? [],
+        teamBMembers:
+          b?.members.map((mem) => ({
+            name: mem.name,
+            avatarUrl: mem.avatarUrl,
+          })) ?? [],
         scoreA: (m.score_a as number | null) ?? null,
         scoreB: (m.score_b as number | null) ?? null,
         winnerTeamId: (m.winner_team_id as string | null) ?? null,
