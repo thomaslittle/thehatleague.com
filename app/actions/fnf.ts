@@ -308,6 +308,7 @@ async function advanceSwiss(tournamentId: string): Promise<void> {
     winnerTeamId: m.winnerTeamId,
     scoreA: m.scoreA,
     scoreB: m.scoreB,
+    games: m.games,
     status: m.status,
   }));
   const ordered = orderStandings(

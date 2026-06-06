@@ -23,7 +23,12 @@ export function StandingsTable({
             <th className="px-2 py-2.5 text-center font-bold">W</th>
             <th className="px-2 py-2.5 text-center font-bold">D</th>
             <th className="px-2 py-2.5 text-center font-bold">L</th>
-            <th className="px-2 py-2.5 text-center font-bold">Diff</th>
+            <th
+              className="px-2 py-2.5 text-center font-bold"
+              title="Goal differential — total goals scored minus conceded across all games"
+            >
+              Diff
+            </th>
           </tr>
         </thead>
         <tbody>

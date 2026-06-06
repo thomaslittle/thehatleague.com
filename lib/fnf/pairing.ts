@@ -15,6 +15,8 @@ export type FnfMatchLite = {
   winnerTeamId: string | null;
   scoreA: number | null;
   scoreB: number | null;
+  /** Per-game scores [[gfA, gfB], ...] — used for goal differential. */
+  games?: [number, number][];
   status: "pending" | "reported";
 };
 
@@ -104,14 +106,21 @@ export function computeStandings(
     }
     const b = table.get(m.teamBId);
     if (!b) continue;
-    const sa = m.scoreA ?? 0;
-    const sb = m.scoreB ?? 0;
+    const sa = m.scoreA ?? 0; // games won by A (series result)
+    const sb = m.scoreB ?? 0; // games won by B
     a.played += 1;
     b.played += 1;
-    a.gameWins += sa;
-    a.gameLosses += sb;
-    b.gameWins += sb;
-    b.gameLosses += sa;
+    // Goal differential: total goals across every game of the series.
+    let goalsA = 0;
+    let goalsB = 0;
+    for (const g of m.games ?? []) {
+      goalsA += g[0] ?? 0;
+      goalsB += g[1] ?? 0;
+    }
+    a.gameWins += goalsA;
+    a.gameLosses += goalsB;
+    b.gameWins += goalsB;
+    b.gameLosses += goalsA;
     a.opponents.push(b.teamId);
     b.opponents.push(a.teamId);
     if (sa === sb) {

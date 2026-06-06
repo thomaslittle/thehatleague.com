@@ -288,6 +288,7 @@ export const getFnfState = cache(
       winnerTeamId: m.winnerTeamId,
       scoreA: m.scoreA,
       scoreB: m.scoreB,
+      games: m.games,
       status: m.status,
     }));
     const standings = orderStandings(
