@@ -503,3 +503,31 @@ export const getFnfAllTimeStats = cache(async (): Promise<FnfAllTimeStat[]> => {
       a.name.localeCompare(b.name),
   );
 });
+
+export type FnfHubStats = {
+  tournaments: number;
+  fighters: number;
+  games: number;
+};
+
+/** Aggregate FNF stats for the hub stat strip. */
+export const getFnfStats = cache(async (): Promise<FnfHubStats> => {
+  const supabase = await createSupabaseServerClient();
+  const { data: tlist } = await supabase
+    .from("fnf_tournaments")
+    .select("id")
+    .order("created_at", { ascending: false });
+
+  let games = 0;
+  let tournaments = 0;
+  const fighters = new Set<string>();
+  for (const t of tlist ?? []) {
+    const state = await getFnfState(t.id as string);
+    if (!state) continue;
+    if (state.matches.length > 0) tournaments += 1;
+    for (const m of state.matches) games += m.games?.length ?? 0;
+    for (const team of state.teams)
+      for (const mem of team.members) fighters.add(mem.id);
+  }
+  return { tournaments, fighters: fighters.size, games };
+});
