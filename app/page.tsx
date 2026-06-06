@@ -2,7 +2,6 @@ import { readThemePref } from "@/lib/theme";
 import { SiteHeader } from "@/components/landing/site-header";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { Hero } from "@/components/landing/hero";
-import { FnfBanner } from "@/components/landing/fnf-banner";
 import { Manifesto } from "@/components/landing/manifesto";
 import { SignupCallout } from "@/components/landing/signup-callout";
 import { Standings } from "@/components/landing/standings";
@@ -19,7 +18,7 @@ import { getTwitchLive } from "@/lib/twitch/live";
 import { getActiveSeason } from "@/lib/data/season";
 import { deriveEvents } from "@/lib/data/events";
 import { UpcomingEvents } from "@/components/landing/upcoming-events";
-import { getFnfTickerLines } from "@/lib/data/fnf";
+import { getFnfTickerLines, getFnfHistory } from "@/lib/data/fnf";
 
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();
@@ -54,6 +53,22 @@ export default async function HomePage() {
   const season = await getActiveSeason();
   const events = deriveEvents(season);
 
+  // Reigning Friday Nite Fights champions, featured inside the hero.
+  const fnfHistory = await getFnfHistory();
+  const fnfChampions = fnfHistory[0]?.champions
+    ? {
+        teamName: fnfHistory[0].champions.name,
+        tournamentId: fnfHistory[0].tournamentId,
+        players: fnfHistory[0].champions.members.map((m) => ({
+          id: m.id,
+          name: m.name,
+          username: m.username,
+          avatarUrl: m.avatarUrl,
+          rank: m.rankValue,
+        })),
+      }
+    : null;
+
   return (
     <div className="min-h-screen overflow-x-clip bg-white text-neutral-900 antialiased dark:bg-black dark:text-white">
       <SiteHeader
@@ -70,8 +85,8 @@ export default async function HomePage() {
           captainCount={stats.captainCount}
           poolAvatars={poolAvatars}
           tickerItems={fnfTicker}
+          fnfChampions={fnfChampions}
         />
-        <FnfBanner />
         <UpcomingEvents events={events} />
         <Manifesto viewer={viewer} />
         {!viewer?.isAuthenticated && <SignupCallout />}

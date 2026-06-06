@@ -3,6 +3,7 @@
 import { useCallback, useRef, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Trophy } from "lucide-react";
 import { ArrowRight, DiscordIcon, TwitchIcon } from "@/components/icons/brand";
 import { HeroPromoVideo } from "@/components/landing/hero-promo-video";
 import { Spotlight } from "@/components/landing/spotlight";
@@ -20,12 +21,25 @@ const TICKER_BASE = [
   "Games scheduled Fri–Sun · 9–11pm EST",
 ];
 
+type HeroChampions = {
+  teamName: string;
+  tournamentId: string;
+  players: {
+    id: string;
+    name: string;
+    username: string | null;
+    avatarUrl: string | null;
+    rank: string | null;
+  }[];
+};
+
 export function Hero({
   viewer,
   poolCount = 0,
   captainCount = 0,
   poolAvatars = [],
   tickerItems = [],
+  fnfChampions = null,
 }: {
   viewer?: ViewerInfo | null;
   poolCount?: number;
@@ -34,6 +48,8 @@ export function Hero({
   /** FNF/league headlines surfaced first in the live feed; falls back to the
    *  evergreen season lines below. */
   tickerItems?: string[];
+  /** Reigning Friday Nite Fights champions, featured in the hero. */
+  fnfChampions?: HeroChampions | null;
 } = {}) {
   const ticker = [...tickerItems, ...TICKER_BASE];
   const isAuthed = !!viewer?.isAuthenticated;
@@ -288,6 +304,67 @@ export function Hero({
             </div>
           </div>
         </div>
+
+        {/* Reigning Friday Nite Fights champions — featured as a slim,
+            clickable band inside the hero. */}
+        {fnfChampions && (
+          <div className="mt-10 md:mt-12">
+            <Link
+              href={`/friday-nite-fights?id=${fnfChampions.tournamentId}`}
+              className="group flex flex-col gap-4 overflow-hidden rounded-2xl border border-thl-orange/30 bg-white/70 p-4 shadow-[0_18px_40px_-24px_rgba(247,97,3,0.5)] backdrop-blur-sm transition hover:border-thl-orange sm:flex-row sm:items-center sm:gap-5 sm:p-5 dark:bg-black/40"
+            >
+              <div className="flex items-center gap-3">
+                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-thl-orange/15 text-thl-orange">
+                  <Trophy className="h-5 w-5" />
+                </span>
+                <div className="min-w-0">
+                  <div className="text-[10px] font-bold tracking-[0.2em] text-thl-orange uppercase">
+                    Reigning FNF champions
+                  </div>
+                  <div className="truncate text-lg font-extrabold tracking-tight text-neutral-900 dark:text-white">
+                    {fnfChampions.teamName}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 sm:ml-auto">
+                {fnfChampions.players.map((p) => (
+                  <span key={p.id} className="inline-flex items-center gap-2">
+                    <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-amber-400/80">
+                      {p.avatarUrl ? (
+                        <Image
+                          src={p.avatarUrl}
+                          alt=""
+                          fill
+                          sizes="36px"
+                          className="object-cover"
+                        />
+                      ) : (
+                        <span className="flex h-full w-full items-center justify-center bg-neutral-300 text-[11px] font-bold text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200">
+                          {p.name.slice(0, 2).toUpperCase()}
+                        </span>
+                      )}
+                    </span>
+                    <span className="leading-tight">
+                      <span className="block text-sm font-bold text-neutral-900 dark:text-white">
+                        {p.name}
+                      </span>
+                      {p.rank && (
+                        <span className="block text-[11px] font-semibold text-neutral-500 dark:text-neutral-400">
+                          {p.rank}
+                        </span>
+                      )}
+                    </span>
+                  </span>
+                ))}
+                <span className="inline-flex items-center gap-1 text-sm font-bold text-thl-orange">
+                  View bracket
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </div>
+            </Link>
+          </div>
+        )}
 
         {/* Full-width social-proof row — avatars span the whole hero so they
             can run all the way across instead of stopping at the column. */}
