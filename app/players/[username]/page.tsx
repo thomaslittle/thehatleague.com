@@ -10,6 +10,8 @@ import { env } from "@/lib/env";
 import { RankBadge } from "@/components/ranks/rank-badge";
 import { ClipCard } from "@/components/landing/clips";
 import { getClips } from "@/lib/discord/clips";
+import { getPlayerFnfResults } from "@/lib/data/fnf";
+import { PlayerFnfResults } from "@/components/fnf/player-fnf-results";
 import { parseSocialLinks, SOCIAL_LINKS } from "@/lib/profile/customization";
 
 export async function generateMetadata(props: PageProps<"/players/[username]">) {
@@ -47,6 +49,8 @@ export default async function PlayerProfilePage(
   const myClips = allClips.filter(
     (c) => c.submitterProfile?.username === player.discord_username,
   );
+
+  const fnfResults = await getPlayerFnfResults(player.id);
 
   const name =
     player.discord_global_name ?? player.discord_username ?? "Unnamed";
@@ -262,6 +266,8 @@ export default async function PlayerProfilePage(
               and ballchasing.com ingestion is live.
             </p>
           </aside>
+
+          <PlayerFnfResults results={fnfResults} />
 
           {myClips.length > 0 && (
             <section className="mt-12">

@@ -301,3 +301,85 @@ export const getFnfState = cache(
     return { tournament, registrations, teams, matches, standings };
   },
 );
+
+export type FnfPlayerResult = {
+  tournamentId: string;
+  tournamentName: string;
+  startsAt: string | null;
+  status: FnfStatus;
+  teamName: string | null;
+  teammates: FnfPlayerCard[];
+  placement: number | null;
+  totalTeams: number;
+  points: number | null;
+  wins: number;
+  draws: number;
+  losses: number;
+  gameDiff: number;
+  madePlayoffs: boolean;
+  isChampion: boolean;
+};
+
+/** Every FNF tournament a player entered, with their team + result. Newest first. */
+export const getPlayerFnfResults = cache(
+  async (profileId: string): Promise<FnfPlayerResult[]> => {
+    const supabase = await createSupabaseServerClient();
+    const { data: regs } = await supabase
+      .from("fnf_registrations")
+      .select("tournament_id")
+      .eq("profile_id", profileId);
+
+    const results: FnfPlayerResult[] = [];
+    for (const r of regs ?? []) {
+      const state = await getFnfState(r.tournament_id as string);
+      if (!state) continue;
+      const { tournament, teams, matches, standings } = state;
+
+      const team = teams.find((t) =>
+        t.members.some((m) => m.id === profileId),
+      );
+      const idx = team
+        ? standings.findIndex((s) => s.teamId === team.id)
+        : -1;
+      const standing = idx >= 0 ? standings[idx] : null;
+
+      const playoffs = matches.filter((m) => m.stage === "playoffs");
+      let isChampion = false;
+      if (team && playoffs.length > 0) {
+        const maxRound = Math.max(...playoffs.map((m) => m.round));
+        const finalMatch = playoffs.find((m) => m.round === maxRound);
+        isChampion = finalMatch?.winnerTeamId === team.id;
+      }
+      const madePlayoffs =
+        !!team &&
+        playoffs.some(
+          (m) => m.teamAId === team.id || m.teamBId === team.id,
+        );
+
+      results.push({
+        tournamentId: tournament.id,
+        tournamentName: tournament.name,
+        startsAt: tournament.startsAt,
+        status: tournament.status,
+        teamName: team?.name ?? null,
+        teammates: team
+          ? team.members.filter((m) => m.id !== profileId)
+          : [],
+        placement: idx >= 0 ? idx + 1 : null,
+        totalTeams: teams.length,
+        points: standing?.points ?? null,
+        wins: standing?.wins ?? 0,
+        draws: standing?.draws ?? 0,
+        losses: standing?.losses ?? 0,
+        gameDiff: standing?.gameDiff ?? 0,
+        madePlayoffs,
+        isChampion,
+      });
+    }
+
+    results.sort((a, b) =>
+      (b.startsAt ?? "").localeCompare(a.startsAt ?? ""),
+    );
+    return results;
+  },
+);
