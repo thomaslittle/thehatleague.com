@@ -16,7 +16,9 @@ insert into public.badges (slug, name, description, category, tier, icon, is_act
   ('fnf-playoffs', 'Into the Lights', 'Reached the playoffs at Friday Nite Fights.',                'fnf', 'silver',    'swords', true),
   ('fnf-finalist', 'Title Shot',      'Fought all the way to the Friday Nite Fights final.',        'fnf', 'gold',      'medal',  true),
   ('fnf-champion', 'FNF Champion',    'Won a Friday Nite Fights tournament.',                        'fnf', 'legendary', 'trophy', true),
-  ('fnf-sweeper',  'Undefeated',      'Won Friday Nite Fights without dropping a single series.',    'fnf', 'gold',      'shield', true)
+  ('fnf-sweeper',  'Undefeated',      'Won Friday Nite Fights without dropping a single series.',    'fnf', 'gold',      'shield', true),
+  ('fnf-veteran',  'Ringside Regular','Entered 5 or more Friday Nite Fights tournaments.',           'fnf', 'silver',    'target', true),
+  ('fnf-dynasty',  'Dynasty',         'Won 3 or more Friday Nite Fights titles.',                    'fnf', 'legendary', 'award',  true)
 on conflict (slug) do update set
   name = excluded.name,
   description = excluded.description,
@@ -157,6 +159,46 @@ begin
       p_tournament
     );
   end if;
+
+  -- (g) Career milestones for everyone who fought tonight, recomputed from
+  -- their full FNF history. Ringside Regular = 5+ tournaments entered.
+  perform public._fnf_grant_badge(
+    'fnf-veteran', p_season,
+    array(
+      select tm.profile_id
+        from fnf_team_members tm
+       where tm.profile_id in (
+               select profile_id from fnf_team_members where tournament_id = p_tournament
+             )
+       group by tm.profile_id
+      having count(distinct tm.tournament_id) >= 5
+    ),
+    p_tournament
+  );
+
+  -- Dynasty = 3+ FNF titles (member of the champion team in 3+ tournaments).
+  perform public._fnf_grant_badge(
+    'fnf-dynasty', p_season,
+    array(
+      select tm.profile_id
+        from fnf_team_members tm
+        join (
+          select f.tournament_id, f.winner_team_id as team_id
+            from fnf_matches f
+            join (
+              select tournament_id, max(round) as mr
+                from fnf_matches where stage = 'playoffs' group by tournament_id
+            ) mx on mx.tournament_id = f.tournament_id and f.round = mx.mr
+           where f.stage = 'playoffs' and f.winner_team_id is not null
+        ) champ on champ.tournament_id = tm.tournament_id and champ.team_id = tm.team_id
+       where tm.profile_id in (
+               select profile_id from fnf_team_members where tournament_id = p_tournament
+             )
+       group by tm.profile_id
+      having count(*) >= 3
+    ),
+    p_tournament
+  );
 end;
 $$;
 
