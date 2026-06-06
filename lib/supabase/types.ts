@@ -1706,6 +1706,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      sfs_own_goals: {
+        Row: {
+          id: string;
+          profile_id: string | null;
+          player_name: string | null;
+          reported_by: string | null;
+          note: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id?: string | null;
+          player_name?: string | null;
+          reported_by?: string | null;
+          note?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          profile_id?: string | null;
+          player_name?: string | null;
+          reported_by?: string | null;
+          note?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "sfs_own_goals_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "sfs_own_goals_reported_by_fkey";
+            columns: ["reported_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       team_members: {
         Row: {
           id: string;

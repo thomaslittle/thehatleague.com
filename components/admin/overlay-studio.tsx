@@ -9,6 +9,7 @@ import {
   Copy,
   Crown,
   ExternalLink,
+  Goal,
   LayoutGrid,
   ListOrdered,
   MonitorPlay,
@@ -66,6 +67,7 @@ const SEASON_SOURCES: SourceDef[] = [
   { path: "/overlay/standings", label: "Standings", note: "Conference tables — fills in once results land.", place: "Side panel", icon: Trophy },
   { path: "/overlay/power-players", label: "Power Players", note: "League-points leaders, for game-day streams.", place: "Side panel", icon: Crown },
   { path: "/overlay/matchup", label: "Matchup", note: "VS card for a match — append &id=<matchId>.", place: "Full screen", icon: Swords },
+  { path: "/overlay/sfs-own-goals", label: "SFS Own Goals", note: "The Saturday own-goal counter + worst offender. Public — no token needed.", place: "Side panel", icon: Goal },
 ];
 
 export function OverlayStudio({

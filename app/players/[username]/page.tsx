@@ -12,6 +12,8 @@ import { ClipCard } from "@/components/landing/clips";
 import { getClips } from "@/lib/discord/clips";
 import { getPlayerFnfResults } from "@/lib/data/fnf";
 import { PlayerFnfResults } from "@/components/fnf/player-fnf-results";
+import { getProfileOwnGoalCount } from "@/lib/data/sfs";
+import { Goal } from "lucide-react";
 import { PlayerScouting } from "@/components/players/player-scouting";
 import { RealtimeRefresh } from "@/components/realtime/realtime-refresh";
 import { parseSocialLinks, SOCIAL_LINKS } from "@/lib/profile/customization";
@@ -60,6 +62,7 @@ export default async function PlayerProfilePage(
   );
 
   const fnfResults = await getPlayerFnfResults(player.id);
+  const ownGoals = await getProfileOwnGoalCount(player.id);
   const social = user ? await loadProfileSocial(user.id, player.id) : null;
   const playerAssets = await loadAssets("player", player.id, user?.id ?? null);
   // Same combine entry captains see on the /combine board — surfaced here so
@@ -302,6 +305,25 @@ export default async function PlayerProfilePage(
           <PlayerScouting profileId={player.id} username={player.discord_username} />
 
           <PlayerFnfResults results={fnfResults} />
+
+          {ownGoals > 0 && (
+            <Link
+              href="/shitfaced-saturday"
+              className="mt-8 inline-flex items-center gap-3 rounded-2xl border border-amber-400/40 bg-amber-400/[0.07] px-4 py-3 transition hover:border-amber-400"
+            >
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-amber-400/15 text-amber-500">
+                <Goal className="size-5" />
+              </span>
+              <span className="leading-tight">
+                <span className="block text-xl font-extrabold tabular-nums">
+                  {ownGoals}
+                </span>
+                <span className="block text-[11px] font-bold tracking-[0.16em] text-neutral-500 uppercase">
+                  Own {ownGoals === 1 ? "goal" : "goals"} · SH*T Faced Sat
+                </span>
+              </span>
+            </Link>
+          )}
 
           {(playerAssets.length > 0 || user) && (
             <section className="mt-12">

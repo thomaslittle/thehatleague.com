@@ -19,6 +19,30 @@ export type ReleaseNote = {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: "v1.1",
+    date: "2026-06-06",
+    title: "Saturday business",
+    summary:
+      "Weekly-event countdowns and the SH*T Faced Saturday own-goal counter — track the shame, tag the culprits, and put it on the stream.",
+    sections: [
+      {
+        heading: "Weekly-event countdown",
+        items: [
+          "A self-rolling countdown to the next weekly event on the landing page — it points at Saturday's hang today and rolls itself over to Friday Nite Fights once the night wraps, flipping to 'Happening now' during the window.",
+          "The Friday Nite Fights and SH*T Faced Saturday pages each carry their own countdown.",
+        ],
+      },
+      {
+        heading: "SH*T Faced Saturday own-goal counter",
+        items: [
+          "An all-time own-goal counter anyone signed in can add to — tag a registered player or type a name for a guest.",
+          "A 'wall of shame' leaderboard and an own-goal count that lands on the tagged player's profile forever.",
+          "A nicely-styled OBS overlay (Own Goals counter + worst offender) the streamer can drop in — listed in the overlay studio, updates live.",
+        ],
+      },
+    ],
+  },
+  {
     version: "v1.0",
     date: "2026-06-06",
     title: "Game on",

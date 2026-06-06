@@ -3,8 +3,12 @@ import { Beer, Users, Gamepad2, Clock, GlassWater, PartyPopper } from "lucide-re
 import { PageShell } from "@/components/page/page-shell";
 import { PageHero } from "@/components/page/page-hero";
 import { EventCountdown } from "@/components/landing/event-countdown";
+import { OwnGoalCounter } from "@/components/sfs/own-goal-counter";
+import { RealtimeRefresh } from "@/components/realtime/realtime-refresh";
 import { DiscordIcon } from "@/components/icons/brand";
 import { SITE } from "@/lib/site";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getSfsOwnGoalStats, getSfsTaggablePlayers } from "@/lib/data/sfs";
 
 export const metadata = {
   title: "SH*T Faced Saturday",
@@ -12,9 +16,23 @@ export const metadata = {
     "The Hat League's friendly Saturday hang — crack a cold one and queue up with the crew. No brackets, no pressure, just buds, beers, and Rocket League.",
 };
 
-export default function ShitfacedSaturdayPage() {
+export default async function ShitfacedSaturdayPage() {
+  const supabase = await createSupabaseServerClient();
+  const [
+    {
+      data: { user },
+    },
+    ownGoals,
+    players,
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    getSfsOwnGoalStats(),
+    getSfsTaggablePlayers(),
+  ]);
+
   return (
     <PageShell>
+      <RealtimeRefresh tables={["sfs_own_goals"]} channel="sfs-own-goals" />
       <PageHero
         eyebrow="The Hat League · Every Saturday"
         title="SH*T Faced"
@@ -195,6 +213,12 @@ export default function ShitfacedSaturdayPage() {
             drive.
           </p>
         </section>
+
+        <OwnGoalCounter
+          stats={ownGoals}
+          players={players}
+          isAuthenticated={!!user}
+        />
       </div>
     </PageShell>
   );
