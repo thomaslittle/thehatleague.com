@@ -83,33 +83,22 @@ export function PoolAvatarStack({
         </span>
       </Link>
 
-      {/* Pool member avatars — a tight overlapping cluster on small screens,
-          then spread out to span the full hero width from lg up. */}
-      <div className="flex min-w-0 flex-1 items-center justify-start -space-x-2.5 lg:justify-between lg:space-x-0">
+      {/* Pool member avatars — an overlapping stack that WRAPS onto more rows
+          as the pool grows, so it always fits no matter the headcount. */}
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-y-2 -space-x-2.5">
       {shown.map((a, i) => {
         const initials = a.name.slice(0, 2).toUpperCase();
         const role = a.role ? ROLE_META[a.role] : null;
         const href = a.username
           ? `/players/${encodeURIComponent(a.username)}`
           : "/pool";
-        // Reveal more faces as the viewport widens so the row never overflows
-        // (or clips a half-avatar) on narrow screens; from lg up everyone shows
-        // and the row spreads edge-to-edge.
-        const display =
-          i < 8
-            ? "inline-flex"
-            : i < 14
-              ? "hidden sm:inline-flex"
-              : i < 22
-                ? "hidden md:inline-flex"
-                : "hidden lg:inline-flex";
         return (
           <Link
             key={a.id}
             href={href}
             aria-label={role ? `${a.name} — ${role.label}` : a.name}
             style={{ zIndex: shown.length - i }}
-            className={`group/av relative ${display} h-9 w-9 shrink-0 items-center justify-center rounded-full transition hover:z-40 ${
+            className={`group/av relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition hover:z-40 ${
               role
                 ? `ring-[3px] ${role.ring}`
                 : "ring-2 ring-white dark:ring-neutral-950"
