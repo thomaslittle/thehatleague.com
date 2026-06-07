@@ -23,11 +23,14 @@ export function ProfileCustomizationForm({
   socialLinks,
   hasCustomAvatar,
   hasCustomBanner,
+  hideHeader = false,
 }: {
   bio: string | null;
   socialLinks: Json | null;
   hasCustomAvatar: boolean;
   hasCustomBanner: boolean;
+  /** Suppress the internal heading when the section already has its own (e.g. a collapsible trigger). */
+  hideHeader?: boolean;
 }) {
   const [state, action, pending] = useActionState<
     ProfileCustomizationState | undefined,
@@ -42,18 +45,20 @@ export function ProfileCustomizationForm({
 
   return (
     <form action={action} className="grid gap-7">
-      <div>
-        <div className="text-xs font-bold tracking-[0.18em] text-thl-orange uppercase">
-          Public player card
+      {!hideHeader && (
+        <div>
+          <div className="text-xs font-bold tracking-[0.18em] text-thl-orange uppercase">
+            Public player card
+          </div>
+          <h2 className="mt-2 text-2xl font-bold tracking-tight">
+            Make your profile yours.
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+            Upload a custom avatar, choose a player-page banner, add a short bio,
+            and link the socials you want other players to find.
+          </p>
         </div>
-        <h2 className="mt-2 text-2xl font-bold tracking-tight">
-          Make your profile yours.
-        </h2>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-          Upload a custom avatar, choose a player-page banner, add a short bio,
-          and link the socials you want other players to find.
-        </p>
-      </div>
+      )}
 
       <div className="grid gap-5 md:grid-cols-2">
         <Field

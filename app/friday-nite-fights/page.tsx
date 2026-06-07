@@ -126,14 +126,14 @@ export default async function FridayNiteFightsPage(
             </>
           }
           aside={
-            <div className="relative mx-auto aspect-square w-full max-w-[320px]">
+            <div className="flex justify-center">
               <Image
                 src="/brand/fnf.png"
                 alt="Friday Nite Fights"
-                fill
+                width={356}
+                height={152}
                 priority
-                sizes="320px"
-                className="object-contain drop-shadow-[0_8px_30px_rgba(255,107,0,0.25)]"
+                className="h-[130px] w-auto object-contain drop-shadow-[0_8px_30px_rgba(255,107,0,0.25)]"
               />
             </div>
           }
@@ -204,14 +204,14 @@ export default async function FridayNiteFightsPage(
           )
         }
         aside={
-          <div className="relative mx-auto aspect-square w-full max-w-[320px]">
+          <div className="flex justify-center">
             <Image
               src="/brand/fnf.png"
               alt="Friday Nite Fights"
-              fill
+              width={356}
+              height={152}
               priority
-              sizes="320px"
-              className="object-contain drop-shadow-[0_8px_30px_rgba(255,107,0,0.25)]"
+              className="h-[130px] w-auto object-contain drop-shadow-[0_8px_30px_rgba(255,107,0,0.25)]"
             />
           </div>
         }

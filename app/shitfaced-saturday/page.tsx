@@ -56,14 +56,14 @@ export default async function ShitfacedSaturdayPage() {
           </a>
         }
         aside={
-          <div className="relative mx-auto aspect-square w-full max-w-[320px]">
+          <div className="flex justify-center">
             <Image
               src="/brand/SFS.png"
               alt="SH*T Faced Saturday"
-              fill
+              width={351}
+              height={128}
               priority
-              sizes="320px"
-              className="object-contain drop-shadow-[0_8px_30px_rgba(255,107,0,0.3)]"
+              className="h-[130px] w-auto object-contain drop-shadow-[0_8px_30px_rgba(255,107,0,0.3)]"
             />
           </div>
         }

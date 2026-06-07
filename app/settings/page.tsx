@@ -4,6 +4,7 @@ import { PageShell } from "@/components/page/page-shell";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { OnboardingForm } from "@/components/onboarding/onboarding-form";
 import { ProfileCustomizationForm } from "@/components/settings/profile-customization-form";
+import { CollapsibleSection } from "@/components/settings/collapsible-section";
 import { signOut } from "@/app/actions/auth";
 import { togglePoolMembership } from "@/app/actions/onboarding";
 
@@ -53,28 +54,38 @@ export default async function SettingsPage() {
             </Link>
           </div>
 
-          <div className="mt-10 rounded-3xl border border-neutral-200 bg-white p-6 md:p-8 dark:border-neutral-800 dark:bg-neutral-950">
-            <ProfileCustomizationForm
-              bio={profile.bio}
-              socialLinks={profile.social_links}
-              hasCustomAvatar={!!profile.profile_avatar_url}
-              hasCustomBanner={!!profile.profile_banner_url}
-            />
-          </div>
+          <div className="mt-10 grid gap-6">
+            <CollapsibleSection
+              title="Public player card"
+              description="Avatar, banner, bio, and the socials other players see."
+              defaultOpen
+            >
+              <ProfileCustomizationForm
+                bio={profile.bio}
+                socialLinks={profile.social_links}
+                hasCustomAvatar={!!profile.profile_avatar_url}
+                hasCustomBanner={!!profile.profile_banner_url}
+                hideHeader
+              />
+            </CollapsibleSection>
 
-          <div className="mt-10 rounded-3xl border border-neutral-200 bg-white p-6 md:p-8 dark:border-neutral-800 dark:bg-neutral-950">
-            <OnboardingForm
-              from="settings"
-              submitLabel="Save changes"
-              pendingLabel="Saving…"
-              defaults={{
-                tracker_url: profile.rl_tracker_url,
-                rank_2v2: profile.rank_2v2,
-                rank_3v3: profile.rank_3v3,
-                peak_rank: profile.peak_rank,
-                peak_playlist: profile.peak_rank_playlist,
-              }}
-            />
+            <CollapsibleSection
+              title="Tracker & ranks"
+              description="Update your tracker URL or refresh your ranks any time."
+            >
+              <OnboardingForm
+                from="settings"
+                submitLabel="Save changes"
+                pendingLabel="Saving…"
+                defaults={{
+                  tracker_url: profile.rl_tracker_url,
+                  rank_2v2: profile.rank_2v2,
+                  rank_3v3: profile.rank_3v3,
+                  peak_rank: profile.peak_rank,
+                  peak_playlist: profile.peak_rank_playlist,
+                }}
+              />
+            </CollapsibleSection>
           </div>
 
           <div className="mt-10 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-5 dark:border-neutral-800 dark:bg-neutral-900">

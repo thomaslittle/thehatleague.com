@@ -20,6 +20,15 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+/** A thin orange accent strip across the top of every mega-menu panel. */
+function MenuAccent() {
+  return (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-thl-orange/0 via-thl-orange to-thl-orange/0"
+    />
+  );
+}
 
 /** Active-route underline marker (shared by the flat link + the League trigger). */
 function ActiveUnderline() {
@@ -94,10 +103,14 @@ export function DesktopNav({
               {leagueActive && <ActiveUnderline />}
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div className="grid w-[480px] grid-cols-3 gap-x-6 gap-y-1 p-5">
-                {NAV_LEAGUE_GROUPS.map((group) => (
-                  <div key={group.title}>
-                    <div className="mb-2 px-2 text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
+              <div className="relative grid w-[600px] grid-cols-3 p-2.5 pt-3">
+                <MenuAccent />
+                {NAV_LEAGUE_GROUPS.map((group, i) => (
+                  <div
+                    key={group.title}
+                    className={`px-2 ${i > 0 ? "border-l border-neutral-200/70 dark:border-neutral-800/70" : ""}`}
+                  >
+                    <div className="mb-1.5 px-3 text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
                       {group.title}
                     </div>
                     <ul className="grid gap-0.5">
@@ -117,11 +130,14 @@ export function DesktopNav({
               {weekliesActive && <ActiveUnderline />}
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[220px] gap-0.5 p-3">
-                {NAV_WEEKLIES.map((l) => (
-                  <NavMenuLink key={l.href} link={l} active={isActive(l.href)} />
-                ))}
-              </ul>
+              <div className="relative p-2 pt-3">
+                <MenuAccent />
+                <ul className="relative grid w-[260px] gap-0.5">
+                  {NAV_WEEKLIES.map((l) => (
+                    <NavMenuLink key={l.href} link={l} active={isActive(l.href)} />
+                  ))}
+                </ul>
+              </div>
             </NavigationMenuContent>
           </NavigationMenuItem>
 
@@ -131,11 +147,14 @@ export function DesktopNav({
               {statsActive && <ActiveUnderline />}
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[200px] gap-0.5 p-3">
-                {NAV_STATS.map((l) => (
-                  <NavMenuLink key={l.href} link={l} active={isActive(l.href)} />
-                ))}
-              </ul>
+              <div className="relative p-2 pt-3">
+                <MenuAccent />
+                <ul className="relative grid w-[260px] gap-0.5">
+                  {NAV_STATS.map((l) => (
+                    <NavMenuLink key={l.href} link={l} active={isActive(l.href)} />
+                  ))}
+                </ul>
+              </div>
             </NavigationMenuContent>
           </NavigationMenuItem>
 
@@ -145,11 +164,14 @@ export function DesktopNav({
               {aboutActive && <ActiveUnderline />}
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[200px] gap-0.5 p-3">
-                {NAV_ABOUT.map((l) => (
-                  <NavMenuLink key={l.href} link={l} active={!l.external && isActive(l.href)} />
-                ))}
-              </ul>
+              <div className="relative p-2 pt-3">
+                <MenuAccent />
+                <ul className="relative grid w-[260px] gap-0.5">
+                  {NAV_ABOUT.map((l) => (
+                    <NavMenuLink key={l.href} link={l} active={!l.external && isActive(l.href)} />
+                  ))}
+                </ul>
+              </div>
             </NavigationMenuContent>
           </NavigationMenuItem>
 
@@ -168,12 +190,13 @@ export function DesktopNav({
                 League Ops
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <div className="w-[220px] p-3">
-                  <div className="mb-2 flex items-center gap-1.5 px-2 text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
+                <div className="relative w-[300px] p-2 pt-3">
+                  <MenuAccent />
+                  <div className="relative mb-1.5 flex items-center gap-1.5 px-3 pt-1 text-[10px] font-bold tracking-[0.22em] text-thl-orange uppercase">
                     <ShieldCheck className="h-3 w-3" aria-hidden />
                     League ops
                   </div>
-                  <ul className="grid gap-0.5">
+                  <ul className="relative grid gap-0.5">
                     {NAV_LEAGUE_OPS.map((l) => (
                       <NavMenuLink key={l.href} link={l} active={isActive(l.href)} />
                     ))}
@@ -188,11 +211,19 @@ export function DesktopNav({
   );
 }
 
-/** A single link row inside a League/Stats/About menu — handles internal vs external. */
+/**
+ * A single clean link row inside a mega-menu: label + one-line description.
+ * Hover/active is a soft full-row wash with the label turning orange — no
+ * icons, no accent bars. The styling stays quiet on purpose.
+ */
 function NavMenuLink({ link, active }: { link: NavLinkType; active: boolean }) {
-  const className = `block rounded-lg px-2 py-1.5 text-sm font-medium ${
-    active ? "text-thl-orange" : "text-neutral-700 dark:text-neutral-300"
-  }`;
+  const className = [
+    // `items-start` overrides the base NavigationMenuLink's `items-center`,
+    // which would otherwise centre the label/description in this column layout.
+    "group/row flex flex-col items-start gap-0.5 rounded-lg px-3 py-2 text-left transition-colors",
+    "hover:bg-neutral-100 dark:hover:bg-white/[0.06]",
+    "data-active:bg-thl-orange/10",
+  ].join(" ");
   return (
     <li>
       <NavigationMenuLink
@@ -206,7 +237,20 @@ function NavMenuLink({ link, active }: { link: NavLinkType; active: boolean }) {
           )
         }
       >
-        {link.label}
+        <span
+          className={`text-sm transition-colors group-hover/row:text-thl-orange ${
+            active
+              ? "font-semibold text-thl-orange"
+              : "font-medium text-neutral-800 dark:text-neutral-100"
+          }`}
+        >
+          {link.label}
+        </span>
+        {link.desc && (
+          <span className="text-xs leading-snug text-neutral-500 dark:text-neutral-400">
+            {link.desc}
+          </span>
+        )}
       </NavigationMenuLink>
     </li>
   );
